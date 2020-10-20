@@ -35,7 +35,7 @@ class CAircraftSpecs:
     | ballistic_frontal_area    | Frontal area of the aircraft during ballistic descent. This is the area size of the aircraft as projected in the direction of   |
     |                           | descent.                                                                                                                        |
     +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | balllistic_drag_coefficient | Drag coefficient of the aircraft during ballistic descent. For future use.                                                      |
+    |balllistic_drag_coefficient| Drag coefficient of the aircraft during ballistic descent. For future use.                                                      |
     +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
     | glide_drag_coefficient    | Drag coefficient of the aircraft during glide descent.                                                                          |
     +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
@@ -108,9 +108,9 @@ class CAircraftSpecs:
         -------
         None
         """
-        if not isinstance(aircraft_type, EAircraftType):
+        if not isinstance(aircraft_type, casex.enums.EAircraftType):
             warnings.warn("Aircraft type not recognized. Type set to fixed wing.")
-            self.aircraft_type = EAircraftType.FIXED_WING
+            self.aircraft_type = casex.enums.EAircraftType.FIXED_WING
         else:
             self.aircraft_type = aircraft_type
     
@@ -421,7 +421,7 @@ class CAircraftSpecs:
         
         self.Oswald_efficiency_number = Oswald_efficiency_number
         
-    def set_Oswald_efficiency_number(self, max_LD_ratio):
+    def set_max_LD_ratio(self, max_LD_ratio):
         """ Set maximum L/D ratio
  
         Parameters
@@ -459,7 +459,7 @@ class CAircraftSpecs:
         return np.power(np.divide(nom, denom), 1/4)
  
     def terminal_velocity(self, rho):
-        """Compute terminal velocity for free falling object
+        """Compute terminal velocity for free falling aircraft
         """
         return np.sqrt(2 * self.mass * casex.constants.GRAVITY / rho / self.ballistic_frontal_area / self.ballistic_drag_coefficient)
     

@@ -81,7 +81,7 @@ class CFrictionCoefficients:
         Returns
         -------
         friction_coeficient : float
-            The friction coefficient between the aircrat and ground material.
+            The friction coefficient between the aircraft and ground material.
             Returns -1 if the coefficient is not available (see table above).
             Returns -2 if either material is not recognized.
         """
@@ -93,8 +93,7 @@ class CFrictionCoefficients:
             return -2
             
         # This returns the appropriate coefficient.
-        # It returns -2 if either enums are not recognized, but this error should be catched and handled by the ifs above.
-        # It returns -1 if there is not appropriate coefficient.
+        # It returns -1 if there is no appropriate coefficient.
         return {
             EGroundMaterial.CONCRETE: self._on_concrete(aircraft_material),
             EGroundMaterial.ASPHALT: self._on_asphalt(aircraft_material),

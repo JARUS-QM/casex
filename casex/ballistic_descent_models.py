@@ -108,24 +108,16 @@ class CBallisticDescent_2ndOrderDrag_Approximation:
         # since the crossing is approximated)
         vix_c = self.compute_vx_before(t_c, initial_velocity_x)
         viy_c = np.minimum(self.gamma * 0.999, self.compute_vy_down(t_c - t_top, Hd)) # Note that viy_c should not reach Gamma, since it will cause problems for x3
-        #print('vix_c:', vix_c)
-        #print('viy_c:', viy_c)
             
         # Horizontal distance after crossing vy = vx
         # x_after gives zero for t_i < t_c
-        mx = np.maximum(0, t_i - t_c) ### Fix to give same length as t_i - t_c rather than length 1 (from the 0)
+        mx = np.maximum(0, t_i - t_c) # This is a fix to give same length as t_i - t_c rather than length 1 (from the 0)
         x3 = self.compute_x_after(mx, vix_c, viy_c, self.compute_H_d(viy_c), self.compute_G_d(viy_c))
             
         # The condition "if t_i < t_c" is implemented through logical indexing
-        #print('t_i:', t_i)
-        #print('t_c:', t_c)
         v_tx = np.where(t_i > t_c,
                  self.compute_vx_after(t_i - t_c, vix_c, self.compute_H_d(viy_c), self.compute_G_d(viy_c)),
                  self.compute_vx_before(t_i, initial_velocity_x))
-        #print('t_i > t_c:', self.compute_vx_after(t_i - t_c, vix_c, self.compute_H_d(viy_c), self.compute_G_d(viy_c)))
-        #print('t_i < t_c:', self.compute_vx_before(t_i, initial_velocity_x))
-        #print('self.compute_H_d(viy_c):',self.compute_H_d(viy_c))
-        #print('self.compute_G_d(viy_c):',self.compute_G_d(viy_c))
             
         # Terminal vertical speed
         v_ty = self.compute_vy_down(t_i - t_top, Hd)
@@ -177,7 +169,6 @@ class CBallisticDescent_2ndOrderDrag_Approximation:
         return self.gamma * np.tanh(casex.constants.GRAVITY * t / self.gamma + Hd)
 
     def compute_vx_before(self, t, vix):
-        #return vix / (1 + t / (self.aircraft.mass / self.c / vix))
         return vix / (1 + (t * vix) / (self.aircraft.mass / self.c))
 
     def compute_vx_after(self, t, init_v_x, Hd, Gd):

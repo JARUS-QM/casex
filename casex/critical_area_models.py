@@ -79,7 +79,7 @@ class CCriticalAreaModels:
         # Check on input argument validity
         if not isinstance(critical_area_model, casex.enums.ECriticalAreaModel):
             warnings.warn("Critical area model not recognized. Type set to RCC.")
-            critical_area_model = ECriticalAreaModel.RCC
+            critical_area_model = casex.enums.ECriticalAreaModel.RCC
 
         if not isinstance(aircraft, casex.aircraft_specs.CAircraftSpecs):
             raise("Aircraft not recognized. Must be of type CAircraftSpecs")
@@ -108,8 +108,6 @@ class CCriticalAreaModels:
         
         elif critical_area_model == casex.enums.ECriticalAreaModel.FAA:
             # [2, p. 99]
-            # Note that this is not identical to (12), since (12) assumes 0 degrees is vertical and not horizontal
-            #LA_inert = math.pi * np.power(self.buffer + aircraft.width / 2, 2) + 2*(self.buffer + aircraft.width / 2) * glide_distance
             r_D = self.buffer + aircraft.width / 2
             # F_A comes from table 6-5 in [2, p. 98]. Here using the median for 20/80 distribution between hard and soft surfaces
             if var1 == -1:
@@ -121,21 +119,17 @@ class CCriticalAreaModels:
             y2m = np.power(2*r_Ac*hs,2) - np.power(np.power(r_Ac,2) + np.power(hs, 2) - np.power(r_D,2), 2)
             # If y2m becomes negative, it means that A_C_mark should become zero, because the secondary
             # debris area is larger than the total glide area. This is accomplished by simply setting y2 = 0
-            # Now, this does not work right now (A_C_mark does not become zero). Probably because of an error
-            # in the derivations in the source
             y2m = np.maximum(0, y2m)
             y2 = np.sqrt(y2m) / (2*hs)
             A_C_mark = 2*y2*hs
             A_C_mark = A_C_mark + (y2*np.sqrt(np.power(r_D,  2) - np.power(y2, 2)) + np.power(r_D,  2) * np.arcsin(y2/r_D))
             A_C_mark = A_C_mark - (y2*np.sqrt(np.power(r_Ac, 2) - np.power(y2, 2)) + np.power(r_Ac, 2) * np.arcsin(y2/r_Ac))
+            # Note that this is not identical to (12), since (12) assumes 0 degrees is vertical and not horizontal
             LA_inert = math.pi*np.power(self.buffer + aircraft.width / 2 * np.sqrt(F_A), 2) + A_C_mark
             
             glide_area = math.pi*np.power(self.buffer + aircraft.width / 2, 2)
             slide_area = LA_inert - glide_area
-            
-            # The below factor is a "conservative estimate" taken from [1, p. 16], predecessor to [2].
-            #LA_inert = LA_inert * 7 
-        
+                    
         elif critical_area_model == casex.enums.ECriticalAreaModel.NAWCAD:
             # All from [7]
             if var1 == -1:
@@ -150,7 +144,7 @@ class CCriticalAreaModels:
             acceleration = aircraft.friction_coefficient * casex.constants.GRAVITY
             
             # P. 17
-            # This is (15), but it seems to be wrong; norally at = v, not 2at = v
+            # This is (15), but it seems to be wrong; normally at = v, not 2at = v
             #t_safe = (horizontal_impact_speed - velocity_min_kill) / 2 / aircraft.friction_coefficient / constants.GRAVITATIONAL
             # This seems to be the correct formula
             t_safe = (horizontal_impact_speed - velocity_min_kill) / acceleration
@@ -160,9 +154,6 @@ class CCriticalAreaModels:
             
             # P. 17
             skid_distance_lethal = (horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
-            
-            # Set this variable to accommodate the second and third output of this function
-            slide_distance_friction = skid_distance_lethal;
             
             # P. 25
             glide_area = glide_distance * (2 * self.buffer + aircraft.width)
@@ -188,7 +179,7 @@ class CCriticalAreaModels:
         LA_inert = glide_area + slide_area
         
         # Compute deflagration area based on both fireball and thermal lethal area
-        TNT = Exp.TNT_equivalent_mass(aircraft.fuel_type, aircraft.fuel_quantity);
+        TNT = Exp.TNT_equivalent_mass(aircraft.fuel_type, aircraft.fuel_quantity)
         FB = Exp.fireball_area(TNT)
         p_lethal = 0.1
         TLA = Exp.lethal_area_thermal(TNT, p_lethal)
@@ -226,7 +217,7 @@ class CCriticalAreaModels:
         distance : float
             [m] Distance from impact to rest
         """
-        return velocity * velocity / 2 / friction_coefficient / casex.constants.GRAVITY;
+        return velocity * velocity / 2 / friction_coefficient / casex.constants.GRAVITY
     
     def glide_distance(self, glide_angle: float):
         """Compute glide distance based on glide angle
@@ -249,10 +240,10 @@ class CCriticalAreaModels:
         # Height out of range
         if (np.any(self.height < 0)):
             warnings.warn("Height in computation of glide distance is less than zero, which does not make sense. Subsequent computations are not valid.")
-            height = 0
+            self.height = 0
             
         # Sanity check on glide angle
-        glide_angel = self.check_glide_angle(glide_angle)
+        glide_angle = self.check_glide_angle(glide_angle)
 
         # This is just triangle standard math
         return self.height / np.tan(np.radians(glide_angle))
@@ -277,6 +268,8 @@ class CCriticalAreaModels:
         if np.any(glide_angle < 1):
             warnings.warn("glide_angle is very small, and may produce numerically unstable results. Glide angle has been set to 1 degree.")
             glide_angle = np.fromiter(map(lambda x: 1 if x < 1 else x, glide_angle), dtype = np.float)
+            
+        return glide_angle
 
     def horizontal_speed_from_angle(self, impact_angle: float, impact_speed: float):
         """Compute horizontal speed component for a given impact angle and impact speed
@@ -315,7 +308,7 @@ class CCriticalAreaModels:
         """
         x = np.linspace(0, distance_glide_slide, resolution)
         
-        Ac = width * distance_glide_slide;
+        Ac = width * distance_glide_slide
     
         # Compute the approximated CDF        
         y = 1 - np.power(1 - x/distance_glide_slide, obstacle_density * Ac / 1e6)
@@ -327,7 +320,7 @@ class CCriticalAreaModels:
             reduction = 1 - np.power(1 - p / (1 - p_none), 1/((obstacle_density/1e6)*Ac))
             Ac_reduced = Ac * reduction
         else:
-            Ac_reduced = Ac;
+            Ac_reduced = Ac
         
         return y, x, p_none, Ac_reduced
     
@@ -336,8 +329,6 @@ class CCriticalAreaModels:
         """
         x = np.linspace(0, distance_glide_slide, resolution)
         
-        Ac = width * distance_glide_slide;
-    
         # Compute the Poisson CDF        
         y = 1 - np.exp(-obstacle_density/1e6 * width * x)
         
@@ -355,7 +346,6 @@ class CCriticalAreaModels:
         test_range = np.arange(count)
         
         # Fill the resulting variable with the maximum distance
-        #y = np.full([count], distance_glide_slide)
         y = np.full(count, float(distance_glide_slide))
         
         num_of_obstacles = int(round(obstacle_density))

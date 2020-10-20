@@ -23,10 +23,10 @@ def example1_critical_area():
 
     # Set aircraft values
     aircraft_type = casex.enums.EAircraftType.GENERIC
-    width = 0.001
+    width = 1.2
     length = 1
     mass = 25
-    friction_coefficient = 0.5 #FC.get_coefficient(casex.friction_coefficient.EAircraftMaterial.ALUMINUM, casex.friction_coefficient.EGroundMaterial.CONCRETE)
+    friction_coefficient = FC.get_coefficient(casex.friction_coefficient.EAircraftMaterial.ALUMINUM, casex.friction_coefficient.EGroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
     Aircraft = casex.aircraft_specs.CAircraftSpecs(aircraft_type, width, length, mass)
