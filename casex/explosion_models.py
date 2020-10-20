@@ -102,7 +102,7 @@ class CExplosionModels:
         ----------
         type_of_fuel : :class:`EFuelType`
             The type of fuel.
-        quantity_in_liters : float
+        fuel_quantity : float
             [L] The amount of fuel.
         
         Returns
@@ -167,7 +167,6 @@ class CExplosionModels:
             [m^2] Size of lethal area.
         """
         
-        # WARNING: This has still to be checked!!
         # It is a combination of (72) and (74)
         # Compute the lethal distance form deflagration center
         D = -14.8 * np.power(TNT_mass, 1/3) / np.log(- 0.0005493 + 0.000232263 / p_lethal) 

@@ -41,6 +41,7 @@ class CObstacleSimulation:
         # Smallest distance before we consider two points the same point
         self.__epsilon = 0.0001
         
+        # Some colors available for drawing obstacles and CAs
         self.BLUE = '#6699cc'
         self.GRAY = '#999999'
         self.DARKGRAY = '#333333'
@@ -166,7 +167,7 @@ class CObstacleSimulation:
                                     
                         # The splitting of CA only resulting in one polygon            
                         else:
-                            CA_polygon = CA_splitted;
+                            CA_polygon = CA_splitted
                             
                         # After splitting the CA, it is most likely not a rectangle anymore, but we want that.
                         # So, we find all the coordinates of the splitted CA that were not in the original CA
@@ -228,7 +229,7 @@ class CObstacleSimulation:
         
         # Do the check again w
         if np.abs(d-self.CA_width) > 10 * self.__epsilon:
-            warning.warn("Distance  between two CA beginning points not equal to width. This is an internal warning showing inconsistencyy.")
+            warnings.warn("Distance  between two CA beginning points not equal to width. This is an internal warning showing inconsistencyy.")
                         
         ### Compute step 1
         # Distance from beginning of CA to the closest point
@@ -465,7 +466,7 @@ class CObstacleSimulation:
         # Preset p_x
         p_x = np.zeros(x_resolution)
 
-        acc_propability_check = 0
+        acc_probability_check = 0
         
         for idx_x, x_val in enumerate(x):
             # Reset acc for integral        
@@ -488,13 +489,13 @@ class CObstacleSimulation:
                         p_length = pdf_length[index_l] * pdf_length_step
                         p_orientation = pdf_CA_orientation[idx_orientation] * pdf_CA_orientation_step 
                         accumulator = accumulator + area * p_width * p_length * p_orientation
-                        acc_propability_check = acc_propability_check + p_width * p_length * p_orientation
+                        acc_probability_check = acc_probability_check + p_width * p_length * p_orientation
                 
             p_x[idx_x] = 1 - np.exp(-obstacle_density * accumulator)
         
-        acc_propability_check = acc_propability_check / x_resolution
+        acc_probability_check = acc_probability_check / x_resolution
         
-        return p_x, acc_propability_check
+        return p_x, acc_probability_check
     
     def test1_Minkowski_sum(self):
         # Testing Minkowski sum
