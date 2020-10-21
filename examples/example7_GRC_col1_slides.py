@@ -27,7 +27,7 @@ def example7_GRC_col1_slides():
     friction_coefficient = 0.7#FC.get_coefficient(coefs.EAircraftMaterial.ALUMINUM, coefs.EGroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
-    aircraft = casex.aircraft_specs.CAircraftSpecs(aircraft_type, width, length, mass)
+    aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
     aircraft.set_fuel_type(casex.enums.EFuelType.GASOLINE)
     aircraft.set_fuel_quantity(0)
     aircraft.set_friction_coefficient(friction_coefficient)

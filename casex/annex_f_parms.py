@@ -74,7 +74,7 @@ class CAnnexFParms:
         ballistic_distance : float = 0
         ballistic_impact_KE : float = 0
         ballistic_descent_time : float = 0
-        aircraft : casex.aircraft_specs.CAircraftSpecs = None
+        aircraft : casex.aircraft_specs.AircraftSpecs = None
 
     def __init__(self, impact_angle):
         """ Constructor
@@ -111,7 +111,7 @@ class CAnnexFParms:
             self.CA_parms[k].glide_speed = self.glide_reduce * self.CA_parms[k].cruise_speed
             
             # Define the aircraft
-            self.CA_parms[k].aircraft = casex.aircraft_specs.CAircraftSpecs(self.aircraft_type, self.CA_parms[k].wingspan, 1, self.CA_parms[k].mass)
+            self.CA_parms[k].aircraft = casex.aircraft_specs.AircraftSpecs(self.aircraft_type, self.CA_parms[k].wingspan, 1, self.CA_parms[k].mass)
        
             # Set parameters into aircraft
             self.CA_parms[k].aircraft.set_ballistic_frontal_area(self.CA_parms[k].ballistic_frontal_area)

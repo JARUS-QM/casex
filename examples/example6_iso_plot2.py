@@ -31,7 +31,7 @@ def example6_iso_plot2():
     aircraft_type = casex.enums.EAircraftType.FIXED_WING
     
     # Width, length, and mass will be set later, so just use dummy values
-    aircraft = casex.aircraft_specs.CAircraftSpecs(aircraft_type, 1, 1, 1)
+    aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, 1, 1, 1)
     aircraft.set_fuel_type(casex.enums.EFuelType.LION)
     aircraft.set_fuel_quantity(0)
 

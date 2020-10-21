@@ -31,7 +31,7 @@ def example5_iso_plot1():
     mass = 3
     friction_coefficient = 0.4
     
-    aircraft = casex.aircraft_specs.CAircraftSpecs(aircraft_type, 1, 1, mass)
+    aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, 1, 1, mass)
     aircraft.set_fuel_type(casex.enums.EFuelType.LION)
     aircraft.set_fuel_quantity(0)
     aircraft.set_friction_coefficient(friction_coefficient)

@@ -21,7 +21,7 @@ def example9_ballistic_descent_vector():
     mass = 25
     
     # Instantiate and add data to CAircraftSpecs class
-    aircraft = casex.aircraft_specs.CAircraftSpecs(aircraft_type, width, length, mass)
+    aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
     aircraft.set_ballistic_drag_coefficient(0.9)
     aircraft.set_ballistic_frontal_area(0.25)
     BDM.set_aircraft(aircraft)

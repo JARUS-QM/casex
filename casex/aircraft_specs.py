@@ -3,58 +3,67 @@ import numpy as np
 
 import casex
 
-class CAircraftSpecs:
+
+class AircraftSpecs:
     """ Class to hold parameters on the aircraft used in area computations
     
-    This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be computed.
+    This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be
+    computed.
+
     The following parameters are stored in this class:
-        
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | Parameters                | Description                                                                                                                     |
-    +===========================+=================================================================================================================================+
-    | width                     | The width of the aircraft is the horitonal size of the aircraft orthogonal to the direction of                                  |
-    |                           | travel. This value is used to determine the width of the glide and slide areas.                                                 |
-    |                           | Therefore, this value is the wingspan for fixed wing aircraft, the rotor diameter for rotorcraft,                               |
-    |                           | and the rotortip to rotortip distance for multirotor aircraft.                                                                  |            
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | length                    | Length of the aircraft. The concept is the same as width. The length is only used in the RCC model.                             |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | mass                      | Mass of the aircraft in kg. This is the total mass at the time of crash, including fuel.                                        |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | aircraft_type             | The type of aircraft as given in :class:`EAircraftType`.                                                                        |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | fuel_type                 | Fuel type, such as fossil fuels or batteries. Given in :class:`EFuelType`.                                                      |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | fuel_quantity             | Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume of the battery.                           |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | friction_coefficient      | Coefficient of friction between aircraft and ground. Appropriate values can be found using :class:`CFrictionCoefficients`.      |
-    |                           | Default value is 0.6.                                                                                                           |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | coefficient_of_restitution| Coefficient of restitution expresses the loss of energy on impact. Default value is 0.7.                                        |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | ballistic_frontal_area    | Frontal area of the aircraft during ballistic descent. This is the area size of the aircraft as projected in the direction of   |
-    |                           | descent.                                                                                                                        |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    |balllistic_drag_coefficient| Drag coefficient of the aircraft during ballistic descent. For future use.                                                      |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | glide_drag_coefficient    | Drag coefficient of the aircraft during glide descent.                                                                          |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | wing_area                 | Wing area of a fixed wing aircraft.                                                                                             |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | max_flight_time           | Maximum flight time on the given amount of fuel. For future use.                                                                |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | cruise_speed              | Cruise speed of the aircraft.                                                                                                   |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | glide_speed               | Glide speed of the aircraft when descending in a glide without thrust.                                                          |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | glide_ratio               | Glide ratio of the aircraft when descending in an optimal glide angle without thrust.                                           |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | parachute_deployment_time | Deployment time for the parachute, measured from the time deployment is signalled to full deployment.                           |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | parachute_area            | Area of the parachute generating drag during descent and full deployment.                                                       |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-    | parachute_drag_coef       | Drag coefficient.                                                                                                                 |
-    +---------------------------+---------------------------------------------------------------------------------------------------------------------------------+
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | Parameters                | Description                                                                          |
+    +===========================+======================================================================================+
+    | width                     | The width of the aircraft is the horizontal size of the aircraft orthogonal to the   |
+    |                           | direction of travel. This value is used to determine the width of the glide and slide|
+    |                           | areas. Therefore, this value is the wingspan for fixed wing aircraft, the rotor      |
+    |                           | diameter for rotorcraft, and the rotortip to rotortip distance for multirotor        |
+    |                           | aircraft.                                                                            |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | length                    | Length of the aircraft. The concept is the same as width. The length is only used in |
+    |                           | the RCC model.                                                                       |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | mass                      | Mass of the aircraft in kg. This is the total mass at the time of crash, including   |
+    |                           | fuel.                                                                                |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | aircraft_type             | The type of aircraft as given in :class:`EAircraftType`.                             |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | fuel_type                 | Fuel type, such as fossil fuels or batteries. Given in :class:`EFuelType`.           |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | fuel_quantity             | Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume|
+    |                           | of the battery.                                                                      |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | friction_coefficient      | Coefficient of friction between aircraft and ground. Appropriate values can be found |
+    |                           | using :class:`CFrictionCoefficients`.                                                |
+    |                           | Default value is 0.6.                                                                |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | coefficient_of_restitution| Coefficient of restitution expresses the loss of energy on impact. Default value is  |
+    |                           | 0.7.                                                                                 |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | ballistic_frontal_area    | Frontal area of the aircraft during ballistic descent. This is the area size of the  |
+    |                           | aircraft as projected in the direction of descent.                                   |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | ballistic_drag_coefficient| Drag coefficient of the aircraft during ballistic descent. For future use.           |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | glide_drag_coefficient    | Drag coefficient of the aircraft during glide descent.                               |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | wing_area                 | Wing area of a fixed wing aircraft.                                                  |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | max_flight_time           | Maximum flight time on the given amount of fuel. For future use.                     |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | cruise_speed              | Cruise speed of the aircraft.                                                        |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | glide_speed               | Glide speed of the aircraft when descending in a glide without thrust.               |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | glide_ratio               | Glide ratio of the aircraft when descending in an optimal glide angle without thrust.|
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | parachute_deployment_time | Deployment time for the parachute, measured from the time deployment is signalled to |
+    |                           | full deployment.                                                                     |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | parachute_area            | Area of the parachute generating drag during descent and full deployment.            |
+    +---------------------------+--------------------------------------------------------------------------------------+
+    | parachute_drag_coef       | Drag coefficient.                                                                    |
+    +---------------------------+--------------------------------------------------------------------------------------+
     
     Many of the these parameters are not used in computations of critical area, but are reserved for future use.
     """

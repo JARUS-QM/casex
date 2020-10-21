@@ -39,7 +39,7 @@ def example2_model_comparison():
         casex.friction_coefficient.EGroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
-    Aircraft = casex.aircraft_specs.CAircraftSpecs(aircraft_type, width, length, mass)
+    Aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
     Aircraft.set_fuel_type(casex.enums.EFuelType.GASOLINE)
     Aircraft.set_fuel_quantity(5)
     Aircraft.set_friction_coefficient(friction_coefficient)

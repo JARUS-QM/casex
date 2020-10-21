@@ -27,7 +27,7 @@ class CCriticalAreaModels:
         
         self._self_test()
         
-    def critical_area(self, critical_area_model: casex.enums.ECriticalAreaModel, aircraft: casex.aircraft_specs.CAircraftSpecs, impact_speed: float, impact_angle: float, critical_areas_overlap: float, var1: float = -1):
+    def critical_area(self, critical_area_model: casex.enums.ECriticalAreaModel, aircraft: casex.aircraft_specs.AircraftSpecs, impact_speed: float, impact_angle: float, critical_areas_overlap: float, var1: float = -1):
         """Computes the lethal area as modeled by different models.
         
         The models are described in more detail in SORA Annex F. References for each model is given in the code.
@@ -81,7 +81,7 @@ class CCriticalAreaModels:
             warnings.warn("Critical area model not recognized. Type set to RCC.")
             critical_area_model = casex.enums.ECriticalAreaModel.RCC
 
-        if not isinstance(aircraft, casex.aircraft_specs.CAircraftSpecs):
+        if not isinstance(aircraft, casex.aircraft_specs.AircraftSpecs):
             raise("Aircraft not recognized. Must be of type CAircraftSpecs")
         
         # Instantiate necessary classes
@@ -384,7 +384,7 @@ class CCriticalAreaModels:
         It is not exhaustive, but gives a good indication.
         """
         
-        Aircraft = casex.aircraft_specs.CAircraftSpecs(casex.enums.EAircraftType.FIXED_WING, 4, 3, 25)
+        Aircraft = casex.aircraft_specs.AircraftSpecs(casex.enums.EAircraftType.FIXED_WING, 4, 3, 25)
         Aircraft.set_fuel_type(casex.enums.EFuelType.GASOLINE)
         Aircraft.set_fuel_quantity(5)
         Aircraft.set_friction_coefficient(0.7)
