@@ -87,7 +87,6 @@ class AnnexFParms:
         impact_angle : float
             The impact angle of the descending aircraft, measured relative to the ground [deg]
         """
-
         self.impact_angle = impact_angle
          
         # Set aircraft type
@@ -142,16 +141,18 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_descent_time = p[3]
             self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)
             
-    def iGRC(self, Dpop, CA, TLOS = 1E-6):
+    @staticmethod
+    def iGRC(Dpop, CA, TLOS=1E-6):
         """
         Compute the finale integer iGRC as described in Annex F.
         
         Parameters
         ----------
         Dpop : float
-            Population density [ppl/km^2] (Note that this function converts the density to ppl/m^2 as needed for the equation)
+            Population density [ppl/km^2] (Note that this function converts the density to ppl/m^2
+            as needed for the equation)
         CA : float
-            Size of the critial area [m^2]
+            Size of the critical area [m^2]
         TLOS : float, optional (default is 1e-6)
             Target level of safety [fatalities per flight hour]
             
@@ -162,7 +163,6 @@ class AnnexFParms:
         raw iGRC : float
             The raw iGRC before rounding up
         """
-
         raw_iGRC_value = 1 - math.log10(TLOS / (Dpop * 1E-6 * CA))
         
         return math.ceil(raw_iGRC_value), raw_iGRC_value
