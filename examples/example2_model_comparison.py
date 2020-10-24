@@ -5,6 +5,7 @@ import numpy as np
 import casex
 
 # Abbreviate this, as it is used several times
+import casex.enums
 from casex.enums import ECriticalAreaModel as Model
 
 """
@@ -35,8 +36,8 @@ def example2_model_comparison():
     length = 3.2
     mass = 25
     friction_coefficient = FC.get_coefficient(
-        casex.friction_coefficient.EAircraftMaterial.ALUMINUM,
-        casex.friction_coefficient.EGroundMaterial.CONCRETE)
+        casex.enums.EAircraftMaterial.ALUMINUM,
+        casex.enums.EGroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
     Aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)

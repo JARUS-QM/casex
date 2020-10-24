@@ -1,28 +1,8 @@
-from enum import Enum
 import warnings
 
 import casex
-
-class EAircraftMaterial(Enum):
-    """Enum of the aircraft materials.
-    """
-    GLASSFIBER = 1
-    CARBONFIBER = 2
-    ALUMINUM = 3
-    STEEL = 4
-    WOOD = 5
-    STYROFOAM = 6
-    RUBBER = 7
-
-
-class EGroundMaterial(Enum):
-    """Enum of the ground materials.
-    """
-    CONCRETE = 1
-    ASPHALT = 2
-    GRASS = 3
-    SAND = 4
-    SOIL = 5
+import casex.enums
+from casex.enums import EAircraftMaterial, EGroundMaterial
 
 
 class CFrictionCoefficients:
@@ -73,9 +53,9 @@ class CFrictionCoefficients:
         
         Parameters
         ----------
-        aircraft_material : :class:`EAircraftMaterial`
+        aircraft_material : :class:`casex.enums.EAircraftMaterial`
             Type of the aircraft material.
-        ground_material : :class:`EGroundMaterial`
+        ground_material : :class:`casex.enums.EGroundMaterial`
             Type of the ground material.
             
         Returns
@@ -168,4 +148,4 @@ class CFrictionCoefficients:
         """
         
         #get_coefficient(self, aircraft_material, ground_material):
-        self.get_coefficient(casex.friction_coefficient.EAircraftMaterial.GLASSFIBER, casex.friction_coefficient.EGroundMaterial.CONCRETE)
+        self.get_coefficient(casex.enums.EAircraftMaterial.GLASSFIBER, casex.enums.EGroundMaterial.CONCRETE)

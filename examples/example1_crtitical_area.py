@@ -1,4 +1,5 @@
 import casex
+import casex.enums
 
 """
 Example 1
@@ -26,7 +27,7 @@ def example1_critical_area():
     width = 1.2
     length = 1
     mass = 25
-    friction_coefficient = FC.get_coefficient(casex.friction_coefficient.EAircraftMaterial.ALUMINUM, casex.friction_coefficient.EGroundMaterial.CONCRETE)
+    friction_coefficient = FC.get_coefficient(casex.enums.EAircraftMaterial.ALUMINUM, casex.enums.EGroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
     Aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
