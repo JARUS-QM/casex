@@ -15,6 +15,7 @@ class BallisticDescent2ndOrderDragApproximation:
     ----------
     MISSING DOC
     """
+
     def __init__(self, rho):
         """Constructor
 
@@ -22,6 +23,7 @@ class BallisticDescent2ndOrderDragApproximation:
         ----------
         MISSING DOC
         """
+        self.aircraft = None
         self.distance_impact = None
         self.distance1 = None
         self.distance2 = None
@@ -33,7 +35,8 @@ class BallisticDescent2ndOrderDragApproximation:
         self.time_top = None
         self.time_cross = None
         self.time_impact = None
-        self.aircraft = None
+        self.c = None
+        self.gamma = None
 
         self.rho = rho
 
@@ -91,7 +94,7 @@ class BallisticDescent2ndOrderDragApproximation:
             [m/s] Impact velocity.
         """
         # Update Gamma and c based on the drag coefficient(s)
-        self.compute_gamma_and_c()
+        self.__compute_gamma_and_c()
 
         if np.any(self.gamma < initial_velocity_y):
             warnings.warn("Vertical velocities exceed terminal velocity and has been thresholded by smallest gamma. "
@@ -101,8 +104,8 @@ class BallisticDescent2ndOrderDragApproximation:
         vi_y_m = np.where(initial_velocity_y < 0, 0, initial_velocity_y)
         vi_y_n = np.where(initial_velocity_y >= 0, 0, initial_velocity_y)
 
-        Hd = self.compute_H_d(vi_y_m)
-        Gd = self.compute_G_d(vi_y_m)
+        Hd = self.__compute_H_d(vi_y_m)
+        Gd = self.__compute_G_d(vi_y_m)
 
         if np.any(initial_velocity_x < 0):
             raise NameError('This function does not support negative initial horizontal velocity.')
@@ -111,51 +114,51 @@ class BallisticDescent2ndOrderDragApproximation:
                             ' vertical velocity.')
 
         # Time of top point
-        t_top = self.compute_t_top(vi_y_n)
+        t_top = self.__compute_t_top(vi_y_n)
 
         # Horizontal distance travelled until top point
-        x1 = self.compute_x_before(t_top, initial_velocity_x)
+        x1 = self.__compute_x_before(t_top, initial_velocity_x)
 
         # Time (from event) to x_vy takes over
-        t_c = self.compute_t_cross(t_top, initial_velocity_x, Hd)
+        t_c = self.__compute_t_cross(t_top, initial_velocity_x, Hd)
 
         # In extreme cases the continued fraction approximation on which t_c is based can go haywire. This is an attempt
         # to solve that problem.
         t_c = np.where(t_c < 0, np.inf, t_c)
 
         # Altitude of top point (negative value)
-        y_t = self.compute_y_top(vi_y_n)
+        y_t = self.__compute_y_top(vi_y_n)
 
         # Time to drop from top point
-        t_d = self.compute_t_drop(altitude - y_t, Hd, Gd)
+        t_d = self.__compute_t_drop(altitude - y_t, Hd, Gd)
 
         # Time of impact
         t_i = t_top + t_d
 
         # Initial horizontal speed at top point
-        vx_top = self.compute_vx_before(t_top, initial_velocity_x)
+        vx_top = self.__compute_vx_before(t_top, initial_velocity_x)
 
-        x2 = self.compute_x_before(np.minimum(t_i, t_c) - t_top, vx_top)
+        x2 = self.__compute_x_before(np.minimum(t_i, t_c) - t_top, vx_top)
 
         # Initial speeds at time of crossing (x and y are not the same, since the crossing is approximated)
-        vix_c = self.compute_vx_before(t_c, initial_velocity_x)
+        vix_c = self.__compute_vx_before(t_c, initial_velocity_x)
 
         # Note that viy_c should not reach Gamma, since it will cause problems for x3
-        viy_c = np.minimum(self.gamma * 0.999, self.compute_vy_down(t_c - t_top, Hd))
+        viy_c = np.minimum(self.gamma * 0.999, self.__compute_vy_down(t_c - t_top, Hd))
 
         # Horizontal distance after crossing vy = vx
         # This is a fix to give same length as t_i - t_c rather than length 1 (from the 0)
         mx = np.maximum(0, t_i - t_c)
         # x_after gives zero for t_i < t_c
-        x3 = self.compute_x_after(mx, vix_c, viy_c, self.compute_H_d(viy_c), self.compute_G_d(viy_c))
+        x3 = self.__compute_x_after(mx, vix_c, viy_c, self.__compute_H_d(viy_c), self.__compute_G_d(viy_c))
 
         # The condition "if t_i < t_c" is implemented through logical indexing
         v_tx = np.where(t_i > t_c,
-                        self.compute_vx_after(t_i - t_c, vix_c, self.compute_H_d(viy_c), self.compute_G_d(viy_c)),
-                        self.compute_vx_before(t_i, initial_velocity_x))
+                        self.__compute_vx_after(t_i - t_c, vix_c, self.__compute_H_d(viy_c), self.__compute_G_d(viy_c)),
+                        self.__compute_vx_before(t_i, initial_velocity_x))
 
         # Terminal vertical speed
-        v_ty = self.compute_vy_down(t_i - t_top, Hd)
+        v_ty = self.__compute_vy_down(t_i - t_top, Hd)
 
         # Return values
         self.distance_impact = x1 + x2 + x3
@@ -172,59 +175,75 @@ class BallisticDescent2ndOrderDragApproximation:
 
         return self.distance_impact, self.velocity_impact, self.angle_impact, self.time_impact
 
-    def compute_gamma_and_c(self):
+    def __compute_gamma_and_c(self):
+        # MISSING DOC
         self.c = 0.5 * self.aircraft.ballistic_frontal_area * self.rho * self.aircraft.ballistic_drag_coefficient
-        self.gamma = np.sqrt(self.aircraft.mass * casex.constants.GRAVITY / self.c)
+        self.gamma = np.sqrt(self.aircraft.mass * constants.GRAVITY / self.c)
 
-    def compute_t_top(self, init_v_y):
-        return -self.gamma / casex.constants.GRAVITY * np.arctan(init_v_y / self.gamma)
+    def __compute_t_top(self, init_v_y):
+        # MISSING DOC
+        return - self.gamma / constants.GRAVITY * np.arctan(init_v_y / self.gamma)
 
-    def compute_t_cross(self, tt, init_v_x, Hd):
-        return (self.aircraft.mass * (casex.constants.GRAVITY * tt - self.gamma * Hd + init_v_x * (
-                    1 + np.power(Hd - casex.constants.GRAVITY / self.gamma * tt, 2)))) / (
-                           self.aircraft.mass * casex.constants.GRAVITY + init_v_x * self.c * (
-                               casex.constants.GRAVITY * tt - self.gamma * Hd))
+    def __compute_t_cross(self, tt, init_v_x, Hd):
+        # MISSING DOC
+        return (self.aircraft.mass * (constants.GRAVITY * tt - self.gamma * Hd + init_v_x * (
+                1 + np.power(Hd - constants.GRAVITY / self.gamma * tt, 2)))) / (
+                       self.aircraft.mass * constants.GRAVITY + init_v_x * self.c *
+                       (constants.GRAVITY * tt - self.gamma * Hd))
 
-    def compute_t_drop(self, y, Hd, Gd):
-        return self.gamma / casex.constants.GRAVITY * (np.arccosh(np.exp(self.c * y / self.aircraft.mass + Gd)) - Hd)
+    def __compute_t_drop(self, y, Hd, Gd):
+        # MISSING DOC
+        return self.gamma / constants.GRAVITY * (np.arccosh(np.exp(self.c * y / self.aircraft.mass + Gd)) - Hd)
 
-    def compute_H_u(self, init_v_y):
+    def __compute_H_u(self, init_v_y):
+        # MISSING DOC
         return np.arctan2(init_v_y, self.gamma)
 
-    def compute_H_d(self, init_v_y):
+    def __compute_H_d(self, init_v_y):
+        # MISSING DOC
         return np.arctanh(init_v_y / self.gamma)
 
-    def compute_G_u(self, init_v_y):
+    def __compute_G_u(self, init_v_y):
+        # MISSING DOC
         return -1 / 2 * np.log(1 + np.power(init_v_y, 2) / np.power(self.gamma, 2))
 
-    def compute_G_d(self, init_v_y):
+    def __compute_G_d(self, init_v_y):
+        # MISSING DOC
         return -1 / 2 * np.log(1 - np.power(init_v_y, 2) / np.power(self.gamma, 2))
 
-    def compute_vy_up(self, t, Hu):
-        return self.gamma * np.tan(casex.constants.GRAVITY * t / self.gamma + Hu)
+    def __compute_vy_up(self, t, Hu):
+        # MISSING DOC
+        return self.gamma * np.tan(constants.GRAVITY * t / self.gamma + Hu)
 
-    def compute_vy_down(self, t, Hd):
-        return self.gamma * np.tanh(casex.constants.GRAVITY * t / self.gamma + Hd)
+    def __compute_vy_down(self, t, Hd):
+        # MISSING DOC
+        return self.gamma * np.tanh(constants.GRAVITY * t / self.gamma + Hd)
 
-    def compute_vx_before(self, t, vix):
+    def __compute_vx_before(self, t, vix):
+        # MISSING DOC
         return vix / (1 + (t * vix) / (self.aircraft.mass / self.c))
 
-    def compute_vx_after(self, t, init_v_x, Hd, Gd):
-        return init_v_x * np.exp(Gd) / np.cosh(casex.constants.GRAVITY * t / self.gamma + Hd)
+    def __compute_vx_after(self, t, init_v_x, Hd, Gd):
+        # MISSING DOC
+        return init_v_x * np.exp(Gd) / np.cosh(constants.GRAVITY * t / self.gamma + Hd)
 
-    def compute_y_up(self, t, Hu, Gu):
-        return -self.aircraft.mass / self.c * (np.log(np.cos(casex.constants.GRAVITY * t / self.gamma + Hu)) - Gu)
+    def __compute_y_up(self, t, Hu, Gu):
+        # MISSING DOC
+        return -self.aircraft.mass / self.c * (np.log(np.cos(constants.GRAVITY * t / self.gamma + Hu)) - Gu)
 
-    def compute_y_down(self, t, Hd, Gd):
-        return self.aircraft.mass / self.c * (np.log(np.cosh(casex.constants.GRAVITY * t / self.gamma + Hd)) - Gd)
+    def __compute_y_down(self, t, Hd, Gd):
+        # MISSING DOC
+        return self.aircraft.mass / self.c * (np.log(np.cosh(constants.GRAVITY * t / self.gamma + Hd)) - Gd)
 
-    def compute_x_before(self, t, init_v_x):
+    def __compute_x_before(self, t, init_v_x):
+        # MISSING DOC
         return self.aircraft.mass / self.c * np.log(1 + init_v_x * self.c * t / self.aircraft.mass)
 
-    def compute_x_after(self, t, init_v_x, init_v_y, Hd, Gd):
-        return init_v_x * np.exp(Gd) * self.gamma / casex.constants.GRAVITY * (
-                    np.arctan(np.sinh(casex.constants.GRAVITY * t / self.gamma + Hd)) - np.arcsin(
-                init_v_y / self.gamma))
+    def __compute_x_after(self, t, init_v_x, init_v_y, Hd, Gd):
+        # MISSING DOC
+        return init_v_x * np.exp(Gd) * self.gamma / constants.GRAVITY * (
+                np.arctan(np.sinh(constants.GRAVITY * t / self.gamma + Hd)) - np.arcsin(init_v_y / self.gamma))
 
-    def compute_y_top(self, init_v_y):
-        return self.compute_G_u(init_v_y) * self.aircraft.mass / self.c
+    def __compute_y_top(self, init_v_y):
+        # MISSING DOC
+        return self.__compute_G_u(init_v_y) * self.aircraft.mass / self.c

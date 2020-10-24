@@ -70,6 +70,7 @@ class AircraftSpecs:
     
     Many of the these parameters are not used in computations of critical area, but are reserved for future use.
     """
+
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.EFuelType.GASOLINE, fuel_quantity=0):
         """Constructor
         
