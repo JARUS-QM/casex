@@ -28,11 +28,11 @@ def example6_iso_plot2():
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
     
     # Set aircraft values
-    aircraft_type = casex.enums.EAircraftType.FIXED_WING
+    aircraft_type = casex.enums.AircraftType.FIXED_WING
     
     # Width, length, and mass will be set later, so just use dummy values
     aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, 1, 1, 1)
-    aircraft.set_fuel_type(casex.enums.EFuelType.LION)
+    aircraft.set_fuel_type(casex.enums.FuelType.LION)
     aircraft.set_fuel_quantity(0)
 
     critical_area_target = np.array([1e1, 1e2, 1e3, 1e4])
@@ -78,7 +78,7 @@ def example6_iso_plot2():
                 # Generate matrix of LA values
                 Z_CA = np.zeros((x_speed.shape[0], y_angle.shape[0]))
                 for i, x in enumerate(x_speed):
-                    Z_CA[:, i] = CA.critical_area(casex.enums.ECriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle, 0)[0]
+                    Z_CA[:, i] = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle, 0)[0]
 #                for i, x in enumerate(X_speed):
 #                    for j, y in enumerate(Y_angle):
 #                        Z_CA[j, i] = CA.critical_area(casex.enums.ECriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle[j], 0)[0]

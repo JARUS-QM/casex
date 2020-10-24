@@ -6,7 +6,7 @@ import casex
 
 # Abbreviate this, as it is used several times
 import casex.enums
-from casex.enums import ECriticalAreaModel as Model
+from casex.enums import CriticalAreaModel as Model
 
 """
 Example2
@@ -31,17 +31,17 @@ def example2_model_comparison():
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Set aircraft values
-    aircraft_type = casex.enums.EAircraftType.FIXED_WING
+    aircraft_type = casex.enums.AircraftType.FIXED_WING
     width = 4
     length = 3.2
     mass = 25
     friction_coefficient = FC.get_coefficient(
-        casex.enums.EAircraftMaterial.ALUMINUM,
-        casex.enums.EGroundMaterial.CONCRETE)
+        casex.enums.AircraftMaterial.ALUMINUM,
+        casex.enums.GroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
     Aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
-    Aircraft.set_fuel_type(casex.enums.EFuelType.GASOLINE)
+    Aircraft.set_fuel_type(casex.enums.FuelType.GASOLINE)
     Aircraft.set_fuel_quantity(5)
     Aircraft.set_friction_coefficient(friction_coefficient)
     Aircraft.set_coefficient_of_restitution(0.7) # default value, so in fact no need to set

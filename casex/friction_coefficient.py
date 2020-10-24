@@ -2,7 +2,7 @@ import warnings
 
 import casex
 import casex.enums
-from casex.enums import EAircraftMaterial, EGroundMaterial
+from casex.enums import AircraftMaterial, GroundMaterial
 
 
 class CFrictionCoefficients:
@@ -53,9 +53,9 @@ class CFrictionCoefficients:
         
         Parameters
         ----------
-        aircraft_material : :class:`casex.enums.EAircraftMaterial`
+        aircraft_material : :class:`casex.enums.AircraftMaterial`
             Type of the aircraft material.
-        ground_material : :class:`casex.enums.EGroundMaterial`
+        ground_material : :class:`casex.enums.GroundMaterial`
             Type of the ground material.
             
         Returns
@@ -65,76 +65,76 @@ class CFrictionCoefficients:
             Returns -1 if the coefficient is not available (see table above).
             Returns -2 if either material is not recognized.
         """
-        if not isinstance(aircraft_material, EAircraftMaterial):
+        if not isinstance(aircraft_material, AircraftMaterial):
             warnings.warn("aircraft_material is not recognized. Use a material from EAircraftMaterial.")
             return -2
-        if not isinstance(ground_material, EGroundMaterial):
+        if not isinstance(ground_material, GroundMaterial):
             warnings.warn("ground_material is not recognized. Use a material from EGroundMaterial.")
             return -2
             
         # This returns the appropriate coefficient.
         # It returns -1 if there is no appropriate coefficient.
         return {
-            EGroundMaterial.CONCRETE: self._on_concrete(aircraft_material),
-            EGroundMaterial.ASPHALT: self._on_asphalt(aircraft_material),
-            EGroundMaterial.GRASS: self._on_grass(aircraft_material),
-            EGroundMaterial.SAND: self._on_sand(aircraft_material),
-            EGroundMaterial.SOIL: self._on_soil(aircraft_material)
+            GroundMaterial.CONCRETE: self._on_concrete(aircraft_material),
+            GroundMaterial.ASPHALT: self._on_asphalt(aircraft_material),
+            GroundMaterial.GRASS: self._on_grass(aircraft_material),
+            GroundMaterial.SAND: self._on_sand(aircraft_material),
+            GroundMaterial.SOIL: self._on_soil(aircraft_material)
         }.get(ground_material, -2)
     
     def _on_concrete(self, aircraft_material):
         return {
-            EAircraftMaterial.GLASSFIBER: 0.2,       
-            EAircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
-            EAircraftMaterial.ALUMINUM: 0.4,
-            EAircraftMaterial.STEEL: 0.45,
-            EAircraftMaterial.WOOD: 0.6,             
-            EAircraftMaterial.STYROFOAM: -1,          # TODO: To be updated
-            EAircraftMaterial.RUBBER: 0.7
+            AircraftMaterial.GLASSFIBER: 0.2,
+            AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
+            AircraftMaterial.ALUMINUM: 0.4,
+            AircraftMaterial.STEEL: 0.45,
+            AircraftMaterial.WOOD: 0.6,
+            AircraftMaterial.STYROFOAM: -1,          # TODO: To be updated
+            AircraftMaterial.RUBBER: 0.7
         }.get(aircraft_material, -2)
     
     def _on_asphalt(self, aircraft_material):
         return {
-            EAircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
-            EAircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
-            EAircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
-            EAircraftMaterial.STEEL: -1,             # TODO: To be updated
-            EAircraftMaterial.WOOD: -1,              # TODO: To be updated
-            EAircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
-            EAircraftMaterial.RUBBER: 0.9
+            AircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
+            AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
+            AircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
+            AircraftMaterial.STEEL: -1,             # TODO: To be updated
+            AircraftMaterial.WOOD: -1,              # TODO: To be updated
+            AircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
+            AircraftMaterial.RUBBER: 0.9
         }.get(aircraft_material, -2)
     
     def _on_grass(self, aircraft_material):
         return {
-            EAircraftMaterial.GLASSFIBER: 0.15,
-            EAircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
-            EAircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
-            EAircraftMaterial.STEEL: -1,             # TODO: To be updated
-            EAircraftMaterial.WOOD: -1,              # TODO: To be updated
-            EAircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
-            EAircraftMaterial.RUBBER: 0.35
+            AircraftMaterial.GLASSFIBER: 0.15,
+            AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
+            AircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
+            AircraftMaterial.STEEL: -1,             # TODO: To be updated
+            AircraftMaterial.WOOD: -1,              # TODO: To be updated
+            AircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
+            AircraftMaterial.RUBBER: 0.35
         }.get(aircraft_material, -2)
 
     def _on_sand(self, aircraft_material):
         return {
-            EAircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
-            EAircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
-            EAircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
-            EAircraftMaterial.STEEL: 0.2,         
-            EAircraftMaterial.WOOD: -1,              # TODO: To be updated
-            EAircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
-            EAircraftMaterial.RUBBER: 0.5
+            AircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
+            AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
+            AircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
+            AircraftMaterial.STEEL: 0.2,
+            AircraftMaterial.WOOD: -1,              # TODO: To be updated
+            AircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
+            AircraftMaterial.RUBBER: 0.5
         }.get(aircraft_material, -2)
 
     def _on_soil(self, aircraft_material):
         return {
-            EAircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
-            EAircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
-            EAircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
-            EAircraftMaterial.STEEL: 0.4,
-            EAircraftMaterial.WOOD: -1,              # TODO: To be updated
-            EAircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
-            EAircraftMaterial.RUBBER: -1             # TODO: To be updated
+            AircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
+            AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
+            AircraftMaterial.ALUMINUM: -1,          # TODO: To be updated
+            AircraftMaterial.STEEL: 0.4,
+            AircraftMaterial.WOOD: -1,              # TODO: To be updated
+            AircraftMaterial.STYROFOAM: -1,         # TODO: To be updated
+            AircraftMaterial.RUBBER: -1             # TODO: To be updated
         }.get(aircraft_material, -2)
 
 
@@ -148,4 +148,4 @@ class CFrictionCoefficients:
         """
         
         #get_coefficient(self, aircraft_material, ground_material):
-        self.get_coefficient(casex.enums.EAircraftMaterial.GLASSFIBER, casex.enums.EGroundMaterial.CONCRETE)
+        self.get_coefficient(casex.enums.AircraftMaterial.GLASSFIBER, casex.enums.GroundMaterial.CONCRETE)

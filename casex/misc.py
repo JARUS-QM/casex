@@ -4,11 +4,11 @@ import numpy as np
 from scipy.stats import norm
 import warnings
 
-from casex.enums import EWrapping, EAircraftType, EFuelType
+from casex.enums import Wrapping, AircraftType, FuelType
 
 class CNormalDistributionParameters:
 
-    def __init__(self, mu = 0.0, sigma = 1.0, wrapping_type = EWrapping.NONE):
+    def __init__(self, mu = 0.0, sigma = 1.0, wrapping_type = Wrapping.NONE):
         """
         CNormalDistributionParameters(mu = 0, sigma = 1, wrapping_type = EWrapping.NONE
         
@@ -23,7 +23,7 @@ class CNormalDistributionParameters:
             sigma : double
                 Standard deviation of the normal distribution (default 1)
             
-            wrapping_type : EWrapping
+            wrapping_type : Wrapping
                 The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi.
                 Default EWrapping.NONE
         """
@@ -32,13 +32,13 @@ class CNormalDistributionParameters:
         
         self._reset_values()
 
-        if not isinstance(wrapping_type, EWrapping):
+        if not isinstance(wrapping_type, Wrapping):
             warnings.warn("Wrapping type not recognized. Wrapping set to NONE.")
-            self.wrapping_type = EWrapping.NONE
+            self.wrapping_type = Wrapping.NONE
         else:
             self.wrapping_type = wrapping_type
             
-        if self.wrapping_type == EWrapping.PI2PI:
+        if self.wrapping_type == Wrapping.PI2PI:
             while self.mu > math.pi:
                 self.mu = self.mu - 2 * math.pi
             while self.mu < -math.pi:

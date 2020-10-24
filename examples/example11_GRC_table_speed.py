@@ -88,7 +88,7 @@ def example11_GRC_table_speed():
                                           
                 overlap = 0;
                 
-                CA_matrix[i, :] = CA.critical_area(casex.enums.ECriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft, impact_speed_i, impact_angle, overlap, AFP.CA_parms[c].KE_critical)[0]
+                CA_matrix[i, :] = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft, impact_speed_i, impact_angle, overlap, AFP.CA_parms[c].KE_critical)[0]
             
             # Show the CA matrix
             if show_matrix:

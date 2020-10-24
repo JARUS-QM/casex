@@ -5,7 +5,7 @@ import numpy as np
 import casex
 
 # Abbreviate this, as it is used several times
-from casex.enums import ECriticalAreaModel as Model
+from casex.enums import CriticalAreaModel as Model
 
 def example13_critical_area_reduction_by_obstacles():
     

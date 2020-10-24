@@ -89,9 +89,9 @@ class CriticalAreaModels:
             [m^2] The deflagration area as given by the deflagration model.
         """
         # Check on input argument validity
-        if not isinstance(critical_area_model, enums.ECriticalAreaModel):
+        if not isinstance(critical_area_model, enums.CriticalAreaModel):
             warnings.warn("Critical area model not recognized. Type set to RCC.")
-            critical_area_model = enums.ECriticalAreaModel.RCC
+            critical_area_model = enums.CriticalAreaModel.RCC
 
         if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
             raise ("Aircraft not recognized. Must be of type CAircraftSpecs")
@@ -104,7 +104,7 @@ class CriticalAreaModels:
         glide_distance = self.glide_distance(impact_angle)
 
         # Compute the inert LA
-        if critical_area_model == enums.ECriticalAreaModel.RCC:
+        if critical_area_model == enums.CriticalAreaModel.RCC:
             # Slide distance based on friction
             slide_distance_friction = self.slide_distance_friction(horizontal_impact_speed,
                                                                    aircraft.friction_coefficient)
@@ -113,7 +113,7 @@ class CriticalAreaModels:
                                      aircraft.width + 2 * self.buffer)
             slide_area = np.multiply(slide_distance_friction, aircraft.width + 2 * self.buffer)
 
-        elif critical_area_model == enums.ECriticalAreaModel.RTI:
+        elif critical_area_model == enums.CriticalAreaModel.RTI:
             # Slide distance based on friction
             slide_distance_friction = self.slide_distance_friction(
                 aircraft.coefficient_of_restitution * horizontal_impact_speed, aircraft.friction_coefficient)
@@ -123,7 +123,7 @@ class CriticalAreaModels:
                 self.buffer + aircraft.width / 2, 2)
             slide_area = slide_distance_friction * (2 * self.buffer + aircraft.width)
 
-        elif critical_area_model == enums.ECriticalAreaModel.FAA:
+        elif critical_area_model == enums.CriticalAreaModel.FAA:
             # [2, p. 99]
             r_D = self.buffer + aircraft.width / 2
 
@@ -155,7 +155,7 @@ class CriticalAreaModels:
             glide_area = math.pi * np.power(self.buffer + aircraft.width / 2, 2)
             slide_area = LA_inert - glide_area
 
-        elif critical_area_model == enums.ECriticalAreaModel.NAWCAD:
+        elif critical_area_model == enums.CriticalAreaModel.NAWCAD:
             # All from [7]
             if var1 == -1:
                 KE_lethal = conversions.ftlb_to_J(54)
@@ -184,7 +184,7 @@ class CriticalAreaModels:
             glide_area = glide_distance * (2 * self.buffer + aircraft.width)
             slide_area = skid_distance_lethal * (2 * self.buffer + aircraft.width)
 
-        elif critical_area_model == enums.ECriticalAreaModel.JARUS:
+        elif critical_area_model == enums.CriticalAreaModel.JARUS:
             if var1 == -1:
                 KE_lethal = 290
                 if aircraft.width <= 1:

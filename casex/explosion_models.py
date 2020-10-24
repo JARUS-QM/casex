@@ -114,31 +114,31 @@ class CExplosionModels:
         # Energy density in MJ/kg
         TNT_energy_density = 4.184
         
-        if type_of_fuel == casex.enums.EFuelType.GASOLINE:  # This includes petrol
+        if type_of_fuel == casex.enums.FuelType.GASOLINE:  # This includes petrol
             relative_density = 46.4 / TNT_energy_density
             kg_per_liter = 0.75
-        elif type_of_fuel == casex.enums.EFuelType.DIESEL:
+        elif type_of_fuel == casex.enums.FuelType.DIESEL:
             relative_density = 45.6 / TNT_energy_density
             kg_per_liter = 0.83 
-        elif type_of_fuel == casex.enums.EFuelType.JETA1:
+        elif type_of_fuel == casex.enums.FuelType.JETA1:
             relative_density = 43 / TNT_energy_density
             kg_per_liter = 0.80
-        elif type_of_fuel == casex.enums.EFuelType.AVGAS:
+        elif type_of_fuel == casex.enums.FuelType.AVGAS:
             relative_density = 44.7 / TNT_energy_density
             kg_per_liter = 0.69
-        elif type_of_fuel == casex.enums.EFuelType.METHANOL:
+        elif type_of_fuel == casex.enums.FuelType.METHANOL:
             relative_density = 19 / TNT_energy_density
             kg_per_liter = 0.79
-        elif type_of_fuel == casex.enums.EFuelType.LIQUID_HYDROGEN:
+        elif type_of_fuel == casex.enums.FuelType.LIQUID_HYDROGEN:
             relative_density = 142 / TNT_energy_density         # NOTE: The energy density is per liter
             kg_per_liter = 1
-        elif type_of_fuel == casex.enums.EFuelType.LIQUID_BUTANE:
+        elif type_of_fuel == casex.enums.FuelType.LIQUID_BUTANE:
             relative_density = 27.8 / TNT_energy_density        # NOTE: The energy density is per liter
             kg_per_liter = 1
-        elif type_of_fuel == casex.enums.EFuelType.LIFE:
+        elif type_of_fuel == casex.enums.FuelType.LIFE:
             relative_density = 1.8 / TNT_energy_density         # NOTE: The energy density is per liter
             kg_per_liter = 1                          
-        elif type_of_fuel == casex.enums.EFuelType.LION:
+        elif type_of_fuel == casex.enums.FuelType.LION:
             relative_density = 0.8 / TNT_energy_density         # NOTE: The energy density is per liter
             kg_per_liter = 1
         else:
@@ -207,7 +207,7 @@ class CExplosionModels:
         self.lethal_area_explosion(20)
         self.lethal_area_explosion(30, 12)
         #TNT_equivalent_mass(self, TypeOfFuel, QuantityInLiters):
-        self.TNT_equivalent_mass(casex.enums.EFuelType.GASOLINE, 45)
+        self.TNT_equivalent_mass(casex.enums.FuelType.GASOLINE, 45)
         #thermal_lethal_area(TNT mass, p_lethal)
         self.lethal_area_thermal(40, 0.1)
         #fireball_area(TNT_mass)        

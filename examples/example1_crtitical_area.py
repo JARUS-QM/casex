@@ -23,15 +23,15 @@ def example1_critical_area():
     impact_angle = 35
 
     # Set aircraft values
-    aircraft_type = casex.enums.EAircraftType.GENERIC
+    aircraft_type = casex.enums.AircraftType.GENERIC
     width = 1.2
     length = 1
     mass = 25
-    friction_coefficient = FC.get_coefficient(casex.enums.EAircraftMaterial.ALUMINUM, casex.enums.EGroundMaterial.CONCRETE)
+    friction_coefficient = FC.get_coefficient(casex.enums.AircraftMaterial.ALUMINUM, casex.enums.GroundMaterial.CONCRETE)
     
     # Instantiate and add data to CAircraftSpecs class
     Aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
-    Aircraft.set_fuel_type(casex.enums.EFuelType.GASOLINE)
+    Aircraft.set_fuel_type(casex.enums.FuelType.GASOLINE)
     Aircraft.set_fuel_quantity(0)
     Aircraft.set_friction_coefficient(friction_coefficient)
 
@@ -47,7 +47,7 @@ def example1_critical_area():
     KE_lethal = -1
     
     # The output from lethal_area is: 
-    p = CA.critical_area(casex.enums.ECriticalAreaModel.JARUS, Aircraft, impact_speed, impact_angle, critical_areas_overlap, KE_lethal)
+    p = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, Aircraft, impact_speed, impact_angle, critical_areas_overlap, KE_lethal)
 
     print("Wingspan: {:1.0f}    Mass: {:1.0f}".format(Aircraft.width, Aircraft.mass))
     print("Horizontal impact speed: {:1.1f} m/s".format(CA.horizontal_speed_from_angle(impact_angle, impact_speed)))

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class EFuelType(Enum):
+class FuelType(Enum):
     """Enum for fuel type."""
     GASOLINE = 1
     PETROL = 1  # Same fuel as gasoline
@@ -15,13 +15,13 @@ class EFuelType(Enum):
     LIQUID_BUTANE = 10
 
 
-class EWrapping(Enum):
+class Wrapping(Enum):
     """Enum for wrapping type for aircraft heading."""
     PI2PI = 1
     NONE = 2
 
 
-class EAircraftType(Enum):
+class AircraftType(Enum):
     """Enum for aircraft type."""
     GENERIC = 1
     FIXED_WING = 2
@@ -30,7 +30,7 @@ class EAircraftType(Enum):
     LIGHTER_THAN_AIR = 5
 
 
-class ECriticalAreaModel(Enum):
+class CriticalAreaModel(Enum):
     """Enum for critical area models."""
     RCC = 1
     RTI = 2
@@ -39,7 +39,7 @@ class ECriticalAreaModel(Enum):
     JARUS = 5
 
 
-class EAircraftMaterial(Enum):
+class AircraftMaterial(Enum):
     """Enum of the aircraft materials."""
     GLASSFIBER = 1
     CARBONFIBER = 2
@@ -50,7 +50,7 @@ class EAircraftMaterial(Enum):
     RUBBER = 7
 
 
-class EGroundMaterial(Enum):
+class GroundMaterial(Enum):
     """Enum of the ground materials."""
     CONCRETE = 1
     ASPHALT = 2

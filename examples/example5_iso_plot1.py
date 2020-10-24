@@ -27,12 +27,12 @@ def example5_iso_plot1():
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
     
     # Set aircraft values
-    aircraft_type = casex.enums.EAircraftType.FIXED_WING
+    aircraft_type = casex.enums.AircraftType.FIXED_WING
     mass = 3
     friction_coefficient = 0.4
     
     aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, 1, 1, mass)
-    aircraft.set_fuel_type(casex.enums.EFuelType.LION)
+    aircraft.set_fuel_type(casex.enums.FuelType.LION)
     aircraft.set_fuel_quantity(0)
     aircraft.set_friction_coefficient(friction_coefficient)
 
@@ -47,7 +47,7 @@ def example5_iso_plot1():
     Z_CA = np.zeros((X_speed.shape[0], Y_angle.shape[0]))
     for i, x in enumerate(X_speed):
         for j, y in enumerate(Y_angle):
-            Z_CA[j, i] = CA.critical_area(casex.enums.ECriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle[j], 0)[0]
+            Z_CA[j, i] = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle[j], 0)[0]
         
     fig = plt.figure()  
     ax = plt.axes()

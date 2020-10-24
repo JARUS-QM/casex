@@ -91,7 +91,7 @@ class AnnexFParms:
          
         # Set aircraft type
         # The type has no effect in this example, but must be given a value
-        self.aircraft_type = enums.EAircraftType.GENERIC
+        self.aircraft_type = enums.AircraftType.GENERIC
     
         # Setup the parameters used in the plotting
         self.CA_parms = []

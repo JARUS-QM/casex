@@ -58,7 +58,7 @@ def example12_GRC():
             
         AFP.CA_parms[column].aircraft.width = wingspan[j]
                 
-        M = 1e-6 * CA.critical_area(casex.enums.ECriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed, impact_angle, 0, 0)[0]
+        M = 1e-6 * CA.critical_area(casex.enums.CriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed, impact_angle, 0, 0)[0]
             
         for i in range(len(pop_dens)):            
             GRC_matrix[i, j] = 1 - np.log10(1e-6 / (pop_dens[i] * M))

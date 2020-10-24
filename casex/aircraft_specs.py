@@ -71,7 +71,7 @@ class AircraftSpecs:
     Many of the these parameters are not used in computations of critical area, but are reserved for future use.
     """
 
-    def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.EFuelType.GASOLINE, fuel_quantity=0):
+    def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
         """Constructor
         
         Parameters
@@ -113,9 +113,9 @@ class AircraftSpecs:
 
         self.width_length_mass_check()
 
-        if not isinstance(aircraft_type, enums.EAircraftType):
+        if not isinstance(aircraft_type, enums.AircraftType):
             warnings.warn("Aircraft type not recognized. Type set to fixed wing.")
-            self.aircraft_type = enums.EAircraftType.FIXED_WING
+            self.aircraft_type = enums.AircraftType.FIXED_WING
         else:
             self.aircraft_type = aircraft_type
 
@@ -133,9 +133,9 @@ class AircraftSpecs:
         -------
         None
         """
-        if not isinstance(aircraft_type, enums.EAircraftType):
+        if not isinstance(aircraft_type, enums.AircraftType):
             warnings.warn("Aircraft type not recognized. Type set to fixed wing.")
-            self.aircraft_type = enums.EAircraftType.FIXED_WING
+            self.aircraft_type = enums.AircraftType.FIXED_WING
         else:
             self.aircraft_type = aircraft_type
 
@@ -239,9 +239,9 @@ class AircraftSpecs:
         -------
         None
         """
-        if not isinstance(fuel_type, enums.EFuelType):
+        if not isinstance(fuel_type, enums.FuelType):
             warnings.warn("Fuel type not recognized. Type set to gasoline.")
-            self.fuel_type = enums.EFuelType.GASOLINE
+            self.fuel_type = enums.FuelType.GASOLINE
         else:
             self.fuel_type = fuel_type
 
