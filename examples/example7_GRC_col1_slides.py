@@ -13,7 +13,7 @@ def example7_GRC_col1_slides():
     person_height = 1.8
 
     # Instantiate necessary classes    
-    FC = casex.friction_coefficient.CFrictionCoefficients()
+    FC = casex.friction_coefficient.FrictionCoefficients()
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Non-used parameters

@@ -51,7 +51,7 @@ class CriticalAreaModels:
 
         Parameters
         ----------       
-        critical_area_model : :class:`CriticalAreaModel`
+        critical_area_model : :class:`enums.CriticalAreaModel`
             Choice of model (RCC [5]_, RTI [3]_, FAA [2]_, NAWCAD [7]_, JARUS [1]_). See SORA Annex F for details [1]_.
         aircraft : :class:`AircraftSpecs`
             Class with information about the aircraft        

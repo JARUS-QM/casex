@@ -29,15 +29,15 @@ class AircraftSpecs:
     | mass                      | Mass of the aircraft in kg. This is the total mass at the time of crash, including   |
     |                           | fuel.                                                                                |
     +---------------------------+--------------------------------------------------------------------------------------+
-    | aircraft_type             | The type of aircraft as given in :class:`EAircraftType`.                             |
+    | aircraft_type             | The type of aircraft as given in :class:`enums.AircraftType`.                        |
     +---------------------------+--------------------------------------------------------------------------------------+
-    | fuel_type                 | Fuel type, such as fossil fuels or batteries. Given in :class:`EFuelType`.           |
+    | fuel_type                 | Fuel type, such as fossil fuels or batteries. Given in :class:`enums.FuelType`.      |
     +---------------------------+--------------------------------------------------------------------------------------+
     | fuel_quantity             | Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume|
     |                           | of the battery.                                                                      |
     +---------------------------+--------------------------------------------------------------------------------------+
     | friction_coefficient      | Coefficient of friction between aircraft and ground. Appropriate values can be found |
-    |                           | using :class:`CFrictionCoefficients`.                                                |
+    |                           | using :class:`FrictionCoefficients`.                                                 |
     |                           | Default value is 0.6.                                                                |
     +---------------------------+--------------------------------------------------------------------------------------+
     | coefficient_of_restitution| Coefficient of restitution expresses the loss of energy on impact. Default value is  |
@@ -76,8 +76,8 @@ class AircraftSpecs:
         
         Parameters
         ----------        
-        aircraft_type : :class:`ECriticalAreaModel`
-            Type of aircraft as given by EAircraftType
+        aircraft_type : :class:`enums.CriticalAreaModel`
+            Type of aircraft as given by enums.AircraftType
         width : float
             [m] Width of aircraft (wingspan, characteristic dimension)
         length : float
@@ -126,7 +126,7 @@ class AircraftSpecs:
                 
         Parameters
         ----------
-        aircraft_type : :class:`EAircraftType`
+        aircraft_type : :class:`enums.AircraftType`
             Type of aircraft
  
         Returns
@@ -228,11 +228,11 @@ class AircraftSpecs:
     def set_fuel_type(self, fuel_type):
         """Set the type of fuel.
         
-        Sets the type of fuel onboard the aircraft. For a list of options, see :class:`EFuelType`.
+        Sets the type of fuel onboard the aircraft. For a list of options, see :class:`enums.FuelType`.
         
         Parameters
         ----------       
-        fuel_type : :class:`EFuelType`
+        fuel_type : :class:`enums.FuelType`
             Type of fuel
             
         Returns
@@ -417,7 +417,7 @@ class AircraftSpecs:
         parachute_area : float
             [m^2] Size of the parachute.
         parachute_drag_coef : float
-            [-] Draf coefficient for the parachute.
+            [-] Drag coefficient for the parachute.
 
         Returns
         -------

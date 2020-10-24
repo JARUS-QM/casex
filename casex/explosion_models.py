@@ -106,7 +106,7 @@ class ExplosionModels:
 
         Parameters
         ----------
-        type_of_fuel : :class:`EFuelType`
+        type_of_fuel : :class:`enums.FuelType`
             The type of fuel.
         fuel_quantity : float
             [L] The amount of fuel.

@@ -42,7 +42,7 @@ def example3_vector_input():
     person_height = 1.8
 
     # Instantiate necessary classes    
-    FC = casex.friction_coefficient.CFrictionCoefficients()
+    FC = casex.friction_coefficient.FrictionCoefficients()
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Set aircraft values

@@ -13,9 +13,9 @@ def example1_critical_area():
     person_height = 1.8
 
     # Instantiate necessary classes    
-    FC = casex.friction_coefficient.CFrictionCoefficients()
+    FC = casex.friction_coefficient.FrictionCoefficients()
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
-    
+
     # Choose impact speed
     impact_speed = 35
     
