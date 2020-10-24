@@ -12,7 +12,7 @@ def example8_ballistic_descent():
     """
     # Instantiate necessary classes
     rho = 1.225
-    BDM = casex.ballistic_descent_models.CBallisticDescent_2ndOrderDrag_Approximation(rho)
+    BDM = casex.ballistic_descent_models.BallisticDescent2ndOrderDragApproximation(rho)
 
     # Set aircraft values
     aircraft_type = casex.enums.EAircraftType.FIXED_WING

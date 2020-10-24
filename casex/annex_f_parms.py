@@ -1,5 +1,5 @@
-"""MISSING DOC
-"Description"
+"""
+MISSING DOC
 """
 import math
 from dataclasses import dataclass
@@ -80,7 +80,7 @@ class AnnexFParms:
         aircraft: aircraft_specs.AircraftSpecs = None
 
     def __init__(self, impact_angle):
-        """ Constructor
+        """Constructor
         
         Parameters
         ----------
@@ -106,7 +106,7 @@ class AnnexFParms:
         self.horizontal_COR = 0.9
         self.vertical_COR = 0.6
     
-        BDM = ballistic_descent_models.CBallisticDescent_2ndOrderDrag_Approximation(self.friction_coefficient)
+        BDM = ballistic_descent_models.BallisticDescent2ndOrderDragApproximation(self.friction_coefficient)
 
         # Compute the parameters for each of the 5 size classes
         for k in range(5):
@@ -143,8 +143,7 @@ class AnnexFParms:
             
     @staticmethod
     def iGRC(Dpop, CA, TLOS=1E-6):
-        """
-        Compute the finale integer iGRC as described in Annex F.
+        """Compute the finale integer iGRC as described in Annex F.
         
         Parameters
         ----------

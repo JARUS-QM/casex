@@ -1,5 +1,5 @@
-"""MISSING DOC
-"Description"
+"""
+MISSING DOC
 """
 import warnings
 import numpy as np
@@ -8,7 +8,7 @@ from casex import enums, constants
 
 
 class AircraftSpecs:
-    """ Class to hold parameters on the aircraft used in area computations
+    """Class to hold parameters on the aircraft used in area computations
     
     This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be
     computed.
@@ -72,7 +72,7 @@ class AircraftSpecs:
     """
 
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.EFuelType.GASOLINE, fuel_quantity=0):
-        """ Constructor
+        """Constructor
         
         Parameters
         ----------        
@@ -155,7 +155,7 @@ class AircraftSpecs:
         self.width_length_mass_check()
 
     def set_length(self, length):
-        """ Set the aircraft length.
+        """Set the aircraft length.
         
         Parameters
         ----------
@@ -170,7 +170,7 @@ class AircraftSpecs:
         self.width_length_mass_check()
 
     def set_mass(self, mass):
-        """ Set the aircraft mass.
+        """Set the aircraft mass.
                 
         Parameters
         ----------
@@ -319,7 +319,7 @@ class AircraftSpecs:
         self.ballistic_frontal_area = ballistic_frontal_area
 
     def set_ballistic_drag_coefficient(self, ballistic_drag_coefficient):
-        """ Set drag coefficient for ballistic descent.
+        """Set drag coefficient for ballistic descent.
  
         Parameters
         ----------
@@ -337,7 +337,7 @@ class AircraftSpecs:
         self.ballistic_drag_coefficient = ballistic_drag_coefficient
 
     def set_glide_drag_coefficient(self, glide_drag_coefficient):
-        """ Set drag coefficient for glide.
+        """Set drag coefficient for glide.
  
         Parameters
         ----------
@@ -354,7 +354,7 @@ class AircraftSpecs:
         self.glide_drag_coefficient = glide_drag_coefficient
 
     def set_max_flight_time(self, max_flight_time):
-        """ Set max flight time.
+        """Set max flight time.
  
         Parameters
         ----------
@@ -371,11 +371,11 @@ class AircraftSpecs:
         self.max_flight_time = max_flight_time
 
     def set_cruise_speed(self, cruise_speed):
-        """MISSING DOC
-        Set cruise speed.
+        """Set cruise speed.
 
         Parameters
         ----------
+        MISSING DOC
 
         Returns
         -------
@@ -491,14 +491,15 @@ class AircraftSpecs:
         return np.power(np.divide(nom, denom), 1 / 4)
 
     def terminal_velocity(self, rho):
-        """MISSING DOC
-        Compute terminal velocity for free falling aircraft
+        """Compute terminal velocity for free falling aircraft
 
         Parameters
         ----------
+        MISSING DOC
 
         Returns
         -------
+        MISSING DOC
         """
         return np.sqrt(
             2 * self.mass * constants.GRAVITY / rho / self.ballistic_frontal_area / self.ballistic_drag_coefficient)

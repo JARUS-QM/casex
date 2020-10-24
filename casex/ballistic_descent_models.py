@@ -1,20 +1,41 @@
+"""
+MISSING DOC
+"""
+import warnings
+
 import numpy as np
 
-import casex
+from casex import constants
 
-class CBallisticDescent_2ndOrderDrag_Approximation:
+
+class BallisticDescent2ndOrderDragApproximation:
+    """MISSING DOC
+
+    Attributes
+    ----------
+    MISSING DOC
     """
-    """
-    
     def __init__(self, rho):
+        """Constructor
+
+        Parameters
+        ----------
+        MISSING DOC
+        """
         self.rho = rho
         self.aircraft = None
         
     def set_aircraft(self, aircraft):
+        """MISSING DOC
+
+        Parameters
+        ----------
+        MISSING DOC
+        """
         self.aircraft = aircraft
      
     def compute_ballistic_distance(self, altitude, initial_velocity_x, initial_velocity_y):
-        """ Compute the distance, time, angle, and velocity of a ballistic descent impact
+        """Compute the distance, time, angle, and velocity of a ballistic descent impact
     
         One following parameters can be an :class:`numpy.array`
         
@@ -37,8 +58,7 @@ class CBallisticDescent_2ndOrderDrag_Approximation:
         
         Parameters
         ----------
-        MISSING DOC
-        altutide : float
+        altitude : float
             [m] Altitude of aircraft at time of event.
         initial_velocity_x : float
             [m/s] Horizontal velocity as time of event.

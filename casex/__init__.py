@@ -1,5 +1,5 @@
-"""MISSING DOC
-"Description"
+"""
+MISSING DOC
 """
 import casex.friction_coefficient
 import casex.constants
