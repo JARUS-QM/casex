@@ -17,7 +17,7 @@ def example11_GRC_table_speed():
     person_height = 1.8
         
     # Instantiate necessary class
-    CA = casex.critical_area_models.CCriticalAreaModels(person_width, person_height)
+    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Sampling density 
     angle_samples = 100;

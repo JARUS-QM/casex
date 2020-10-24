@@ -13,7 +13,7 @@ def example13_critical_area_reduction_by_obstacles():
     person_width = 0.3
     person_height = 1.8
     
-    CA = casex.critical_area_models.CCriticalAreaModels(person_width, person_height)
+    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
     
     width = 2
     obstacles_per_CA = np.array([0.5,1,3,5])

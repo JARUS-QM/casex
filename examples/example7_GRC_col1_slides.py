@@ -14,7 +14,7 @@ def example7_GRC_col1_slides():
 
     # Instantiate necessary classes    
     FC = casex.friction_coefficient.CFrictionCoefficients()
-    CA = casex.critical_area_models.CCriticalAreaModels(person_width, person_height)
+    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Non-used parameters
     critical_areas_overlap = 0

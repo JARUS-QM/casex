@@ -26,7 +26,7 @@ def example4_iGRC_CA_vs_PopDensity():
 
     # Instantiate necessary classes    
     FC = casex.friction_coefficient.CFrictionCoefficients()
-    CA = casex.critical_area_models.CCriticalAreaModels(person_width, person_height)
+    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
     
     # Instantiate the Annex F class. The impact angle is not relevant for this example, so the value is random.
     impact_angle = 35;

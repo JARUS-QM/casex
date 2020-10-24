@@ -18,7 +18,7 @@ def example12_GRC():
     impact_angle = 9
         
     # Instantiate necessary classes    
-    CA = casex.critical_area_models.CCriticalAreaModels(person_width, person_height)
+    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Sampling density 
     pop_dens_samples = 400;

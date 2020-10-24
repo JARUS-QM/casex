@@ -27,7 +27,7 @@ def example2_model_comparison():
 
     # Instantiate necessary classes    
     FC = casex.friction_coefficient.CFrictionCoefficients()
-    CA = casex.critical_area_models.CCriticalAreaModels(person_width, person_height)
+    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
     # Set aircraft values
     aircraft_type = casex.enums.EAircraftType.FIXED_WING

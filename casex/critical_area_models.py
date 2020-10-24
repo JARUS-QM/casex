@@ -9,7 +9,7 @@ import numpy as np
 from casex import enums, aircraft_specs, explosion_models, conversions, constants
 
 
-class CCriticalAreaModels:
+class CriticalAreaModels:
     """MISSING DOC
 
     Attributes
@@ -220,8 +220,9 @@ class CCriticalAreaModels:
 
         return LA_inert + LA_deflagration - overlapping_area, glide_area, slide_area, LA_inert, LA_deflagration
 
-    def slide_distance_friction(self, velocity, friction_coefficient):
-        """Computes slide distance based on initial velocity and friction
+    @staticmethod
+    def slide_distance_friction(velocity, friction_coefficient):
+        """Computes slide distance based on initial velocity and friction.
         
         Sliding distance computed based on the assumption
             
@@ -235,7 +236,6 @@ class CCriticalAreaModels:
         
         Parameters
         ----------
-        
         velocity : float
             [m/s] Horizontal component of the impact velocity
         friction_coefficient : float
@@ -243,26 +243,26 @@ class CCriticalAreaModels:
         
         Returns
         -------
-        
         distance : float
             [m] Distance from impact to rest
         """
-        return velocity * velocity / 2 / friction_coefficient / casex.constants.GRAVITY
+        return velocity * velocity / 2 / friction_coefficient / constants.GRAVITY
 
-    def glide_distance(self, glide_angle: float):
-        """Compute glide distance based on glide angle
+    def glide_distance(self, glide_angle):
+        """Compute glide distance based on glide angle.
         
-        Glide distance is the distance an aircraft will glide through the air for a given glide angel from altitude Height and until it impact the ground.
+        Glide distance is the distance an aircraft will glide through the air for a given glide angel from altitude
+        Height until it impacts the ground.
         Thus, the glide starts at altitude Height and continues until the aircraft impacts the ground.
         
         Parameters
         ----------
-        glide_angle : float, 
-            [deg] The angle of the aircraft relative to the ground as is impacts the ground. Must be between 1 and 179 degree. Values above 90 degrees are used as '180 - GlideAngle'.
+        glide_angle : float
+            [deg] The angle of the aircraft relative to the ground as is impacts the ground. Must be between 1 and 179
+            degree. Values above 90 degrees are used as '180 - GlideAngle'.
         
         Returns
         -------
-        
         distance : float
             [m] The glide distance
         """
@@ -278,8 +278,18 @@ class CCriticalAreaModels:
         # This is just triangle standard math
         return self.height / np.tan(np.radians(glide_angle))
 
-    def check_glide_angle(self, glide_angle: float):
-        """Performs a sanity check on the glide angle
+    @staticmethod
+    def check_glide_angle(glide_angle):
+        """Performs a sanity check on the glide angle.
+
+        Parameters
+        ----------
+        glide_angle : float
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         # glide_angle out of range    
         if np.any(glide_angle < 0) or np.any(glide_angle > 180):
@@ -287,14 +297,14 @@ class CCriticalAreaModels:
             glide_angle = np.fromiter(map(lambda x: 90 if (x < 0 or x > 180) else x, glide_angle), dtype=np.float)
 
         # Flip glide angle
-        try:
+        if type(glide_angle) is float:
             if glide_angle > 90:
                 glide_angle = 180 - glide_angle
-        except:
+        else:
             glide_angle = np.fromiter(map(lambda x: 180 - x if x > 90 else x, glide_angle), dtype=np.float)
 
-        # If glide_angle is close to zero, we get a division by close to zero, so warn the user
-        # Also avoids an division by zero error
+        # If glide_angle is close to zero, we get a division by close to zero, so warn the user.
+        # Also avoids an division by zero error.
         if np.any(glide_angle < 1):
             warnings.warn("glide_angle is very small, and may produce numerically unstable results."
                           " Glide angle has been set to 1 degree.")
@@ -302,41 +312,110 @@ class CCriticalAreaModels:
 
         return glide_angle
 
-    def horizontal_speed_from_angle(self, impact_angle: float, impact_speed: float):
-        """Compute horizontal speed component for a given impact angle and impact speed
+    @staticmethod
+    def horizontal_speed_from_angle(impact_angle, impact_speed):
+        """Compute horizontal speed component for a given impact angle and impact speed.
         
-        
-        """
+        Parameters
+        ----------
+        impact_angle : float
+            MISSING DOC
+        impact_speed : float
+            MISSING DOC
 
+        Returns
+        -------
+        MISSING DOC
+        """
         # Note that we use .abs, since cosine is negative for angles between 90 and 180
         return np.fabs(np.cos(np.radians(impact_angle))) * impact_speed
 
-    def horizontal_speed_from_ratio(self, glide_ratio: float, impact_speed: float):
-        """Compute horizontal speed from glide ratio
-        
+    @staticmethod
+    def horizontal_speed_from_ratio(glide_ratio, impact_speed):
+        """Compute horizontal speed from glide ratio.
+
+        Parameters
+        ----------
+        glide_ratio : float
+            MISSING DOC
+        impact_speed : float
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         return (glide_ratio / np.power(np.power(glide_ratio, 2) + 1, 0.5)) * impact_speed
 
-    def vertical_speed_from_angle(self, impact_angle: float, impact_speed: float):
-        """Compute vertical speed from descent angle       
-        
+    @staticmethod
+    def vertical_speed_from_angle(impact_angle, impact_speed):
+        """Compute vertical speed from descent angle.
+
+        Parameters
+        ----------
+        impact_angle : float
+            MISSING DOC
+        impact_speed : float
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         return np.sin(np.radians(impact_angle)) * impact_speed
 
-    def glide_angle_from_glide_ratio(self, glide_ratio: float):
-        """Compute glide angle from glide ratio
-        
+    @staticmethod
+    def glide_angle_from_glide_ratio(glide_ratio):
+        """Compute glide angle from glide ratio.
+
+        Parameters
+        ----------
+        glide_ratio : float
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         return np.rad2deg(np.arctan2(1, glide_ratio))
 
-    def speed_from_kinetic_energy(self, KE: float, mass: float):
-        """Compute speed from kinetic energy
+    @staticmethod
+    def speed_from_kinetic_energy(KE, mass):
+        """Compute speed from kinetic energy.
+
+        Parameters
+        ----------
+        KE : float
+            MISSING DOC
+        mass : float
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         return np.sqrt(2 * KE / mass)
 
-    def compute_minimum_CDF(self, obstacle_density: float, width, distance_glide_slide: float, resolution: float,
-                            p: float = 0.9):
-        """Compute xxx
+    @staticmethod
+    def compute_minimum_CDF(obstacle_density, width, distance_glide_slide, resolution, p=0.9):
+        """MISSING DOC
+
+        Parameters
+        ----------
+        obstacle_density : float
+            MISSING DOC
+        width : float
+            MISSING DOC
+        distance_glide_slide : float
+            MISSING DOC
+        resolution : float
+            MISSING DOC
+        p : float, optional (default is 0.9)
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         x = np.linspace(0, distance_glide_slide, resolution)
 
@@ -348,7 +427,7 @@ class CCriticalAreaModels:
         # Probability that there are no obstacles in the CA
         p_none = np.power(1 - Ac / 1e6, obstacle_density)
 
-        if (p < 1 - p_none):
+        if p < 1 - p_none:
             reduction = 1 - np.power(1 - p / (1 - p_none), 1 / ((obstacle_density / 1e6) * Ac))
             Ac_reduced = Ac * reduction
         else:
@@ -356,8 +435,24 @@ class CCriticalAreaModels:
 
         return y, x, p_none, Ac_reduced
 
-    def compute_Poisson_CDF(self, obstacle_density: float, width: float, distance_glide_slide: float, resolution: float):
-        """Compute xxx
+    @staticmethod
+    def compute_Poisson_CDF(obstacle_density, width, distance_glide_slide, resolution):
+        """MISSING DOC
+
+        Parameters
+        ----------
+        obstacle_density : float
+            MISSING DOC
+        width : float
+            MISSING DOC
+        distance_glide_slide : float
+            MISSING DOC
+        resolution : float
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
         """
         x = np.linspace(0, distance_glide_slide, resolution)
 
@@ -368,12 +463,27 @@ class CCriticalAreaModels:
 
         return y, x, p_none
 
-    def simulate_minimum_CDF(self, obstacle_density: float, width, distance_glide_slide: float, count: int):
-        """ Do a simulation of the reduction of the critical area
+    @staticmethod
+    def simulate_minimum_CDF(obstacle_density, width, distance_glide_slide, count):
+        """ Do a simulation of the reduction of the critical area.
         
-        Note that since this simulation assumes that the obstacle density is an integer, we go for km as distance unit
-        """
+        Note that since this simulation assumes that the obstacle density is an integer, we go for km as distance unit.
 
+        Parameters
+        ----------
+        obstacle_density : float
+            MISSING DOC
+        width : float
+            MISSING DOC
+        distance_glide_slide : float
+            MISSING DOC
+        count : int
+            MISSING DOC
+
+        Returns
+        -------
+        MISSING DOC
+        """
         # Just a list of integers to use as indexing in y
         test_range = np.arange(count)
 
@@ -391,7 +501,9 @@ class CCriticalAreaModels:
             # Pick only the objects that is closer to zero (in the length dimension of the CA) than the length of the CA
             objects_inside_distance = object_locations < distance_glide_slide
 
-            # Pick only the objects that is within the width of the aircraft, relative to a width of 1 km (since the object density unit is km^2)
+            # Pick only the objects that is within the width of the aircraft, relative to a width of 1 km
+            # (since the object density unit is km^2)
+
             # This assumes a uniform distribution in the second dimension
             objects_inside_CA = objects_inside_distance & (np.random.uniform(size=num_of_obstacles) < width / 1000)
 
