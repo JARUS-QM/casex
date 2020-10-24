@@ -97,7 +97,7 @@ class CriticalAreaModels:
             raise ("Aircraft not recognized. Must be of type CAircraftSpecs")
 
         # Instantiate necessary classes
-        exp = explosion_models.CExplosionModels()
+        exp = explosion_models.ExplosionModels()
 
         # Compute additional parameters
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
