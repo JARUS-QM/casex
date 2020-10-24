@@ -1,19 +1,24 @@
-import warnings
-import numpy as np
+"""
+MISSING DOC
+"""
 import math
+import warnings
 
-import casex
+import numpy as np
+
+from casex import enums, aircraft_specs, explosion_models, conversions, constants
 
 
 class CCriticalAreaModels:
-    """
-    [Explanation of the purpose of this class]
-    
-    [Quick review of the member functions]
+    """MISSING DOC
+
+    Attributes
+    ----------
+    MISSING DOC
     """
 
-    def __init__(self, buffer: float = 0.3, height: float = 1.8):
-        """
+    def __init__(self, buffer=0.3, height=1.8):
+        """Constructor
         
         Parameters
         ----------          
@@ -22,20 +27,16 @@ class CCriticalAreaModels:
         height : float, optional
             [m] The altitude above the ground at which the aircraft can first impact a person (default is 1.8 m)        
         """
-
         self.buffer = buffer
         self.height = height
 
-        self._self_test()
-
-    def critical_area(self, critical_area_model: casex.enums.ECriticalAreaModel,
-                      aircraft: casex.aircraft_specs.AircraftSpecs, impact_speed: float, impact_angle: float,
-                      critical_areas_overlap: float, var1: float = -1):
+    def critical_area(self, critical_area_model, aircraft, impact_speed, impact_angle, critical_areas_overlap, var1=-1):
         """Computes the lethal area as modeled by different models.
         
         The models are described in more detail in SORA Annex F. References for each model is given in the code.
         
-        This function supports one of the following input parameters to be a vector, which will give a vector of the same size as output:
+        This function supports one of the following input parameters to be a vector, which will give a vector of the
+        same size as output:
             
         * impact_speed
         * impact_angle
@@ -44,13 +45,15 @@ class CCriticalAreaModels:
         * aircraft.length
         * aircraft.fuel_quantity
         
-        This vector is given as ``numpy.array``, and only one of the parameters can be a vector for each call. The return values are then also ``numpy.array`` IF the input parameter that is a ``numpy.array`` is used in the computation.
+        This vector is given as ``numpy.array``, and only one of the parameters can be a vector for each call.
+        The return values are then also ``numpy.array`` IF the input parameter that is a ``numpy.array`` is used in the
+        computation.
 
         Parameters
         ----------       
-        critical_area_model : :class:`ECriticalAreaModel`
+        critical_area_model : :class:`CriticalAreaModel`
             Choice of model (RCC [5]_, RTI [3]_, FAA [2]_, NAWCAD [7]_, JARUS [1]_). See SORA Annex F for details [1]_.
-        aircraft : :class:`CAircraftSpecs`
+        aircraft : :class:`AircraftSpecs`
             Class with information about the aircraft        
         impact_speed : float
             [m/s] Impact speed of aircraft (this is speed along the velocity vector).
@@ -61,16 +64,23 @@ class CCriticalAreaModels:
             [0 to 1] Fraction of overlap between lethal area from glide and from explosion/deflagration.
         var1 : float, optional
             An additional variable that is used in FAA, NAWCAD, and JARUS models.
-            For the FAA model, `var1` = :math:`F_A`, the ratio of secondary debris field to primary debris field. If not specified, :math:`F_A` = 4.36 will be used. See [2]_ page 98.
-            For the NAWCAD model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1) the value 73.2 J is used.
-            For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1), the following is done (see Annex F section A.5 for details): `var1` is set to 290 J, except when the width of the aircraft is <= 1 m, in which case `var1` is set to 2 * 290 J.
+            For the FAA model, `var1` = :math:`F_A`, the ratio of secondary debris field to primary debris field. If not
+            specified, :math:`F_A` = 4.36 will be used. See [2]_ page 98.
+
+            For the NAWCAD model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1)
+            the value 73.2 J is used.
+
+            For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1),
+            the following is done (see Annex F section A.5 for details): `var1` is set to 290 J, except when the width
+            of the aircraft is <= 1 m, in which case `var1` is set to 2 * 290 J.
         
         Returns
         -------       
         critical area : float
             [m^2] Size of the critical area for the selected model.
         estimated glide area : float
-            [m^2] The glide and slide areas are estimated as the relation between the glide and slide distances multiplied by the glide+slide area. The glide area is returned as the second output.
+            [m^2] The glide and slide areas are estimated as the relation between the glide and slide distances
+            multiplied by the glide+slide area. The glide area is returned as the second output.
         estimated slide area : float
             [m^2] The estimated slide area is returned as the third output.
         critical area inert : float
@@ -78,24 +88,23 @@ class CCriticalAreaModels:
         deflagration area : float
             [m^2] The deflagration area as given by the deflagration model.
         """
-
         # Check on input argument validity
-        if not isinstance(critical_area_model, casex.enums.ECriticalAreaModel):
+        if not isinstance(critical_area_model, enums.ECriticalAreaModel):
             warnings.warn("Critical area model not recognized. Type set to RCC.")
-            critical_area_model = casex.enums.ECriticalAreaModel.RCC
+            critical_area_model = enums.ECriticalAreaModel.RCC
 
-        if not isinstance(aircraft, casex.aircraft_specs.AircraftSpecs):
+        if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
             raise ("Aircraft not recognized. Must be of type CAircraftSpecs")
 
         # Instantiate necessary classes
-        Exp = casex.explosion_models.CExplosionModels()
+        exp = explosion_models.CExplosionModels()
 
         # Compute additional parameters
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
         glide_distance = self.glide_distance(impact_angle)
 
         # Compute the inert LA
-        if critical_area_model == casex.enums.ECriticalAreaModel.RCC:
+        if critical_area_model == enums.ECriticalAreaModel.RCC:
             # Slide distance based on friction
             slide_distance_friction = self.slide_distance_friction(horizontal_impact_speed,
                                                                    aircraft.friction_coefficient)
@@ -104,16 +113,17 @@ class CCriticalAreaModels:
                                      aircraft.width + 2 * self.buffer)
             slide_area = np.multiply(slide_distance_friction, aircraft.width + 2 * self.buffer)
 
-        elif critical_area_model == casex.enums.ECriticalAreaModel.RTI:
+        elif critical_area_model == enums.ECriticalAreaModel.RTI:
             # Slide distance based on friction
             slide_distance_friction = self.slide_distance_friction(
                 aircraft.coefficient_of_restitution * horizontal_impact_speed, aircraft.friction_coefficient)
+
             # [1, p. 6]
             glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + math.pi * np.power(
                 self.buffer + aircraft.width / 2, 2)
             slide_area = slide_distance_friction * (2 * self.buffer + aircraft.width)
 
-        elif critical_area_model == casex.enums.ECriticalAreaModel.FAA:
+        elif critical_area_model == enums.ECriticalAreaModel.FAA:
             # [2, p. 99]
             r_D = self.buffer + aircraft.width / 2
 
@@ -145,10 +155,10 @@ class CCriticalAreaModels:
             glide_area = math.pi * np.power(self.buffer + aircraft.width / 2, 2)
             slide_area = LA_inert - glide_area
 
-        elif critical_area_model == casex.enums.ECriticalAreaModel.NAWCAD:
+        elif critical_area_model == enums.ECriticalAreaModel.NAWCAD:
             # All from [7]
             if var1 == -1:
-                KE_lethal = casex.conversions.ftlb_to_J(54)
+                KE_lethal = conversions.ftlb_to_J(54)
             else:
                 KE_lethal = var1
 
@@ -156,7 +166,7 @@ class CCriticalAreaModels:
             velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
 
             # Intermediate variable
-            acceleration = aircraft.friction_coefficient * casex.constants.GRAVITY
+            acceleration = aircraft.friction_coefficient * constants.GRAVITY
 
             # P. 17
             # This is (15), but it seems to be wrong; normally at = v, not 2at = v
@@ -174,7 +184,7 @@ class CCriticalAreaModels:
             glide_area = glide_distance * (2 * self.buffer + aircraft.width)
             slide_area = skid_distance_lethal * (2 * self.buffer + aircraft.width)
 
-        elif critical_area_model == casex.enums.ECriticalAreaModel.JARUS:
+        elif critical_area_model == enums.ECriticalAreaModel.JARUS:
             if var1 == -1:
                 KE_lethal = 290
                 if aircraft.width <= 1:
@@ -183,7 +193,7 @@ class CCriticalAreaModels:
                 KE_lethal = var1
 
             velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
-            acceleration = aircraft.friction_coefficient * casex.constants.GRAVITY
+            acceleration = aircraft.friction_coefficient * constants.GRAVITY
 
             t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
             t_safe = np.maximum(0, t_safe)
@@ -199,10 +209,10 @@ class CCriticalAreaModels:
         LA_inert = glide_area + slide_area
 
         # Compute deflagration area based on both fireball and thermal lethal area
-        TNT = Exp.TNT_equivalent_mass(aircraft.fuel_type, aircraft.fuel_quantity)
-        FB = Exp.fireball_area(TNT)
+        TNT = exp.TNT_equivalent_mass(aircraft.fuel_type, aircraft.fuel_quantity)
+        FB = exp.fireball_area(TNT)
         p_lethal = 0.1
-        TLA = Exp.lethal_area_thermal(TNT, p_lethal)
+        TLA = exp.lethal_area_thermal(TNT, p_lethal)
         LA_deflagration = np.maximum(FB, TLA)
 
         # Compute the overlapping area between inert and deflagration
