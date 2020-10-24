@@ -30,7 +30,7 @@ def example4_iGRC_CA_vs_PopDensity():
     
     # Instantiate the Annex F class. The impact angle is not relevant for this example, so the value is random.
     impact_angle = 35;
-    AFP = casex.annex_f_parms.CAnnexFParms(impact_angle)
+    AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
     
     # Let CA span from 1 to 66k (we need to add a bit to the upper limit, so the numerics of the log10 does not exclude he value from the axis)
     CA = np.logspace(math.log10(1), math.log10(66e3+100), 500)

@@ -30,7 +30,7 @@ def example11_GRC_table_speed():
     speed_plot_range = np.array([50, 70, 120, 250, 300])
     
     # Get the four scenario
-    AFP = casex.annex_f_parms.CAnnexFParms(impact_angle)
+    AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
         
     # Set to False to get plots in Annex F
     # Set to True to see the CA matrix

@@ -28,7 +28,7 @@ def example12_GRC():
     wingspan = np.linspace(0, 12, wingspan_samples)
 
     # Get the five scenario
-    AFP = casex.annex_f_parms.CAnnexFParms(impact_angle)
+    AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
         
     fig, ax = plt.subplots(1, 1, figsize=(13,7))
     

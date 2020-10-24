@@ -37,6 +37,7 @@ class CBallisticDescent_2ndOrderDrag_Approximation:
         
         Parameters
         ----------
+        MISSING DOC
         altutide : float
             [m] Altitude of aircraft at time of event.
         initial_velocity_x : float
@@ -54,8 +55,7 @@ class CBallisticDescent_2ndOrderDrag_Approximation:
             [s] Time from event to impact.
         impact_velocity : float
             [m/s] Impact velocity.
-            
-        
+        MISSING DOC
         """
             
         # Update Gamma and c based on the drag coefficient(s)
