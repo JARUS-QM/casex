@@ -35,7 +35,7 @@ def example14_obstacle_simulation():
 
     obstacle_density = num_of_obstacles / trial_area_sidelength / trial_area_sidelength
 
-    OS = casex.obstacle_simulation.CObstacleSimulation(trial_area_sidelength)    
+    OS = casex.obstacle_simulation.ObstacleSimulation(trial_area_sidelength)
 
     gen_polygons_time = time.time()
     OS.generate_rectangular_obstacles_normal_distributed(num_of_obstacles, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu, obstacle_length_sigma)

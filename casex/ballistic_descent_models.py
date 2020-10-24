@@ -46,6 +46,9 @@ class BallisticDescent2ndOrderDragApproximation:
         Parameters
         ----------
         MISSING DOC
+
+        Returns
+        -------
         """
         self.aircraft = aircraft
 
