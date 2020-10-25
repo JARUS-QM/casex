@@ -35,15 +35,15 @@ def example2_model_comparison():
                                               casex.enums.GroundMaterial.CONCRETE)
 
     # Instantiate and add data to CAircraftSpecs class
-    Aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
-    Aircraft.set_fuel_type(casex.enums.FuelType.GASOLINE)
-    Aircraft.set_fuel_quantity(5)
-    Aircraft.set_friction_coefficient(friction_coefficient)
-    Aircraft.set_coefficient_of_restitution(0.7)  # default value, so in fact no need to set
+    aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, width, length, mass)
+    aircraft.set_fuel_type(casex.enums.FuelType.GASOLINE)
+    aircraft.set_fuel_quantity(5)
+    aircraft.set_friction_coefficient(friction_coefficient)
+    aircraft.set_coefficient_of_restitution(0.7)  # default value, so in fact no need to set
 
     # Use the same impact speed for all models
     # Computed here based on kinetic energy.
-    impact_speed = CA.speed_from_kinetic_energy(34000, Aircraft.mass)
+    impact_speed = CA.speed_from_kinetic_energy(34000, aircraft.mass)
 
     # Impact angle
     impact_angle = 25
@@ -55,40 +55,41 @@ def example2_model_comparison():
     p = []
 
     # One set of parameters
-    p.append(CA.critical_area(Model.RCC, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
     # Same setup, but different impact angle
     impact_angle = 65
-    p.append(CA.critical_area(Model.RCC, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
     # Let's try another aircraft size
-    Aircraft.set_width(1.8)
-    Aircraft.set_length(1)
-    Aircraft.set_mass(1.1)
-    Aircraft.set_fuel_quantity(1)
-    impact_speed = CA.speed_from_kinetic_energy(700, Aircraft.mass)
-    impact_angle = 25
-    p.append(CA.critical_area(Model.RCC, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    aircraft.set_width(1.8)
+    aircraft.set_length(1)
+    aircraft.set_mass(1.1)
+    aircraft.set_fuel_quantity(1)
+    impact_speed = CA.speed_from_kinetic_energy(700, aircraft.mass)
 
-    # and now with the steeper impact angle
+    impact_angle = 25
+    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+
+    # And now with the steeper impact angle
     impact_angle = 65
-    p.append(CA.critical_area(Model.RCC, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, Aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
     # The CA.critical_area returns four outputs. The first is the lethal area.
     # The lethal area for the first model is thus obtained by p[0][0], and for the second by p[1][0], etc
