@@ -3,6 +3,7 @@ MISSING DOC
 """
 import math
 import warnings
+from collections.abc import Iterable
 
 import numpy as np
 
@@ -284,8 +285,7 @@ class CriticalAreaModels:
 
         Parameters
         ----------
-        glide_angle : float
-            MISSING DOC
+        MISSING DOC
 
         Returns
         -------
@@ -297,11 +297,11 @@ class CriticalAreaModels:
             glide_angle = np.fromiter(map(lambda x: 90 if (x < 0 or x > 180) else x, glide_angle), dtype=np.float)
 
         # Flip glide angle
-        if type(glide_angle) is float:
+        if isinstance(glide_angle, Iterable):
+            glide_angle = np.fromiter(map(lambda x: 180 - x if x > 90 else x, glide_angle), dtype=np.float)
+        else:
             if glide_angle > 90:
                 glide_angle = 180 - glide_angle
-        else:
-            glide_angle = np.fromiter(map(lambda x: 180 - x if x > 90 else x, glide_angle), dtype=np.float)
 
         # If glide_angle is close to zero, we get a division by close to zero, so warn the user.
         # Also avoids an division by zero error.
