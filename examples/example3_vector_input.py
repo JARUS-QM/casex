@@ -1,6 +1,6 @@
 """
-example2_vector_input.py
-
+Example 3
+---------
 This example shows how to use the models using vector input to generate a vector output.
 Using this feature it is possible to generate graphs for variations on one input parameter.
 

@@ -2,7 +2,6 @@
 Example 1
 ---------
 MISSING DOC
-
 """
 import casex
 

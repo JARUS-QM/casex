@@ -1,5 +1,5 @@
 """
-Example2
+Example 2
 --------
 This example shows the basics of using the different models in casex.
 It shows how to set up the necessary parameters and variables, and how
