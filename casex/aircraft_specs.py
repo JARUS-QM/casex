@@ -58,6 +58,10 @@ class AircraftSpecs:
         Area of the parachute generating drag during descent and full deployment.
     parachute_drag_coef : float
         Drag coefficient.
+    Oswald_efficiency_number : float
+        MISSING DOC
+    max_LD_ratio : float
+        MISSING DOC
     
     Many of the these parameters are not used in computations of critical area, but are reserved for future use.
     """
@@ -68,13 +72,17 @@ class AircraftSpecs:
         Parameters
         ----------        
         aircraft_type : :class:`enums.AircraftType`
-            Type of aircraft as given by enums.AircraftType
+            Type of aircraft as given by enums.AircraftType.
         width : float
-            [m] Width of aircraft (wingspan, characteristic dimension)
+            [m] Width of aircraft (wingspan, characteristic dimension).
         length : float
-            [m] Length of aircraft
+            [m] Length of aircraft.
         mass : float
-            [kg] Mass of the aircraft
+            [kg] Mass of the aircraft.
+        fuel_type : :class:'enums.FuelType, optional
+            MISSING DOC
+        fuel_quantity : float
+            MISSING DOC
         """
         self.ballistic_frontal_area = None
         self.ballistic_drag_coefficient = None
@@ -96,7 +104,7 @@ class AircraftSpecs:
         self.length = length
         self.mass = mass
 
-        # Default values
+        # Default values.
         self.friction_coefficient = 0.6
         self.coefficient_of_restitution = 0.7
         self.fuel_type = fuel_type
@@ -118,7 +126,7 @@ class AircraftSpecs:
         Parameters
         ----------
         aircraft_type : :class:`enums.AircraftType`
-            Type of aircraft
+            Type of aircraft.
  
         Returns
         -------
@@ -186,7 +194,7 @@ class AircraftSpecs:
 
         Returns
         -------
-        None        
+        None
         """
         if np.any(self.mass <= 0):
             warnings.warn("Non-positive mass does not make sense. Subsequent results are invalid.")
@@ -208,7 +216,7 @@ class AircraftSpecs:
         Parameters
         ----------
         wing_area : float
-            [m^2] Wing area of the aircraft
+            [m^2] Wing area of the aircraft.
             
         Returns
         -------
@@ -224,7 +232,7 @@ class AircraftSpecs:
         Parameters
         ----------       
         fuel_type : :class:`enums.FuelType`
-            Type of fuel
+            Type of fuel.
             
         Returns
         -------
@@ -315,7 +323,7 @@ class AircraftSpecs:
         Parameters
         ----------
         ballistic_drag_coefficient : float
-            [-] Drag coefficient for ballistic descent
+            [-] Drag coefficient for ballistic descent.
 
         Returns
         -------
@@ -333,7 +341,7 @@ class AircraftSpecs:
         Parameters
         ----------
         glide_drag_coefficient : float
-            [-] Drag coefficient for glide descent
+            [-] Drag coefficient for glide descent.
 
         Returns
         -------
@@ -350,7 +358,7 @@ class AircraftSpecs:
         Parameters
         ----------
         max_flight_time : float
-            [s] Maximum flight time
+            [s] Maximum flight time.
 
         Returns
         -------
@@ -370,6 +378,7 @@ class AircraftSpecs:
 
         Returns
         -------
+        None
         """
         if np.any(cruise_speed <= 0):
             warnings.warn("Non-positive cruise speed does not make sense. Subsequent results are invalid.")
@@ -444,12 +453,12 @@ class AircraftSpecs:
         self.Oswald_efficiency_number = Oswald_efficiency_number
 
     def set_max_LD_ratio(self, max_LD_ratio):
-        """Set maximum L/D ratio
+        """Set maximum L/D ratio.
  
         Parameters
         ----------
         max_LD_ratio : float
-            [-] Maximum ratio between lift and drag
+            [-] Maximum ratio between lift and drag.
 
         Returns
         -------
@@ -461,7 +470,7 @@ class AircraftSpecs:
         self.max_LD_ratio = max_LD_ratio
 
     def compute_best_glide_speed_wing_area(self):
-        """Compute the optimal glide speed based on wing area
+        """Compute the optimal glide speed based on wing area.
         
         NOTE THAT THIS FUNCTION IS UNTESTED!!
  
@@ -482,7 +491,7 @@ class AircraftSpecs:
         return np.power(np.divide(nom, denom), 1 / 4)
 
     def terminal_velocity(self, rho):
-        """Compute terminal velocity for free falling aircraft
+        """Compute terminal velocity for free falling aircraft.
 
         Parameters
         ----------
@@ -495,19 +504,28 @@ class AircraftSpecs:
         return np.sqrt(
             2 * self.mass * constants.GRAVITY / rho / self.ballistic_frontal_area / self.ballistic_drag_coefficient)
 
-    def COR_from_impact_angle(self, impact_angle, angles=[9, 90], CoRs=[0.9, 0.6]):
+    def COR_from_impact_angle(self, impact_angle, angles=None, CoRs=None):
         """MISSING DOC
         
         Parameters
         ----------        
         impact_angle : float
             [deg] The impact angle between 0 and 90.
+        angles : MISSING DOC
+            MISSING DOC
+        CoRs : MISSING DOC
+            MISSING DOC
 
         Returns
-        ----------
+        -------
         coefficient of restitution : float
             The coefficient of restitution for the given impact angle.
         """
+        if angles is None:
+            angles = [9, 90]
+        if CoRs is None:
+            CoRs = [0.9, 0.6]
+
         if np.any(impact_angle < 0):
             warnings.warn("Impact angle must be positive. Output is not valid.")
         if np.any(impact_angle > 90):
