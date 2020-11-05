@@ -9,7 +9,7 @@ import numpy as np
 import casex
 
 
-def example11_GRC_table_speed():
+def figure_angle_vs_speed():
     # Data on person size
     person_width = 0.3
     person_height = 1.8
@@ -33,6 +33,7 @@ def example11_GRC_table_speed():
     # Set to False to get plots in Annex F
     # Set to True to see the CA matrix
     show_matrix = False
+    show_contours = False
 
     # Contour levels for each plot
     # Note that the CA target is not included, since it is already listed above (and is plotted in different color)
@@ -44,7 +45,7 @@ def example11_GRC_table_speed():
     contour_levels.append(np.array([5000, 10000, 30000, 50000]))
 
     # Set to true to plot the COR
-    if False:
+    if show_contours:
         fig, axcor = plt.subplots(1, 1, figsize=(12, 6))
 
         axcor.plot(impact_angle, AFP.CA_parms[0].aircraft.coefficient_of_restitution)
@@ -140,6 +141,7 @@ def example11_GRC_table_speed():
 
     # The loop above was interrupted, and c was left one too large, so
     c = c - 1
+    
     # Show x axis label only for the two lower plots
     ax[1, 0].set_xlabel('Impact angle [deg]')
     ax[1, 1].set_xlabel('Impact angle [deg]')
@@ -148,15 +150,10 @@ def example11_GRC_table_speed():
     # Hide the 6th and unused axis
     ax[1, 2].set_axis_off()
 
-    # Make the figure full screen
-    # figManager = plt.get_current_fig_manager()
-    # figManager.full_screen_toggle()
-
     plt.show()
 
     # Save the figure to file
     fig.savefig('Descent scenarios - critical area.png', format='png', dpi=300)
 
-
 if __name__ == '__main__':
-    example11_GRC_table_speed()
+    figure_angle_vs_speed()

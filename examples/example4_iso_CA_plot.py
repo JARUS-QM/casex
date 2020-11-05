@@ -18,7 +18,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import casex
 
 
-def example5_iso_plot1():
+def example4_iso_CA_plot():
     # Data on person size
     person_width = 0.3
     person_height = 1.8
@@ -72,4 +72,4 @@ def example5_iso_plot1():
 
 
 if __name__ == '__main__':
-    example5_iso_plot1()
+    example4_iso_CA_plot()

@@ -10,5 +10,5 @@ from .aircraft_specs import *
 from .critical_area_models import *
 from .explosion_models import *
 from .ballistic_descent_models import *
-from .obstacle_simulation import *
+from .obstacles import *
 from .annex_f_parms import *

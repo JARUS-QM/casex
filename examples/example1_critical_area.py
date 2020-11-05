@@ -5,7 +5,6 @@ MISSING DOC
 """
 import casex
 
-
 def example1_critical_area():
     # Data on person size
     person_width = 0.3

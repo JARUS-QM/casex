@@ -6,7 +6,7 @@ MISSING DOC
 class Conversion:
     """Provide functionality for converting between imperial and metric system.
 
-    Note that all methods are static, and can be called without instantiating :class:`CConversion`, i.e.
+    Note that all methods are static, and can be called without instantiating :class:`Conversion`, i.e.
 
     .. code-block:: python
 

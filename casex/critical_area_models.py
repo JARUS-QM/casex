@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from casex import enums, aircraft_specs, explosion_models, conversions, constants
+from casex import enums, aircraft_specs, explosion_models, Conversion, constants
 
 
 class CriticalAreaModels:
@@ -159,7 +159,7 @@ class CriticalAreaModels:
         elif critical_area_model == enums.CriticalAreaModel.NAWCAD:
             # All from [7]
             if var1 == -1:
-                KE_lethal = conversions.ftlb_to_J(54)
+                KE_lethal = Conversion.ftlb_to_J(54)
             else:
                 KE_lethal = var1
 
@@ -187,9 +187,16 @@ class CriticalAreaModels:
 
         elif critical_area_model == enums.CriticalAreaModel.JARUS:
             if var1 == -1:
-                KE_lethal = 290
-                if aircraft.width <= 1:
-                    KE_lethal = 290 * 2
+                # Set default value for a scalar width
+                if not isinstance(aircraft.width, np.ndarray):
+                    if aircraft.width <= 1:
+                        KE_lethal = 290
+                    else:
+                        KE_lethal = 290 * 2
+                # Set default value for array width
+                else:
+                    KE_lethal = np.full(len(aircraft.width), 290)
+                    KE_lethal = np.where(aircraft.width <= 1, KE_lethal, 2 * KE_lethal)
             else:
                 KE_lethal = var1
 
@@ -396,125 +403,3 @@ class CriticalAreaModels:
         """
         return np.sqrt(2 * KE / mass)
 
-    @staticmethod
-    def compute_minimum_CDF(obstacle_density, width, distance_glide_slide, resolution, p=0.9):
-        """MISSING DOC
-
-        Parameters
-        ----------
-        obstacle_density : float
-            MISSING DOC
-        width : float
-            MISSING DOC
-        distance_glide_slide : float
-            MISSING DOC
-        resolution : float
-            MISSING DOC
-        p : float, optional (default is 0.9)
-            MISSING DOC
-
-        Returns
-        -------
-        MISSING DOC
-        """
-        x = np.linspace(0, distance_glide_slide, resolution)
-
-        Ac = width * distance_glide_slide
-
-        # Compute the approximated CDF        
-        y = 1 - np.power(1 - x / distance_glide_slide, obstacle_density * Ac / 1e6)
-
-        # Probability that there are no obstacles in the CA
-        p_none = np.power(1 - Ac / 1e6, obstacle_density)
-
-        if p < 1 - p_none:
-            reduction = 1 - np.power(1 - p / (1 - p_none), 1 / ((obstacle_density / 1e6) * Ac))
-            Ac_reduced = Ac * reduction
-        else:
-            Ac_reduced = Ac
-
-        return y, x, p_none, Ac_reduced
-
-    @staticmethod
-    def compute_Poisson_CDF(obstacle_density, width, distance_glide_slide, resolution):
-        """MISSING DOC
-
-        Parameters
-        ----------
-        obstacle_density : float
-            MISSING DOC
-        width : float
-            MISSING DOC
-        distance_glide_slide : float
-            MISSING DOC
-        resolution : float
-            MISSING DOC
-
-        Returns
-        -------
-        MISSING DOC
-        """
-        x = np.linspace(0, distance_glide_slide, resolution)
-
-        # Compute the Poisson CDF        
-        y = 1 - np.exp(-obstacle_density / 1e6 * width * x)
-
-        p_none = np.exp(-obstacle_density / 1e6 * width * distance_glide_slide)
-
-        return y, x, p_none
-
-    @staticmethod
-    def simulate_minimum_CDF(obstacle_density, width, distance_glide_slide, count):
-        """ Do a simulation of the reduction of the critical area.
-        
-        Note that since this simulation assumes that the obstacle density is an integer, we go for km as distance unit.
-
-        Parameters
-        ----------
-        obstacle_density : float
-            MISSING DOC
-        width : float
-            MISSING DOC
-        distance_glide_slide : float
-            MISSING DOC
-        count : int
-            MISSING DOC
-
-        Returns
-        -------
-        MISSING DOC
-        """
-        # Just a list of integers to use as indexing in y
-        test_range = np.arange(count)
-
-        # Fill the resulting variable with the maximum distance
-        y = np.full(count, float(distance_glide_slide))
-
-        num_of_obstacles = int(round(obstacle_density))
-        no_obstacles_in_CA = 0
-
-        for k in test_range:
-            # Get the object location in meters
-            # Uniform distribution in the first dimension
-            object_locations = np.random.uniform(0, 1000, size=num_of_obstacles)
-
-            # Pick only the objects that is closer to zero (in the length dimension of the CA) than the length of the CA
-            objects_inside_distance = object_locations < distance_glide_slide
-
-            # Pick only the objects that is within the width of the aircraft, relative to a width of 1 km
-            # (since the object density unit is km^2)
-
-            # This assumes a uniform distribution in the second dimension
-            objects_inside_CA = objects_inside_distance & (np.random.uniform(size=num_of_obstacles) < width / 1000)
-
-            # Pick out the objects that are inside the CA
-            x = object_locations[objects_inside_CA]
-
-            # If there are none, just let y[k] keep the original value of full CA length
-            if len(x) > 0:
-                # Otherwise, use the distance to the first object in the glide/slide path
-                y[k] = np.amin(x)
-            else:
-                no_obstacles_in_CA = no_obstacles_in_CA + 1
-
-        return y, no_obstacles_in_CA

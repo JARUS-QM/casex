@@ -76,73 +76,52 @@ def example3_vector_input():
     v_width = np.linspace(1, 5, 100)
     aircraft.set_width(v_width)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
     aircraft.set_width(width)
 
     # Varying length
     v_length = np.linspace(1, 5, 100)
     aircraft.set_length(v_length)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
     aircraft.set_width(length)
 
     # Varying impact_angle
     v_impact_angle = np.linspace(10, 80, 100)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
     impact_angle = 25
 
     # Varying impact_speed
     v_impact_speed = np.linspace(5, 40, 100)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
     impact_speed = 25
 
     # Varying critical_area_overlap
     v_critical_areas_overlap = np.linspace(0, 1, 100)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
 
     # Varying fuel_quantity
     v_fuel_quantity = np.linspace(0, 10, 100)
     aircraft.set_fuel_quantity(v_fuel_quantity)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
     aircraft.set_fuel_quantity(5)
 
     # Varying friction coefficient (ground friction during slide)
     v_friction_coefficient = np.linspace(0.2, 0.9, 100)
     aircraft.set_friction_coefficient(v_friction_coefficient)
 
-    p.append(CA.critical_area(Model.RCC, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.RTI, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.FAA, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.NAWCAD, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    p.append(CA.critical_area(Model.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap))
+    for model in Model:
+        p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
     aircraft.set_friction_coefficient(friction_coefficient)
 
     clr = ['blue', 'orange', 'red', 'green', 'purple']

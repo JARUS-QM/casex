@@ -5,7 +5,7 @@ import math
 
 import numpy as np
 
-from casex import enums, conversions
+from casex import enums, Conversion
 
 
 class ExplosionModels:
@@ -197,4 +197,4 @@ class ExplosionModels:
         area : float
             [m^2] Size of area of fireball.
         """
-        return math.pi * np.power(conversions.ft_to_m(2.77 * np.power(conversions.kg_to_lbs(TNT_mass), 0.36) / 0.45), 2)
+        return math.pi * np.power(Conversion.ft_to_m(2.77 * np.power(Conversion.kg_to_lbs(TNT_mass), 0.36) / 0.45), 2)
