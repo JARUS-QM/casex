@@ -480,7 +480,7 @@ class AircraftSpecs:
 
         Returns
         -------
-        glide_speed : float
+        glide speed : float
             [m/s] Optimal glide speed.
         """
         nom = 4 * np.power(self.mass, 2) * np.power(constants.GRAVITY, 2) * np.power(
