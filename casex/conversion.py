@@ -9,10 +9,8 @@ class Conversion:
     Note that all methods are static, and can be called without instantiating :class:`Conversion`, i.e.
 
     .. code-block:: python
-
-       length = casex.conversions.CConversion.ft_to_m(32)
+       length = casex.Conversion.ft_to_m(32)
     """
-
     @staticmethod
     def kg_to_lbs(mass):
         """Converts kg to pounds. Simply a division with 0.45359237 lbs/kg.

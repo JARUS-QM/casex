@@ -5,7 +5,7 @@ from .friction_coefficient import *
 from .constants import *
 from .enums import *
 from .enums import *
-from .conversions import *
+from .conversion import *
 from .aircraft_specs import *
 from .critical_area_models import *
 from .explosion_models import *
