@@ -13,7 +13,36 @@ class BallisticDescent2ndOrderDragApproximation:
 
     Attributes
     ----------
-    MISSING DOC
+    aircraft : :class:'AircraftSpecs'
+        MISSING DOC
+    distance_impact : float
+        MISSING DOC
+    distance1 : float
+        MISSING DOC
+    distance2 : float
+        MISSING DOC
+    distance3 : float
+        MISSING DOC
+    velocity_impact : float
+        MISSING DOC
+    velocity_x : float
+        MISSING DOC
+    velocity_y : float
+        MISSING DOC
+    angle_impact : MISSING DOC
+        MISSING DOC
+    time_top : float
+        MISSING DOC
+    time_cross : float
+        MISSING DOC
+    time_impact : float
+        MISSING DOC
+    c : float
+        MISSING DOC
+    gamma : MISSING DOC
+        MISSING DOC
+    rho : float
+        MISSING DOC
     """
     def __init__(self, rho):
         """Constructor
@@ -90,7 +119,7 @@ class BallisticDescent2ndOrderDragApproximation:
             [m] Horizontal distance for impact relative to event point.
         velocity impact: float
             [m/s] Impact velocity.
-        angle impact : float
+        angle impact : MISSING DOC
             MISSING DOC
         time impact: float
             [s] Time from event to impact.
