@@ -13,46 +13,57 @@ class AnnexFParms:
     """This class provides support for redoing some of the computations found in Annex F.
     
     It contains the following parameters for the 5 size classes in the iGRC table:
-    
-    +----------------------------------+----------------------------------------------------------------------+
-    | wingspan                         | Same as width                                                        |
-    +----------------------------------+----------------------------------------------------------------------+
-    | critical_area_target             | Size of the largest critical area for each size class                |
-    +----------------------------------+----------------------------------------------------------------------+
-    | cruise_speed                     | Maximum cruise speed for each size class                             |
-    +----------------------------------+----------------------------------------------------------------------+
-    | mass                             | Assumed biggest mass for each size class                             |
-    +----------------------------------+----------------------------------------------------------------------+
-    | KE_critical                      | Non-lethal energy during slide                                       |
-    +----------------------------------+----------------------------------------------------------------------+
-    | friction_coefficient = 0.5       | The friction coefficient is assumed constant throughout Annex F      |
-    +----------------------------------+----------------------------------------------------------------------+
-    | glide_reduce = 0.7               | Reduction in glide speed relative to cruise speed                    |
-    +----------------------------------+----------------------------------------------------------------------+
-    | scenario_angles = [9, 35, 80]    | The three impact angles for the three descent scenarios.             |
-    |                                  | The 80 degrees is recomputed for each ballistic descent.             |
-    +----------------------------------+----------------------------------------------------------------------+
-    | terminal_velocity                | Terminal velocity for aircraft                                       |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_frontal_area           | Assumed frontal area used in ballistic computations                  |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_drag_coefficient = 0.7 | Drag coefficient used for ballistic descent                          |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_descent_altitude       | Assumed altitude for beginning of ballistic descent                  |
-    +----------------------------------+---------------------------------------------------- -----------------+
-    | ballistic_impact_velocity        | Assumed horizontal velocity for beginning of ballistic descent       |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_impact_angle           | Computed impact angle                                                |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_distance               | Computed horizontal distance traveled during ballistic descent       |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_impact_KE              | Computed kinetic energy of aircraft just prior to impact             |
-    +----------------------------------+----------------------------------------------------------------------+
-    | ballistic_descent_time           | Computed descent time for ballistic descent                          |
-    +----------------------------------+----------------------------------------------------------------------+
-    | rho = 1.225                      | Density of air [kg/m^3]                                              |
-    +----------------------------------+----------------------------------------------------------------------+
 
+    Attributes
+    ----------
+    wingspan : float
+        Same as width.
+    critical_area_target : float
+        Size of the largest critical area for each size class.
+    cruise_speed : float
+        Maximum cruise speed for each size class.
+    mass : float
+        Assumed biggest mass for each size class.
+    KE_critical : float
+        Non-lethal energy during slide.
+    friction_coefficient = 0.5 : float
+        The friction coefficient is assumed constant throughout Annex F.
+    glide_reduce = 0.7 : float
+        Reduction in glide speed relative to cruise speed.
+    glide_speed : float
+        MISSING DOC
+    aircraft : :class:'AircraftSpecs'
+        MISSING DOC
+    scenario_angles = [9, 35, 80] : MISSING DOC
+       The three impact angles for the three descent scenarios. The 80 degrees is recomputed for each ballistic descent.
+    terminal_velocity : float
+        Terminal velocity for aircraft.
+    ballistic_frontal_area : float
+        Assumed frontal area used in ballistic computations.
+    ballistic_drag_coefficient = 0.7 : float
+        Drag coefficient used for ballistic descent.
+    ballistic_descent_altitude : float
+        Assumed altitude for beginning of ballistic descent.
+    ballistic_impact_velocity :float
+        Assumed horizontal velocity for beginning of ballistic descent.
+    ballistic_impact_angle : float
+        Computed impact angle.
+    ballistic_distance : float
+        Computed horizontal distance traveled during ballistic descent.
+    ballistic_impact_KE : float
+        Computed kinetic energy of aircraft just prior to impact.
+    ballistic_descent_time : float
+        Computed descent time for ballistic descent.
+    rho = 1.225 : float
+        Density of air [kg/m^3].
+    impact_angle : float
+        MISSING DOC
+    aircraft_type : :class:`enums.AircraftType`
+        MISSING DOC
+    horizontal_COR : float
+        MISSING DOC
+    vertical_COR : float
+        MISSING DOC
     """
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
     @dataclass
