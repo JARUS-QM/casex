@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from casex import enums, AircraftSpecs, ExplosionModels, Conversion, constants
+from casex import enums, aircraft_specs, explosion_models, Conversion, constants
 
 
 class CriticalAreaModels:
@@ -57,7 +57,7 @@ class CriticalAreaModels:
         ----------       
         critical_area_model : :class:`enums.CriticalAreaModel`
             Choice of model (RCC [5]_, RTI [3]_, FAA [2]_, NAWCAD [7]_, JARUS [1]_). See SORA Annex F for details [1]_.
-        aircraft : :class:`AircraftSpecs`
+        aircraft : :class:`casex.AircraftSpecs`
             Class with information about the aircraft.
         impact_speed : float
             [m/s] Impact speed of aircraft (this is speed along the velocity vector).
@@ -96,11 +96,11 @@ class CriticalAreaModels:
             warnings.warn("Critical area model not recognized. Type set to RCC.")
             critical_area_model = enums.CriticalAreaModel.RCC
 
-        if not isinstance(aircraft, AircraftSpecs):
+        if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
             raise Exception("Aircraft not recognized. Must be of type AircraftSpecs")
 
         # Instantiate necessary classes.
-        exp = ExplosionModels()
+        exp = explosion_models.ExplosionModels()
 
         # Compute additional parameters.
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
