@@ -178,7 +178,6 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
 
         Returns
         -------
@@ -265,30 +264,30 @@ class Obstacles:
 
     def __cut_polygon_to_rectangle(self, CA_polygon, CA_original_coords):
         """
-        Create a rectangular polygon that has the same beginning side as the original CA polygon
+        Create a rectangular polygon that has the same beginning side as the original CA polygon.
 
         This function finds all the coordinates of the non-rectangular (split) CA that were not in the original CA
         and the one closest to the beginning of the CA (called p_closest) will be used for creating the rectangle.
         When we compute a new CA polygon consisting of p_closest and the two points at the beginning
         of the CA, plus a fourth point that make the polygon a rectangle
         """
-        # Get the coordinates of the input polygon as Points
+        # Get the coordinates of the input polygon as Points.
         CA_reduced_polygon_coords = MultiPoint(CA_polygon.exterior.coords)
 
-        # Initialize with a sufficiently big number
+        # Initialize with a sufficiently big number.
         dist = 10 * self.trial_area_sidelength
 
-        # Initialize what point to keep
+        # Initialize what point to keep.
         p_closest = CA_reduced_polygon_coords[0]
 
-        # Iterate over the points in the reduced polygon
+        # Iterate over the points in the reduced polygon.
         for p in CA_reduced_polygon_coords:
 
-            # Distance to the two coordinates at the beginning of the CA
+            # Distance to the two coordinates at the beginning of the CA.
             d0 = CA_original_coords[0].distance(p)
             d1 = CA_original_coords[1].distance(p)
 
-            # If p is one of the two original coordinates, move to next for iteration
+            # If p is one of the two original coordinates, move to next for iteration.
             if (d0 < self.__epsilon) | (d1 < self.__epsilon):
                 continue
 
@@ -300,47 +299,47 @@ class Obstacles:
                 p_closest = p
                 dist = d1
 
-        # Figure out the fourth point in the rectangle
-        # 1. Conceptually make a line through p_keep parallel to a line through the two CA coords at the CA beginning, and find the distance between these two lines
+        # Figure out the fourth point in the rectangle.
+        # 1. Conceptually make a line through p_keep parallel to a line through the two CA coords at the CA beginning,
+        #    and find the distance between these two lines.
         # 2. Pick the two points on this line closest to the two CA coords at the CA beginning.
 
-        # Initial computations
+        # Initial computations.
         x = CA_original_coords[1].x - CA_original_coords[0].x
         y = CA_original_coords[1].y - CA_original_coords[0].y
 
-        # This should be equal to w, but juuust in case
+        # This should be equal to w, but just in case.
         d = CA_original_coords[0].distance(CA_original_coords[1])
 
-        # Do the check again w
+        # Do the check again w.
         if np.abs(d - self.CA_width) > 10 * self.__epsilon:
-            warning.warn(
-                "Distance  between two CA beginning points not equal to width. This is an internal warning showing inconsistencyy.")
+            warning.warn("Distance between two CA beginning points not equal to width. This is an internal warning"
+                         " showing inconsistency.")
 
-        ### Compute step 1
-        # Distance from beginning of CA to the closest point
-        dist = np.abs(
-            y * p_closest.x - x * p_closest.y + CA_original_coords[1].x * CA_original_coords[0].y - CA_original_coords[
-                1].y * CA_original_coords[0].x) / d
+        # Compute step 1
+        # Distance from beginning of CA to the closest point.
+        dist = np.abs(y * p_closest.x - x * p_closest.y + CA_original_coords[1].x * CA_original_coords[0].y -
+                      CA_original_coords[1].y * CA_original_coords[0].x) / d
 
-        # Make this distance a smidging shorter to avoid CA still slightly overlapping obstacle
+        # Make this distance a smidging shorter to avoid CA still slightly overlapping obstacle.
         dist = dist - 100 * self.__epsilon
 
         # Compute step 2
-        # Find the two points in addition to the two CA beginning points
+        # Find the two points in addition to the two CA beginning points.
         point1 = Point(-y / d * dist + CA_original_coords[0].x, x / d * dist + CA_original_coords[0].y)
         point2 = affinity.translate(point1, x, y)
 
-        # Record the points for debugging/viz purposes
+        # Record the points for debugging/viz purposes.
         self.closest.append(p_closest)
         self.CA_cut_off_coords.append(point1)
         self.CA_cut_off_coords.append(point2)
 
-        # Generate a new rectangular polygon from the four points
+        # Generate a new rectangular polygon from the four points.
         CA_polygon = Polygon(
             [[CA_original_coords[0].x, CA_original_coords[0].y], [CA_original_coords[1].x, CA_original_coords[1].y],
              [point2.x, point2.y], [point1.x, point1.y]])
 
-        # Return the new rectangular polygon
+        # Return the new rectangular polygon.
         return CA_polygon
 
     def compute_CA_lengths(self):
@@ -348,12 +347,12 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
 
         Returns
         -------
+        None
         """
-        # We count the number of empty CAs for comparison with the global num_of_empty_CA for sanity check
+        # We count the number of empty CAs for comparison with the global num_of_empty_CA for sanity check.
         count_empties = 0
 
         self.CA_lengths = []
@@ -369,14 +368,14 @@ class Obstacles:
             warning("Sanity check fail for number of empty CAs.")
 
     def compute_coverage(self):
-        """Determine total obstacle coverage
+        """Determine total obstacle coverage.
 
         Parameters
         ----------
-        MISSING DOC
 
         Returns
         -------
+        None
         """
         self.total_obstacle_area = 0
         self.total_coverage = 0
@@ -394,14 +393,19 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
 
         Returns
         -------
+        intersection area : MISSING DOC
+            MISSING DOC
+        problematic obstacles : MISSING DOC
+            MISSING DOC
+        problematic CAs : MISSING DOC
+            MISSING DOC
         """
         intersection_area = 0
 
-        # Return all found overlapping polygons
+        # Return all found overlapping polygons.
         problematic_obstacles = []
         problematic_CAs = []
 
@@ -420,10 +424,14 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
+        ax : MISSING DOC
+            MISSING DOC
+        options : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
+        None
         """
         # Viz all the original CAs
         if options.get("CAs") == "True":
@@ -466,10 +474,14 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
+        ax : MISSING DOC
+            MISSING DOC
+        show_CA_as_size : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
+        None
         """
         F = 1
         if show_CA_as_size:
@@ -494,10 +506,22 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
+        ax : MISSING DOC
+            MISSING DOC
+        x0 : MISSING DOC
+            MISSING DOC
+        xN : MISSING DOC
+            MISSING DOC
+        y0 : MISSING DOC
+            MISSING DOC
+        yN : MISSING DOC
+            MISSING DOC
+        step : MISSING DOC, optional
+            MISSING DOC
 
         Returns
         -------
+        None
         """
         ax.set_xlim(x0, xN)
         ax.set_xticks(range(x0, xN + 1, step))
@@ -509,15 +533,19 @@ class Obstacles:
     def Minkowski_sum_convex_polygons(A, B):
         """Compute the polygon that is the Minkowski sum of two convex polygons A and B.
 
-        The result is returned as a MultiPoint type
+        The result is returned as a MultiPoint type.
 
         Parameters
         ----------
-        MISSING DOC
+        A : MISSING DOC
+            MISSING DOC
+        B : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
-        MISSING DOC
+        C : MISSING DOC
+            MISSING DOC
         """
         Av = MultiPoint(A.exterior.coords)
         Bv = MultiPoint(B.exterior.coords)
@@ -531,31 +559,31 @@ class Obstacles:
         return C
 
     @staticmethod
-    def Minkowski_sum_convex_polygons_area(w, x, a, b, theta, theta2):
-        """Compute the area of the Minkowski sum of two rectangles polygons
+    def Minkowski_sum_convex_polygons_area(w, x, a, b, theta1, theta2):
+        """Compute the area of the Minkowski sum of two rectangles polygons.
         
         Parameters
-        -----------
+        ----------
         w : float
-            Width of rectangle 1
+            Width of rectangle 1.
         x : float
-            Length of rectangle 1
+            Length of rectangle 1.
         a : float
-            Width of rectangle 2
+            Width of rectangle 2.
         b : float
-            Length of rectangle 2
-        theta : float
-            [deg] Angle of rectangle 1
+            Length of rectangle 2.
+        theta1 : float
+            [deg] Angle of rectangle 1.
         theta2 : float
-            [deg] Angle of rectangle 2
+            [deg] Angle of rectangle 2.
                 
         Returns
         -------
         area : float
-            Area of the Minkowski sum of the two rectangles
+            Area of the Minkowski sum of the two rectangles.
         """
-        Ct = abs(math.cos(np.radians(theta - theta2)))
-        St = abs(math.sin(np.radians(theta - theta2)))
+        Ct = abs(math.cos(np.radians(theta1 - theta2)))
+        St = abs(math.sin(np.radians(theta1 - theta2)))
 
         return w * x + a * b + w * abs(a * St + b * Ct) + x * abs(a * Ct + b * St)
 
@@ -563,15 +591,19 @@ class Obstacles:
     def Minkowski_difference_convex_polygons(A, B):
         """Compute the polygon that is the Minkowski difference of two convex polygons A and B.
 
-        The result is returned as a MultiPoint type
+        The result is returned as a MultiPoint type.
 
         Parameters
         ----------
-        MISSING DOC
+        A : MISSING DOC
+            MISSING DOC
+        B : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
-        MISSING DOC
+        C : MISSING DOC
+            MISSING DOC
         """
         Av = MultiPoint(A.exterior.coords)
         Bv = MultiPoint(B.exterior.coords)
@@ -590,11 +622,13 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
+        polygon : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
-        MISSING DOC
+        m : MISSING DOC
+            MISSING DOC
         """
         coords = polygon.exterior.coords
         print(coords[0])
@@ -609,13 +643,31 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
+        x : MISSING DOC
+            MISSING DOC
+        obstacle_density : MISSING DOC
+            MISSING DOC
+        obstacle_width_mu : MISSING DOC
+            MISSING DOC
+        obstacle_width_sigma : MISSING DOC
+            MISSING DOC
+        obstacle_length_mu : MISSING DOC
+            MISSING DOC
+        obstacle_length_sigma : MISSING DOC
+            MISSING DOC
+        pdf_resolution : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
-        MISSING DOC
+        p x : MISSING DOC
+            MISSING DOC
+        beta : MISSING DOC
+            MISSING DOC
+        acc_probability_check : MISSING DOC
+            MISSING DOC
         """
-        # Sample the obstacle PDF
+        # Sample the obstacle PDF.
         width = np.linspace(obstacle_width_mu - 3 * obstacle_width_sigma, obstacle_width_mu + 3 * obstacle_width_sigma,
                             pdf_resolution)
         length = np.linspace(obstacle_length_mu - 3 * obstacle_length_sigma,
@@ -626,22 +678,22 @@ class Obstacles:
         pdf_length = stats.norm(obstacle_length_mu, obstacle_length_sigma).pdf(length)
         pdf_CA_orientation = stats.uniform(0, 360).pdf(CA_orientation)
 
-        # Compute the step length for the integral computation
+        # Compute the step length for the integral computation.
         pdf_width_step = (width[-1] - width[0]) / (pdf_resolution - 1)
         pdf_length_step = (length[-1] - length[0]) / (pdf_resolution - 1)
         pdf_CA_orientation_step = (CA_orientation[-1] - CA_orientation[0]) / (pdf_resolution - 1)
 
         x_resolution = len(x)
 
-        # Preset p_x
+        # Preset p_x.
         p_x = np.zeros(x_resolution)
 
-        acc_propability_check = 0
+        acc_probability_check = 0
 
         beta_acc = 0
 
         for idx_x, x_val in enumerate(x):
-            # Reset acc for integral        
+            # Reset acc for integral.
             accumulator = 0
 
             CA_polygon = Polygon([(0, 0), (self.CA_width, 0), (self.CA_width, x_val), (0, x_val), (0, 0)])
@@ -662,9 +714,9 @@ class Obstacles:
                         p_length = pdf_length[index_l] * pdf_length_step
                         p_orientation = pdf_CA_orientation[idx_orientation] * pdf_CA_orientation_step
                         accumulator = accumulator + minkowski_area * p_width * p_length * p_orientation
-                        acc_propability_check = acc_propability_check + p_width * p_length * p_orientation
+                        acc_probability_check = acc_probability_check + p_width * p_length * p_orientation
 
-                        # Compute beta (does not depend on x and orient, so only need to compute once)
+                        # Compute beta (does not depend on x and orient, so only need to compute once).
                         if idx_x == 0 and idx_orientation == 0:
                             beta_acc = beta_acc + w * l * p_width * p_length
 
@@ -672,25 +724,25 @@ class Obstacles:
 
         beta = 1 - np.exp(-obstacle_density * beta_acc)
 
-        # Divide to account for the accumulator is not reset in the above outer loop
-        acc_propability_check = acc_propability_check / x_resolution
+        # Divide to account for the accumulator is not reset in the above outer loop.
+        acc_probability_check = acc_probability_check / x_resolution
 
-        return p_x, beta, acc_propability_check
+        return p_x, beta, acc_probability_check
 
     def test_Minkowski_sum_diff(self):
-        # Create to random convex polygons
+        # Create to random convex polygons.
         p1 = [(0, 0), (3, 0), (3, 10), (0, 0)]
         A = affinity.translate(affinity.rotate(Polygon(p1), 35, 'center'), 4, 2)
         p2 = [(0, 0), (4, 0), (4, 8), (0, 8), (0, 0)]
         B = affinity.translate(affinity.rotate(Polygon(p2), 79, 'center'), 10, 5)
 
-        # Find Minkowski sum
+        # Find Minkowski sum.
         Cd1 = self.Minkowski_sum_convex_polygons(B, A)
 
-        # Find Minkowski difference
+        # Find Minkowski difference.
         Cd2 = self.Minkowski_difference_convex_polygons(B, A)
 
-        # Draw all four polygons
+        # Draw all four polygons.
         fig = plt.figure(1, figsize=(18, 18), dpi=90)
         ax1 = fig.add_subplot(111)
         ax1.add_patch(PolygonPatch(A, facecolor='#ff0000', edgecolor='#000000', alpha=0.5, zorder=10))
@@ -700,46 +752,46 @@ class Obstacles:
         ax1.grid()
         self.set_limits(ax1, -10, 30, -10, 30, 10)
 
-        # The the corner pointers for the A and B polygons
+        # The the corner pointers for the A and B polygons.
         Ax, Ay = A.exterior.coords.xy
         Bx, By = B.exterior.coords.xy
 
-        # Create sample points covering A and B
+        # Create sample points covering A and B.
         res = 10
         Ax_sample = np.linspace(np.amin(Ax), np.amax(Ax), res)
         Ay_sample = np.linspace(np.amin(Ay), np.amax(Ay), res)
         Bx_sample = np.linspace(np.amin(Bx), np.amax(Bx), res)
         By_sample = np.linspace(np.amin(By), np.amax(By), res)
 
-        # Grab all the points inside A
+        # Grab all the points inside A.
         Alist = []
         for Axv in Ax_sample:
             for Ayv in Ay_sample:
                 if A.contains(Point(Axv, Ayv)):
                     Alist.append(Point(Axv, Ayv))
 
-        # and add the corner points, too
+        # and add the corner points, too.
         for k, p in enumerate(Ax):
             Alist.append(Point(Ax[k], Ay[k]))
 
-        # Grab all the points inside B
+        # Grab all the points inside B.
         Blist = []
         for Bxv in Bx_sample:
             for Byv in By_sample:
                 if B.contains(Point(Bxv, Byv)):
                     Blist.append(Point(Bxv, Byv))
 
-        # and add the corner points, too
+        # and add the corner points, too.
         for k, p in enumerate(Bx):
             Blist.append(Point(Bx[k], By[k]))
 
-        # Show all the points in A and B
+        # Show all the points in A and B.
         for Ap in Alist:
             ax1.plot(Ap.x, Ap.y, '.', color='#ff0000')
         for Bp in Blist:
             ax1.plot(Bp.x, Bp.y, '.', color='#00ff00')
 
-        # Manually compute A + B and A - B (the Minkowski way) and show it
+        # Manually compute A + B and A - B (the Minkowski way) and show it.
         for Ap in Alist:
             for Bp in Blist:
                 ax1.plot(Bp.x - Ap.x, Bp.y - Ap.y, '.', color='#00ffff')
@@ -748,7 +800,7 @@ class Obstacles:
         plt.show()
 
     def test_fast_Minkowski_sum(self):
-        # Testing Minkowski sum
+        # Testing Minkowski sum.
         x = 8
         w = 4
         a = 3
