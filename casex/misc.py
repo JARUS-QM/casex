@@ -15,7 +15,16 @@ class NormalDistributionParameters:
 
     Attributes
     ----------
-    MISSING DOC
+    input_set : float array
+        The domain for the sampling (i.e. the input to the distribution, or the x axis values).
+    output_set : float array
+        The value set for the sampling (i.e. the output of the distribution, or the y axis values).
+    mu : float, optional (default is 0)
+        Mean of the normal distribution.
+    sigma : float, optional (default is 1)
+        Standard deviation of the normal distribution.
+    wrapping_type : :class:`enums.Wrapping`, optional (default is EWrapping.NONE)
+        The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi.
     """
 
     def __init__(self, mu=0.0, sigma=1.0, wrapping_type=enums.Wrapping.NONE):
@@ -23,9 +32,9 @@ class NormalDistributionParameters:
         
         Parameters
         ----------
-        mu : double, optional (default is 0)
+        mu : float, optional (default is 0)
             Mean of the normal distribution.
-        sigma : double, optional (default is 1)
+        sigma : float, optional (default is 1)
             Standard deviation of the normal distribution.
         wrapping_type : :class:`enums.Wrapping`, optional (default is EWrapping.NONE)
             The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi.
@@ -57,22 +66,22 @@ class NormalDistributionParameters:
     
     def compute_sampling(self, times_sigma, num_of_samples):
         """Computes a sampling of the normal distribution.
-        
+
+        The normal distribution can be plotted using output set against input set.
+
         Parameters
         ----------
-        times_sigma : double
+        times_sigma : float
             This value is multiplied onto sigma and the results plus/minus is the interval for the sampling.
         num_of_samples : int
             Number of samples in the sampling.
             
         Returns
         -------
-        input_set : double array
+        input_set : float array
             The domain for the sampling (i.e. the input to the distribution, or the x axis values).
-        output_set : double array
+        output_set : float array
             The value set for the sampling (i.e. the output of the distribution, or the y axis values).
-            
-        The normal distribution can be plotted using output_set against input_set.
         """
         self.input_set = np.linspace(self.mu - times_sigma * self.sigma, self.mu + times_sigma * self.sigma,
                                      num_of_samples)
@@ -84,7 +93,10 @@ class InitialSpeeds:
 
     Attributes
     ----------
-    MISSING DOC
+    initial_speed_x : MISSING DOC
+        MISSING DOC
+    initial_speed_y : MISSING DOC
+        MISSING DOC
     """
 
     def __init__(self, initial_speed_x_mu, initial_speed_x_sigma, initial_speed_y_mu, initial_speed_y_sigma):
@@ -92,7 +104,14 @@ class InitialSpeeds:
 
         Parameters
         ----------
-        MISSING DOC
+        initial_speed_x_mu : MISSING DOC
+            MISSING DOC
+        initial_speed_x_sigma : MISSING DOC
+            MISSING DOC
+        initial_speed_y_mu : MISSING DOC
+            MISSING DOC
+        initial_speed_y_sigma : MISSING DOC
+            MISSING DOC
         """
         if initial_speed_x_mu < 0:
             warnings.warn("Initial horizontal speed (along x axis) cannot be negative. Subsequent results are invalid.")
