@@ -71,7 +71,6 @@ class ExplosionModels:
         This value is used for the explosion and deflagration computations.
         
         Available types of fuels are:
-        
         +----------------------+----------------------------+-------------------+
         | Fuel type            | Energy density             | Mass density      |
         +======================+============================+===================+
@@ -116,10 +115,10 @@ class ExplosionModels:
         TNT_mass : float
             [kg] TNT equivalent mass.
         """
-        # Energy density in MJ/kg
+        # Energy density in MJ/kg.
         TNT_energy_density = 4.184
 
-        if type_of_fuel == enums.FuelType.GASOLINE:  # This includes petrol
+        if type_of_fuel == enums.FuelType.GASOLINE:  # This includes petrol.
             relative_density = 46.4 / TNT_energy_density
             kg_per_liter = 0.75
         elif type_of_fuel == enums.FuelType.DIESEL:
@@ -135,16 +134,16 @@ class ExplosionModels:
             relative_density = 19 / TNT_energy_density
             kg_per_liter = 0.79
         elif type_of_fuel == enums.FuelType.LIQUID_HYDROGEN:
-            relative_density = 142 / TNT_energy_density  # NOTE: The energy density is per liter
+            relative_density = 142 / TNT_energy_density  # NOTE: The energy density is per liter.
             kg_per_liter = 1
         elif type_of_fuel == enums.FuelType.LIQUID_BUTANE:
-            relative_density = 27.8 / TNT_energy_density  # NOTE: The energy density is per liter
+            relative_density = 27.8 / TNT_energy_density  # NOTE: The energy density is per liter.
             kg_per_liter = 1
         elif type_of_fuel == enums.FuelType.LIFE:
-            relative_density = 1.8 / TNT_energy_density  # NOTE: The energy density is per liter
+            relative_density = 1.8 / TNT_energy_density  # NOTE: The energy density is per liter.
             kg_per_liter = 1
         elif type_of_fuel == enums.FuelType.LION:
-            relative_density = 0.8 / TNT_energy_density  # NOTE: The energy density is per liter
+            relative_density = 0.8 / TNT_energy_density  # NOTE: The energy density is per liter.
             kg_per_liter = 1
         else:
             raise ValueError("Invalid fuel type " + str(type_of_fuel))
@@ -172,11 +171,11 @@ class ExplosionModels:
         area : float
             [m^2] Size of lethal area.
         """
-        # It is a combination of (72) and (74)
-        # Compute the lethal distance form deflagration center
+        # It is a combination of (72) and (74).
+        # Compute the lethal distance form deflagration center.
         D = -14.8 * np.power(TNT_mass, 1 / 3) / np.log(- 0.0005493 + 0.000232263 / p_lethal)
 
-        # Return the circular area
+        # Return the circular area.
         return math.pi * np.power(D, 2)
 
     @staticmethod
