@@ -14,7 +14,6 @@ class FrictionCoefficients:
     known in this class.
     
     The coefficient takes the following values.
-    
     +-------------------------+------------------------------------------------------+
     |                         | Ground type                                          |
     +-------------------------+----------+----------+----------+----------+----------+
