@@ -15,7 +15,10 @@ class CriticalAreaModels:
 
     Attributes
     ----------
-    MISSING DOC
+    buffer : float, optional
+        [m] Radius of a standard person as seen from above (default is 0.3 m).
+    height : float, optional
+        [m] The altitude above the ground at which the aircraft can first impact a person (default is 1.8 m).
     """
 
     def __init__(self, buffer=0.3, height=1.8):
@@ -24,9 +27,9 @@ class CriticalAreaModels:
         Parameters
         ----------          
         buffer : float, optional
-            [m] Radius of a standard person as seen from above (default is 0.3 m)
+            [m] Radius of a standard person as seen from above (default is 0.3 m).
         height : float, optional
-            [m] The altitude above the ground at which the aircraft can first impact a person (default is 1.8 m)        
+            [m] The altitude above the ground at which the aircraft can first impact a person (default is 1.8 m).
         """
         self.buffer = buffer
         self.height = height
@@ -55,12 +58,11 @@ class CriticalAreaModels:
         critical_area_model : :class:`enums.CriticalAreaModel`
             Choice of model (RCC [5]_, RTI [3]_, FAA [2]_, NAWCAD [7]_, JARUS [1]_). See SORA Annex F for details [1]_.
         aircraft : :class:`AircraftSpecs`
-            Class with information about the aircraft        
+            Class with information about the aircraft.
         impact_speed : float
             [m/s] Impact speed of aircraft (this is speed along the velocity vector).
         impact_angle : float
             [deg] Impact angle relative to ground (90 is vertical, straight down).
-            A value smaller than 
         critical_areas_overlap : float
             [0 to 1] Fraction of overlap between lethal area from glide and from explosion/deflagration.
         var1 : float, optional
@@ -95,18 +97,18 @@ class CriticalAreaModels:
             critical_area_model = enums.CriticalAreaModel.RCC
 
         if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
-            raise ("Aircraft not recognized. Must be of type CAircraftSpecs")
+            raise Exception("Aircraft not recognized. Must be of type AircraftSpecs")
 
-        # Instantiate necessary classes
+        # Instantiate necessary classes.
         exp = explosion_models.ExplosionModels()
 
-        # Compute additional parameters
+        # Compute additional parameters.
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
         glide_distance = self.glide_distance(impact_angle)
 
-        # Compute the inert LA
+        # Compute the inert LA.
         if critical_area_model == enums.CriticalAreaModel.RCC:
-            # Slide distance based on friction
+            # Slide distance based on friction.
             slide_distance_friction = self.slide_distance_friction(horizontal_impact_speed,
                                                                    aircraft.friction_coefficient)
             # [5, p. D-4]
@@ -115,7 +117,7 @@ class CriticalAreaModels:
             slide_area = np.multiply(slide_distance_friction, aircraft.width + 2 * self.buffer)
 
         elif critical_area_model == enums.CriticalAreaModel.RTI:
-            # Slide distance based on friction
+            # Slide distance based on friction.
             slide_distance_friction = self.slide_distance_friction(
                 aircraft.coefficient_of_restitution * horizontal_impact_speed, aircraft.friction_coefficient)
 
@@ -129,7 +131,7 @@ class CriticalAreaModels:
             r_D = self.buffer + aircraft.width / 2
 
             # F_A comes from table 6-5 in [2, p. 98]. Here using the median for 20/80 distribution between hard and
-            # soft surfaces
+            # soft surfaces.
             if var1 == -1:
                 F_A = 4.36
             else:
@@ -140,7 +142,7 @@ class CriticalAreaModels:
             y2m = np.power(2 * r_Ac * hs, 2) - np.power(np.power(r_Ac, 2) + np.power(hs, 2) - np.power(r_D, 2), 2)
 
             # If y2m becomes negative, it means that A_C_mark should become zero, because the secondary
-            # debris area is larger than the total glide area. This is accomplished by simply setting y2 = 0
+            # debris area is larger than the total glide area. This is accomplished by simply setting y2 = 0.
             y2m = np.maximum(0, y2m)
             y2 = np.sqrt(y2m) / (2 * hs)
 
@@ -150,7 +152,7 @@ class CriticalAreaModels:
             A_C_mark = A_C_mark - (
                     y2 * np.sqrt(np.power(r_Ac, 2) - np.power(y2, 2)) + np.power(r_Ac, 2) * np.arcsin(y2 / r_Ac))
 
-            # Note that this is not identical to (12), since (12) assumes 0 degrees is vertical and not horizontal
+            # Note that this is not identical to (12), since (12) assumes 0 degrees is vertical and not horizontal.
             LA_inert = math.pi * np.power(self.buffer + aircraft.width / 2 * np.sqrt(F_A), 2) + A_C_mark
 
             glide_area = math.pi * np.power(self.buffer + aircraft.width / 2, 2)
@@ -175,7 +177,7 @@ class CriticalAreaModels:
             # This seems to be the correct formula
             t_safe = (horizontal_impact_speed - velocity_min_kill) / acceleration
 
-            # Avoid having negative time
+            # Avoid having negative time.
             t_safe = np.maximum(0, t_safe)
 
             # P. 17
@@ -187,13 +189,13 @@ class CriticalAreaModels:
 
         elif critical_area_model == enums.CriticalAreaModel.JARUS:
             if var1 == -1:
-                # Set default value for a scalar width
+                # Set default value for a scalar width.
                 if not isinstance(aircraft.width, np.ndarray):
                     if aircraft.width <= 1:
                         KE_lethal = 290
                     else:
                         KE_lethal = 290 * 2
-                # Set default value for array width
+                # Set default value for array width.
                 else:
                     KE_lethal = np.full(len(aircraft.width), 290)
                     KE_lethal = np.where(aircraft.width <= 1, KE_lethal, 2 * KE_lethal)
@@ -213,17 +215,17 @@ class CriticalAreaModels:
             glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + circular_end
             slide_area = slide_distance_lethal * (2 * self.buffer + aircraft.width)
 
-        # Add glide and slide from model
+        # Add glide and slide from model.
         LA_inert = glide_area + slide_area
 
-        # Compute deflagration area based on both fireball and thermal lethal area
+        # Compute deflagration area based on both fireball and thermal lethal area.
         TNT = exp.TNT_equivalent_mass(aircraft.fuel_type, aircraft.fuel_quantity)
         FB = exp.fireball_area(TNT)
         p_lethal = 0.1
         TLA = exp.lethal_area_thermal(TNT, p_lethal)
         LA_deflagration = np.maximum(FB, TLA)
 
-        # Compute the overlapping area between inert and deflagration
+        # Compute the overlapping area between inert and deflagration.
         overlapping_area = np.minimum(LA_inert, LA_deflagration) * np.maximum(0, np.minimum(critical_areas_overlap, 1))
 
         return LA_inert + LA_deflagration - overlapping_area, glide_area, slide_area, LA_inert, LA_deflagration
@@ -245,14 +247,14 @@ class CriticalAreaModels:
         Parameters
         ----------
         velocity : float
-            [m/s] Horizontal component of the impact velocity
+            [m/s] Horizontal component of the impact velocity.
         friction_coefficient : float
-            [] Friction coefficient, typical between 0.4 and 0.7
+            [] Friction coefficient, typically between 0.4 and 0.7.
         
         Returns
         -------
         distance : float
-            [m] Distance from impact to rest
+            [m] Distance from impact to rest.
         """
         return velocity * velocity / 2 / friction_coefficient / constants.GRAVITY
 
@@ -260,7 +262,7 @@ class CriticalAreaModels:
         """Compute glide distance based on glide angle.
         
         Glide distance is the distance an aircraft will glide through the air for a given glide angel from altitude
-        Height until it impacts the ground.
+        height until it impacts the ground.
         Thus, the glide starts at altitude Height and continues until the aircraft impacts the ground.
         
         Parameters
@@ -272,18 +274,18 @@ class CriticalAreaModels:
         Returns
         -------
         distance : float
-            [m] The glide distance
+            [m] The glide distance.
         """
-        # Height out of range
+        # Height out of range.
         if np.any(self.height < 0):
             warnings.warn("Height in computation of glide distance is less than zero, which does not make sense."
                           " Subsequent computations are not valid.")
             self.height = 0
 
-        # Sanity check on glide angle
+        # Sanity check on glide angle.
         glide_angle = self.check_glide_angle(glide_angle)
 
-        # This is just triangle standard math
+        # This is just triangle standard math.
         return self.height / np.tan(np.radians(glide_angle))
 
     @staticmethod
@@ -298,12 +300,12 @@ class CriticalAreaModels:
         -------
         MISSING DOC
         """
-        # glide_angle out of range    
+        # glide_angle out of range.
         if np.any(glide_angle < 0) or np.any(glide_angle > 180):
             warnings.warn("glide_angle is out of valid range (0 to 180). Subsequent computations are not valid.")
             glide_angle = np.fromiter(map(lambda x: 90 if (x < 0 or x > 180) else x, glide_angle), dtype=np.float)
 
-        # Flip glide angle
+        # Flip glide angle.
         if isinstance(glide_angle, Iterable):
             glide_angle = np.fromiter(map(lambda x: 180 - x if x > 90 else x, glide_angle), dtype=np.float)
         else:
@@ -334,7 +336,7 @@ class CriticalAreaModels:
         -------
         MISSING DOC
         """
-        # Note that we use .abs, since cosine is negative for angles between 90 and 180
+        # Note that we use .abs, since cosine is negative for angles between 90 and 180.
         return np.fabs(np.cos(np.radians(impact_angle))) * impact_speed
 
     @staticmethod
