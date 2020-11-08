@@ -4,13 +4,13 @@ from enum import Enum
 class FuelType(Enum):
     """Enum for fuel type."""
     GASOLINE = 1
-    PETROL = 1  # Same fuel as gasoline
+    PETROL = 1  # Same fuel as gasoline.
     DIESEL = 2
     JETA1 = 3
     AVGAS = 5
     METHANOL = 6
-    LIFE = 7  # LiFe (Lithium-iron) battery
-    LION = 8  # Lithium-ion battery
+    LIFE = 7  # LiFe (Lithium-iron) battery.
+    LION = 8  # Lithium-ion battery.
     LIQUID_HYDROGEN = 9
     LIQUID_BUTANE = 10
 
