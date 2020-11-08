@@ -83,10 +83,10 @@ class Obstacles:
         self.num_of_empty_CA = 0
         self.num_of_reduced_CA = 0
 
-        # Smallest distance before we consider two points the same point
+        # Smallest distance before we consider two points the same point.
         self.__epsilon = 0.0001
 
-        # Some colors available for drawing obstacles and CAs
+        # Some colors available for drawing obstacles and CAs.
         self.BLUE = '#6699cc'
         self.GRAY = '#999999'
         self.DARKGRAY = '#333333'
@@ -101,17 +101,27 @@ class Obstacles:
 
         Parameters
         ----------
-        MISSING DOC
+        num_of_obstacles : int
+            MISSING DOC
+        width_mu : MISSING DOC
+            MISSING DOC
+        width_sigma : MISSING DOC
+            MISSING DOC
+        length_mu : MISSING DOC
+            MISSING DOC
+        length_sigma : MISSING DOC
+            MISSING DOC
 
         Returns
         -------
+        None
         """
         self.num_of_obstacles = num_of_obstacles
 
         width = stats.norm.rvs(size=num_of_obstacles, loc=width_mu, scale=width_sigma)
         length = stats.norm.rvs(size=num_of_obstacles, loc=length_mu, scale=length_sigma)
 
-        # Create a list of obstacle polygons
+        # Create a list of obstacle polygons.
         trans_x = stats.uniform.rvs(size=self.num_of_obstacles, loc=0, scale=self.trial_area_sidelength)
         trans_y = stats.uniform.rvs(size=self.num_of_obstacles, loc=0, scale=self.trial_area_sidelength)
 
@@ -133,6 +143,7 @@ class Obstacles:
 
         Returns
         -------
+        None
         """
         self.trials_count = trials_count
         self.CA_width = CA_width
@@ -142,7 +153,7 @@ class Obstacles:
         # the compensation is half the longest length of the CA.
         CA_compensate = np.amax([CA_width, CA_length]) / 2
 
-        # Uniformly distributed heading from 0 to 180 degrees
+        # Uniformly distributed heading from 0 to 180 degrees.
         heading = stats.uniform.rvs(size=self.trials_count, loc=0, scale=360)
 
         # Uniformly distributed translation from 0 to trial_area_sidelength.
@@ -156,7 +167,7 @@ class Obstacles:
         CA_coor = [(0, 0), (self.CA_width, 0), (self.CA_width, self.CA_length), (0, self.CA_length), (0, 0)]
 
         for j in range(0, self.trials_count):
-            # Rotate and move CA
+            # Rotate and move CA.
             CA_polygon = affinity.translate(affinity.rotate(Polygon(CA_coor), heading[j], 'center'), CA_trans_x[j],
                                             CA_trans_y[j])
 
@@ -171,6 +182,7 @@ class Obstacles:
 
         Returns
         -------
+        None
         """
         self.CAs_reduced = []
         self.intersected_obstacles = []
@@ -178,37 +190,37 @@ class Obstacles:
         self.CA_cut_off_coords = []
         self.num_of_empty_CA = 0
 
-        # Create STRtree for faster intersection detection
+        # Create STRtree for faster intersection detection.
         self.obstacles_rtree = STRtree(self.obstacles)
 
-        # Keep track of reduced obstacles
+        # Keep track of reduced obstacles.
         reduced_CA_idxs = []
 
         for CA_idx, CA_polygon in enumerate(self.CAs):
-            # Keep track of the starting coordinates of the original CA
+            # Keep track of the starting coordinates of the original CA.
             CA_original_coords = MultiPoint(CA_polygon.exterior.coords)
 
-            # Get a short list of potentially intersecting obstacles
+            # Get a short list of potentially intersecting obstacles.
             potentially_intersecting_obstacles = self.obstacles_rtree.query(CA_polygon)
 
-            # Iterate over those potential obstacles
+            # Iterate over those potential obstacles.
             for idx, obstacle in enumerate(potentially_intersecting_obstacles):
-                # Check if it intersects any of the obstacles
+                # Check if it intersects any of the obstacles.
                 if CA_polygon.intersects(obstacle):
 
-                    # Check if this obstacles has already been reduced once
-                    if not CA_idx in reduced_CA_idxs:
-                        # If not, increment the number of reduced obstacles
+                    # Check if this obstacles has already been reduced once.
+                    if CA_idx not in reduced_CA_idxs:
+                        # If not, increment the number of reduced obstacles.
                         self.num_of_reduced_CA = self.num_of_reduced_CA + 1
-                        # and append it to the list of reduced obstacles
+                        # and append it to the list of reduced obstacles.
                         reduced_CA_idxs.append(CA_idx)
 
-                    # Keep a list of the intersected obstacles for later viz
+                    # Keep a list of the intersected obstacles for later viz.
                     self.intersected_obstacles.append(obstacle)
 
-                    # Figure out how much is left of the CA
+                    # Figure out how much is left of the CA.
 
-                    # If the beginning of the CA is inside the obstacle, the CA becomes empty
+                    # If the beginning of the CA is inside the obstacle, the CA becomes empty.
                     CA_beginning_line = LineString([(CA_original_coords[0].x, CA_original_coords[0].y),
                                                     (CA_original_coords[1].x, CA_original_coords[1].y)])
                     if CA_beginning_line.intersects(obstacle):
@@ -216,18 +228,19 @@ class Obstacles:
                         self.num_of_empty_CA = self.num_of_empty_CA + 1
 
                         # And we can save a little time by breaking the for loop at this point,
-                        # since the CA is reduced as much as it can be, so no need to check more obstacles
+                        # since the CA is reduced as much as it can be, so no need to check more obstacles.
                         break
 
                     else:
-                        # First, subtract the obstacle from the CA
+                        # First, subtract the obstacle from the CA.
                         CA_splitted = CA_polygon.difference(obstacle)
 
-                        # If the obstacles splits the CA in multiple polygons, figure out which part we need (i.e. the one closest to the CA origin)
+                        # If the obstacles splits the CA in multiple polygons, figure out which part we need
+                        # (i.e. the one closest to the CA origin).
                         if CA_splitted.geom_type == 'MultiPolygon':
-                            dist = 10 * self.trial_area_sidelength  # Just a number sufficiently big
+                            dist = 10 * self.trial_area_sidelength  # Just a number sufficiently big.
 
-                            # Iterate over all resulting polygons after splitting the CA
+                            # Iterate over all resulting polygons after splitting the CA.
                             for CA_split in CA_splitted:
 
                                 # Look for the one where the distance to the beginning of the CA is (very close to) zero
@@ -236,18 +249,18 @@ class Obstacles:
                                     CA_polygon = CA_split
                                     break
 
-                        # The splitting of CA only resulting in one polygon            
+                        # The splitting of CA only resulting in one polygon.
                         else:
-                            CA_polygon = CA_splitted;
+                            CA_polygon = CA_splitted
 
                         # After splitting the CA, it is most likely not a rectangle anymore, but we want that.
-                        # So, we find all the coordinates of the splitted CA that were not in the original CA
-                        # and that the one closest to the beginning of the CA (called p_clostest)
+                        # So, we find all the coordinates of the split CA that were not in the original CA
+                        # and that the one closest to the beginning of the CA (called p_closest).
                         # When we compute a new CA polygon consisting of p_closest and the two points at the beginning
-                        # of the CA, plus a fourth point that make the polygon a rectangle
+                        # of the CA, plus a fourth point that make the polygon a rectangle.
                         CA_polygon = self.__cut_polygon_to_rectangle(CA_polygon, CA_original_coords)
 
-            # Add the resulting CA polygon to the list of reduced CAs
+            # Add the resulting CA polygon to the list of reduced CAs.
             self.CAs_reduced.append(CA_polygon)
 
     def __cut_polygon_to_rectangle(self, CA_polygon, CA_original_coords):
