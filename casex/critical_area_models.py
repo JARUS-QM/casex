@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from casex import enums, aircraft_specs, explosion_models, Conversion, constants
+from casex import enums, AircraftSpecs, ExplosionModels, Conversion, constants
 
 
 class CriticalAreaModels:
@@ -96,11 +96,11 @@ class CriticalAreaModels:
             warnings.warn("Critical area model not recognized. Type set to RCC.")
             critical_area_model = enums.CriticalAreaModel.RCC
 
-        if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
+        if not isinstance(aircraft, AircraftSpecs):
             raise Exception("Aircraft not recognized. Must be of type AircraftSpecs")
 
         # Instantiate necessary classes.
-        exp = explosion_models.ExplosionModels()
+        exp = ExplosionModels()
 
         # Compute additional parameters.
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
