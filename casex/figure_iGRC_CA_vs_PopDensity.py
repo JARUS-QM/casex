@@ -1,6 +1,5 @@
 """
-Example 4
----------
+MISSING DOC:
 This example basically recreates Figure 2 in Annex F. This figure shows the iGRC integer values
 for a range of critical areas and population densities that span what the iGRC table has, that is,
 CA values from 1 m^2 to 66k m^2, and population densities from 0.01 to 500k ppl/km^2.
@@ -18,9 +17,29 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import casex
 
 def figure_iGRC_CA_vs_PopDensity():
-    show_reduced_pop_dens = True
+    # Show the calculated iGRC values with a reduction as shown in Annex F Table 17. TODO: Update this when Annex F is finished.
+    show_with_obstacles = False
+    
+    # Use a reduced granularity on the CA axis
+    show_reduced_CA_axis = True
+    
+    # Uses the old SORA quantization (only appicable if show_reduced_CA_axis is True)
+    show_old_quantization = True
+    show_old_quantization = show_old_quantization and show_reduced_CA_axis
+    
+    # Show the iGRC numbers as iGRC-X instead of just X
+    show_iGRC_prefix = True
+    
+    # Show additional grid lines. Makes it a bit cluttered, but assist in reading the table.
     show_additional_grid = False
+    
+    # Show colorbar instead of numbers for the background ISO plot.
     show_colorbar = False
+    
+    # Turn on/off three different labels on the x axis
+    show_x_wingspan = True
+    show_x_velocity = True
+    show_x_CA = False
 
     # Data on person size
     person_width = 0.3
@@ -44,7 +63,7 @@ def figure_iGRC_CA_vs_PopDensity():
     for pop_density_i in range(len(pop_density)):
         for CA_i in range(len(CA)):
             ReducedCA = 1
-            if (pop_density[pop_density_i] > 500 and pop_density[pop_density_i] < 100000 and CA[CA_i] > 6.5 and CA[CA_i] < 20000 and show_reduced_pop_dens):
+            if (pop_density[pop_density_i] > 500 and pop_density[pop_density_i] < 100000 and CA[CA_i] > 6.5 and CA[CA_i] < 20000 and show_with_obstacles):
                 ReducedCA = 120/200
             M[pop_density_i][CA_i] = AFP.iGRC(pop_density[pop_density_i], CA[CA_i] * ReducedCA)[0] - 0.3
         
@@ -67,16 +86,62 @@ def figure_iGRC_CA_vs_PopDensity():
     else:
         CA_ticks_additional = []
     ax.set_xticks(np.sort(np.concatenate([CA_ticks, CA_ticks_additional])))
-    # CA axis actual names at the ticks
-    if show_reduced_pop_dens:
-        ax.set_xticklabels(['', 1, 3, 8, 20, ''])        
-    elif not show_additional_grid:
-        ax.set_xticklabels(['', 6.5,   200, 2000, '20k', '66k'])
-    else:
-        ax.set_xticklabels(['', '6.5\n1 m\n25 m/s', '20\nCannot be\nachieved', '50\n0.5 m\n35 m/s', '100\n1.2 m\n35 m/s', '200\n3 m\n35 m/s', '500\n1.6 m\n75 m/s', '1k\n3.9 m\n75 m/s', '2k\n8 m\n75 m/s', '5k\n4.5 m\n150 m/s', '10k\n9.5 m\n150 m/s', '20k\n20 m\n150 m/s', '40k\n22 m\n200 m/s', '66k\n36 m\n200 m/s'])
+
+    # Add x tick labels
+    xtick_wingspan = ['1',   'n/a', '0.5', '1.2', '3',   '1.6', '3.9', '8',  '4.5', '9.5', '20',  '22',  '36']
+    xtick_velocity = ['25',  'n/a', '35',  '35',  '35',  '75',  '75',  '75', '150', '150', '150', '200', '200']
+    xtick_CA =       ['6.5', '20',  '50',  '10',  '200', '500', '1k',  '2k', '5k',  '10k', '20k', '40k', '66k']
+
+    # Add units to x tick labels
+    for k in range(len(xtick_wingspan)):
+        xtick_wingspan[k] = xtick_wingspan[k] + ' m'
+        xtick_velocity[k] = xtick_velocity[k] + ' m/s'
+        xtick_CA[k] = xtick_CA[k] + ' m$^2$'
+        
+    xtick_wingspan[1] = 'n/a'
+    xtick_velocity[1] = 'n/a'
+        
+    # Add the requested label types
+    xtick_actual_label = [0] * len(xtick_wingspan)
+    for k in range(len(xtick_wingspan)):
+        xtick_actual_label[k] = ''
+        if show_x_wingspan:
+            xtick_actual_label[k] += xtick_wingspan[k]
+        if show_x_velocity:
+            if show_x_wingspan:
+                xtick_actual_label[k] += '\n'
+            xtick_actual_label[k] += xtick_velocity[k]
+        if show_x_CA:
+            if show_x_velocity or show_x_wingspan:
+                xtick_actual_label[k] += '\n'
+            xtick_actual_label[k] += xtick_CA[k]
+
+    # Create the x axis label
+    x_actual_label = ''
+    if show_x_wingspan:
+        x_actual_label += 'Wingspan'
+    if show_x_velocity:
+        if show_x_wingspan:
+            x_actual_label += ' + '
+        x_actual_label += 'Velocity'
+    if show_x_CA:
+        if show_x_velocity or show_x_wingspan:
+            x_actual_label += ' + '
+        x_actual_label += 'Critical area'
+
+
+    # Remove addtional xtick labels is they are not requested
+    if not show_additional_grid:
+        xtick_actual_label = [xtick_actual_label[i] for i in [0, 4, 7, 10]]
+        
+    # Add empty labels at both ends
+    xtick_actual_label.insert(0, '')
+    xtick_actual_label.append('')
+
+    ax.set_xticklabels(xtick_actual_label, fontsize='16')
 
     # pop_density axis tick values in log10
-    if show_reduced_pop_dens:
+    if show_reduced_CA_axis:
         pop_density_ticks = np.array([-2, -1, np.log10(300), np.log10(15000), 5.7])
     else:
         pop_density_ticks = np.array([-2, -1, 1,    2,   3.167,  4.167,       5,    5.7])
@@ -87,7 +152,7 @@ def figure_iGRC_CA_vs_PopDensity():
     ax.set_yticks(np.sort(np.concatenate([pop_density_ticks, pop_density_ticks_additional])))
     # pop_density axis actual names at the ticks
     if not show_additional_grid:
-        if show_reduced_pop_dens:
+        if show_reduced_CA_axis:
             ax.set_yticklabels(['', 0.1, 300, '15k', '500k'])
         else:
             ax.set_yticklabels(['', 0.1,       10,         100,                1500,             '15k',               '100k', '500k'])
@@ -99,9 +164,9 @@ def figure_iGRC_CA_vs_PopDensity():
     else:
         ax.tick_params(axis='both', which='major', labelsize=9)
 
-    # Show vertical and horizontal lines corresponding to the tick marks
+    # Show vertical lines
     for k in CA_ticks:
-        if k < math.log10(7) or show_reduced_pop_dens:
+        if k < math.log10(7) or show_reduced_CA_axis:
             end_pop_density = math.log10(pop_density[-1])
         else:
             end_pop_density = math.log10(1E5)
@@ -112,69 +177,100 @@ def figure_iGRC_CA_vs_PopDensity():
         else:
             end_pop_density = math.log10(1E5)
         ax.plot([k, k], [math.log10(pop_density[0]), end_pop_density], color='black', linestyle='--')
-    #    ax.plot([math.log10(6.5), math.log10(6.5)], [math.log10(pop_density[0]), math.log10(pop_density[-1])], color='white')
-    #    ax.plot([math.log10(200), math.log10(200), math.log10(120), math.log10(120), math.log10(200), math.log10(200)], [math.log10(pop_density[0]), math.log10(500), math.log10(500), math.log10(100000), math.log10(100000), math.log10(500000)], color='white')
-    #    ax.plot([math.log10(2000), math.log10(2000), math.log10(700), math.log10(700), math.log10(2000), math.log10(2000)], [math.log10(pop_density[0]), math.log10(500), math.log10(500), math.log10(100000), math.log10(100000), math.log10(500000)], color='white')
-    #    ax.plot([math.log10(20000), math.log10(20000), math.log10(7000), math.log10(7000), math.log10(20000), math.log10(20000)], [math.log10(pop_density[0]), math.log10(500), math.log10(500), math.log10(100000), math.log10(100000), math.log10(500000)], color='white')
-    #    ax.plot([math.log10(66000), math.log10(66000)], [math.log10(pop_density[0]), math.log10(pop_density[-1])], color='white')
 
+    # Show horizontal lines
     for k in pop_density_ticks:
         ax.plot([math.log10(CA[0]), math.log10(CA[-1])], [k, k], color='white')
     for k in pop_density_ticks_additional:
         ax.plot([math.log10(CA[0]), math.log10(CA[-1])], [k, k], color='black', linestyle='--')
 
     # Insert the iGRC table numbers in the middle between the white lines
-    if not show_reduced_pop_dens:
-        x = np.diff(CA_ticks) / 2 + CA_ticks[0:5:1]
-        y = np.diff(pop_density_ticks) / 2 + pop_density_ticks[0:7:1]
+    iGRX_prefix = ''
+    if show_iGRC_prefix:
+        iGRX_prefix = 'iGRC-'
 
+    # Compute placement of iGRC numbers (half way between lines)
+    x = np.diff(CA_ticks) / 2 + CA_ticks[0:len(CA_ticks)-1:1]
+    y = np.diff(pop_density_ticks) / 2 + pop_density_ticks[0:len(pop_density_ticks)-1:1]
+
+    iGRC_fontsize = 12
+
+    if show_reduced_CA_axis:
+        old_iGRC = [
+            [1, 2, 3, 4, 0],
+            [3, 4, 5, 6, 0],
+            [5, 6, 8, 10, 0],
+            [8, 0, 0, 0, 0]
+        ]
+        new_iGRC = [
+            [1, 3, 4, 5, 5],
+            [5, 6, 7, 8, 9],
+            [6, 8, 9, 10, 10],
+            [8, 9, 10, 11, 12]
+        ]
+        for k in range(5):
+            for j in range(4):
+                if show_old_quantization:
+                    if old_iGRC[j][k] > 0:
+                        ax.text(x[k], y[j], iGRX_prefix + str(old_iGRC[j][k]), ha='center', va='center', color='white', weight='bold', fontsize=iGRC_fontsize)
+                    else:
+                        ax.text(x[k], y[j], "NO GRC", ha='center', va='center', color='black', weight='bold', fontsize=iGRC_fontsize)
+                else:
+                    ax.text(x[k], y[j], iGRX_prefix + str(new_iGRC[j][k]), ha='center', va='center', color='white', weight='bold', fontsize=iGRC_fontsize)
+    else:
         for k, xv in enumerate(x, start=2):
             for j, yv in enumerate(y):
                 a = k+j
                 if (j == 0):
                     a = a - 1
                 if (j < 6):
-                    txt = '{}'.format(a)
+                    txt = iGRX_prefix + '{}'.format(a)
                 else:
                     if (k == 2):
-                        txt = '7*'
+                        txt = iGRX_prefix + '7*'
                     else:
                         txt = ''
-                ax.text(xv, yv, txt, ha='center', va='center', color='white', weight='bold', fontsize='9')
+                ax.text(xv, yv, txt, ha='center', va='center', color='white', weight='bold', fontsize=iGRC_fontsize)
 
-        ax.text(2.9, 5.4, "Not in SORA", ha='center', va='center', color='white', weight='bold', fontsize='9')
+        ax.text(2.9, 5.4, "Not in SORA", ha='center', va='center', color='white', weight='bold', fontsize=iGRC_fontsize)
 
 
-    # Locations for the band value numbers
-    bands_x = [ 0.4,  1.4,  2.5,  3.5,  4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4]
-    bands_y = [-1.7, -1.7, -1.7, -1.7, -1.7,-0.7, 0.3, 1.3, 2.3, 3.4, 4.4, 5.4]
+    if not show_colorbar:
+        # Locations for the band value numbers
+        bands_x = [ 0.4,  1.4,  2.5,  3.5,  4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4]
+        bands_y = [-1.7, -1.7, -1.7, -1.7, -1.7,-0.7, 0.3, 1.3, 2.3, 3.4, 4.4, 5.4]
 
-    for k in range(len(bands_x)):
-        if k < 8:
-            clr = 'yellow'
-        else:
-            clr = 'black'
-        ax.text(bands_x[k], bands_y[k], '{}'.format(k), color=clr, weight='bold', fontsize='8')
+        # Add values to the bands in the ISO plot
+        for k in range(len(bands_x)):
+            if k < 8:
+                clr = 'yellow'
+            else:
+                clr = 'mediumblue'
+            ax.text(bands_x[k], bands_y[k], '{}'.format(k), color=clr, weight='bold', fontsize=10)
 
-    ax.set_ylabel('Population density [ppl/km$^2$]', fontsize='11')
-    if show_reduced_pop_dens:
-        ax.set_xlabel('Wingspan [m]', fontsize='11')
-    elif not show_additional_grid:
-        ax.set_xlabel('Critical area [m$^2$]', fontsize='11')
-    else:
-        ax.set_xlabel('Critical area [m$^2$]\nWing span [m ]\nSpeed [m/s]', fontsize='11')
+    # Set axes labels
+    ax.set_ylabel('Population density [ppl/km$^2$]', fontsize='16')
+    ax.set_xlabel(x_actual_label, fontsize='16')
 
     # Set axis limits
     ax.set_xlim(math.log10(CA[0]), math.log10(CA[-1]))
     ax.set_ylim(math.log10(pop_density[-1]), math.log10(pop_density[0]))
+    
+    ax.tick_params(axis="x", labelsize=14)
+    ax.tick_params(axis="y", labelsize=14)
 
+    title = 'Critical area iso plot'
+    if show_old_quantization:
+        title += ', old SORA quantization'
+    if show_with_obstacles:
+        title += ', reduced CA due to obstacles'
+        
+    ax.set_title(title, fontsize='20')
+    
     plt.show()
     
     # Use this to generate a PNG file of the plot
-    if show_additional_grid:
-        fig.savefig('iGRC_CA_vs_pop_density_additional_grid.png', format='png', dpi=300)
-    else:
-        fig.savefig('iGRC_CA_vs_pop_density.png', format='png', dpi=300)
+    fig.savefig('iGRC_CA_vs_pop_density_img4.png', format='png', dpi=300)
 
 if __name__ == '__main__':
     figure_iGRC_CA_vs_PopDensity()
