@@ -23,17 +23,29 @@ def obstacle_simulation():
     start_time = time.time()
 
     ## CA properties.
-    CA_width = 0.1
-    CA_length = 100
-    trials_count = 400
-    trial_area_sidelength = 2000
-    num_of_obstacles = 3000
+    CA_width = 3
+    CA_length = 67
+    trials_count = 200
+    trial_area_sidelength = 1000
+    num_of_obstacles = 800
 
-    obstacle_width_mu = 25
-    obstacle_width_sigma = 8
+    obstacle_width_mu = 23
+    obstacle_width_sigma = 6
     obstacle_length_mu = 9
     obstacle_length_sigma = 2
 
+    ## These are the values used in the simulation presented in Annex F Appendix B
+    # CA_width = 3
+    # CA_length = 67
+    # trials_count = 200
+    # trial_area_sidelength = 1000
+    # num_of_obstacles = 800
+    # obstacle_width_mu = 23
+    # obstacle_width_sigma = 6
+    # obstacle_length_mu = 9
+    # obstacle_length_sigma = 2
+    
+    # Bools to control the computations and visualization
     do_compute_coverage = True
     do_sanity_check = True
     do_theory = True
@@ -41,12 +53,12 @@ def obstacle_simulation():
 
     obstacle_density = num_of_obstacles / trial_area_sidelength / trial_area_sidelength
 
-    OS = Obstacles(trial_area_sidelength)
+    OS = Obstacles(CA_width, CA_length, trial_area_sidelength)
 
     gen_polygons_time = time.time()
     OS.generate_rectangular_obstacles_normal_distributed(num_of_obstacles, obstacle_width_mu, obstacle_width_sigma,
                                                          obstacle_length_mu, obstacle_length_sigma)
-    OS.generate_CAs(trials_count, CA_width, CA_length)
+    OS.generate_CAs(trials_count)
     print('Generate polygons time:  {:1.3f} sec'.format(time.time() - gen_polygons_time))
 
     ### Run trials.

@@ -54,18 +54,22 @@ class Obstacles:
         MISSING DOC
     """
 
-    def __init__(self, trial_area_sidelength):
+    def __init__(self, CA_width, CA_length, trial_area_sidelength):
         """Constructor
         
         Parameters
         ----------
+        CA_width : float
+            [m] Width of the nominal CA.
+        CA_length : float
+            [m] Length of the nominal CA.
         trial_area_sidelength : float
             [m] Length of each side of the square trial area.
         """
-        self.num_of_obstacles = None
+        self.CA_width = CA_width
+        self.CA_length = CA_length
         self.trials_count = None
-        self.CA_width = None
-        self.CA_length = None
+        self.num_of_obstacles = None
         self.intersected_obstacles = None
         self.closest = None
         self.CA_cut_off_coords = None
@@ -129,29 +133,23 @@ class Obstacles:
             obs = [(0, 0), (length[k], 0), (length[k], width[k]), (0, width[k]), (0, 0)]
             self.obstacles.append(affinity.translate(Polygon(obs), trans_x[k], trans_y[k]))
 
-    def generate_CAs(self, trials_count, CA_width, CA_length):
+    def generate_CAs(self, trials_count):
         """MISSING DOC
 
         Parameters
         ----------
         trials_count : int
             Number of trials to perform.
-        CA_width : float
-            [m] Width of the nominal CA.
-        CA_length : float
-            [m] Length of the nominal CA.
 
         Returns
         -------
         None
         """
         self.trials_count = trials_count
-        self.CA_width = CA_width
-        self.CA_length = CA_length
 
         # Compute reduction in the translation of the original CA. Since rotation is around the center,
         # the compensation is half the longest length of the CA.
-        CA_compensate = np.amax([CA_width, CA_length]) / 2
+        CA_compensate = np.amax([self.CA_width, self.CA_length]) / 2
 
         # Uniformly distributed heading from 0 to 180 degrees.
         heading = stats.uniform.rvs(size=self.trials_count, loc=0, scale=360)
@@ -683,6 +681,10 @@ class Obstacles:
         pdf_length_step = (length[-1] - length[0]) / (pdf_resolution - 1)
         pdf_CA_orientation_step = (CA_orientation[-1] - CA_orientation[0]) / (pdf_resolution - 1)
 
+        # The assumption is that the input is a list, so if it is scalar, change it to a list
+        if not isinstance(x, np.ndarray):
+            x = np.array([x])
+
         x_resolution = len(x)
 
         # Preset p_x.
@@ -703,12 +705,7 @@ class Obstacles:
 
                 for index_w, w in enumerate(width):
                     for index_l, l in enumerate(length):
-                        if False:
-                            obstacle = Polygon([(0, 0), (w, 0), (w, l), (0, l), (0, 0)])
-                            M = self.Minkowski_sum_convex_polygons(CA_polygon, obstacle)
-                            minkowski_area = M.area
-                        else:
-                            minkowski_area = self.Minkowski_sum_convex_polygons_area(self.CA_width, x_val, w, l,
+                        minkowski_area = self.Minkowski_sum_convex_polygons_area(self.CA_width, x_val, w, l,
                                                                                      orientation_val, 0)
                         p_width = pdf_width[index_w] * pdf_width_step
                         p_length = pdf_length[index_l] * pdf_length_step
