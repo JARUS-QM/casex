@@ -47,21 +47,21 @@ def example6_obstacles():
     pdf_resolution = 25
     
     # Compute the probability curve
-    p_x, beta_analytical, sanity_check = OS.first_pdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
+    p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
     
     # Compute probability for specific CA size (for graphics)
-    p_x2 = OS.first_pdf(CA_of_interest / CA_width, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
+    p_x2 = OS.cdf(CA_of_interest / CA_width, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
     
     # Plot the curve and the target CA
     fig = plt.figure(1, figsize=(12, 8), dpi=90)
     ax = fig.add_subplot(111)
     ax.plot(x * CA_width, p_x)
-    ax.set_xlabel('Critical area [m$^2$]')
+    ax.set_xlabel('Critical area [m$^2$]',fontsize=12)
     ax.set_xlim([0, x[-1] * CA_width])
-    ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange')
-    ax.plot([CA_of_interest, CA_of_interest], [p_x[0], p_x2[0][0]], '--', color='orange')
+    ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange',linewidth=2)
+    ax.plot([CA_of_interest, CA_of_interest], [p_x[0], p_x2[0][0]], '--', color='orange',linewidth=2)
     ax.set_ylim([p_x[0], 1])
-    ax.set_ylabel('Probability')
+    ax.set_ylabel('Probability',fontsize=12)
     
     print('Probability of reduction to at most {:1.0f} m^2 is {:1.0f}%'.format(CA_of_interest, p_x2[0][0] * 100))
     

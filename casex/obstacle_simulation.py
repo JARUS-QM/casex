@@ -84,7 +84,7 @@ def obstacle_simulation():
         x_resolution = 50
         x = np.linspace(0, CA_length, x_resolution)
         pdf_resolution = 30
-        p_x, beta_analytical, sanity_check = OS.first_pdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
+        p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
                                                           obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
         print('Theory time:             {:1.3f} sec'.format(time.time() - theory_time))
         beta_numerical = OS.total_coverage / trial_area_sidelength / trial_area_sidelength

@@ -635,7 +635,7 @@ class Obstacles:
 
         return m
 
-    def first_pdf(self, x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
+    def cdf(self, x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
                   obstacle_length_sigma, pdf_resolution):
         """MISSING DOC
 
