@@ -31,7 +31,7 @@ def example2_model_comparison():
     mass = 25
     friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.ALUMINUM, enums.GroundMaterial.CONCRETE)
 
-    # Instantiate and add data to CAircraftSpecs class.
+    # Instantiate and add data to AircraftSpecs class.
     aircraft = AircraftSpecs(aircraft_type, width, length, mass)
     aircraft.set_fuel_type(enums.FuelType.GASOLINE)
     aircraft.set_fuel_quantity(5)
