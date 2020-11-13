@@ -1,6 +1,4 @@
 """
-Example 11
----------
 MISSING DOC
 """
 import matplotlib.pyplot as plt
@@ -10,33 +8,42 @@ import casex
 
 
 def figure_angle_vs_speed():
-    # Data on person size
+    """MISSING DOC
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    None
+    """
+    # Data on person size.
     person_width = 0.3
     person_height = 1.8
 
-    # Instantiate necessary class
+    # Instantiate necessary class.
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
-    # Sampling density 
+    # Sampling density.
     angle_samples = 100
     speed_samples = 100
 
-    # Plotting range for the impact angle
+    # Plotting range for the impact angle.
     impact_angle = np.linspace(1, 80, angle_samples)
 
-    # Plotting range for the speed for each of the four scenarios
+    # Plotting range for the speed for each of the four scenarios.
     speed_plot_range = np.array([50, 70, 120, 250, 300])
 
-    # Get the four scenario
+    # Get the four scenario.
     AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
 
-    # Set to False to get plots in Annex F
-    # Set to True to see the CA matrix
+    # Set to False to get plots in Annex F.
+    # Set to True to see the CA matrix.
     show_matrix = False
     show_contours = False
 
-    # Contour levels for each plot
-    # Note that the CA target is not included, since it is already listed above (and is plotted in different color)
+    # Contour levels for each plot.
+    # Note that the CA target is not included, since it is already listed above (and is plotted in different color).
     contour_levels = []
     contour_levels.append(np.array([5, 10, 30, 50, 100]))
     contour_levels.append(np.array([100, 300, 400, 600]))
@@ -44,7 +51,7 @@ def figure_angle_vs_speed():
     contour_levels.append(np.array([5000, 10000, 30000, 50000]))
     contour_levels.append(np.array([5000, 10000, 30000, 50000]))
 
-    # Set to true to plot the COR
+    # Set to true to plot the COR.
     if show_contours:
         fig, axcor = plt.subplots(1, 1, figsize=(12, 6))
 
@@ -74,22 +81,23 @@ def figure_angle_vs_speed():
             if c > 4:
                 break
 
-            # Speed range for the plot
+            # Speed range for the plot.
             impact_speed = np.linspace(0, speed_plot_range[c], speed_samples)
 
-            # Initialize CA matrix
+            # Initialize CA matrix.
             CA_matrix = np.zeros((speed_samples, angle_samples))
 
-            # Compute the CA matrix
+            # Compute the CA matrix.
             for i in range(speed_samples):
                 impact_speed_i = impact_speed[i]
 
                 overlap = 0
 
                 CA_matrix[i, :] = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft,
-                                                   impact_speed_i, impact_angle, overlap, AFP.CA_parms[c].KE_critical)[0]
+                                                   impact_speed_i, impact_angle, overlap, AFP.CA_parms[c].KE_critical)[
+                    0]
 
-            # Show the CA matrix
+            # Show the CA matrix.
             if show_matrix:
                 im = ax[j, k].imshow(np.log(CA_matrix),
                                      extent=[impact_angle[0], impact_angle[-1], impact_speed[0], impact_speed[-1]],
@@ -101,14 +109,14 @@ def figure_angle_vs_speed():
                 # cax = divider.append_axes('right', size='5%', pad=0.05)
                 # fig.colorbar(im, cax=cax, orientation='vertical')
 
-            # Show contours for the CA matrix  
+            # Show contours for the CA matrix.
             CS = ax[j, k].contour(impact_angle, impact_speed, CA_matrix, contour_levels[c], colors=side_color)
             ax[j, k].clabel(CS, inline=1, inline_spacing=-7, fontsize=10, fmt="%u m^2")
             CS2 = ax[j, k].contour(impact_angle, impact_speed, CA_matrix, [AFP.CA_parms[c].critical_area_target],
                                    colors=main_color)
             ax[j, k].clabel(CS2, inline=1, inline_spacing=-7, fontsize=10, fmt="%u m^2")
 
-            # Plot the scenario values as dashed lines
+            # Plot the scenario values as dashed lines.
             ax[j, k].plot(np.array([AFP.scenario_angles[0], AFP.scenario_angles[0]]),
                           np.array([impact_speed[0], AFP.CA_parms[c].glide_speed]), 'b--')
             ax[j, k].plot(np.array([AFP.scenario_angles[1], AFP.scenario_angles[1]]),
@@ -139,21 +147,22 @@ def figure_angle_vs_speed():
 
             c = c + 1
 
-    # The loop above was interrupted, and c was left one too large, so
+    # The loop above was interrupted, and c was left one too large.
     c = c - 1
-    
-    # Show x axis label only for the two lower plots
+
+    # Show x axis label only for the two lower plots.
     ax[1, 0].set_xlabel('Impact angle [deg]')
     ax[1, 1].set_xlabel('Impact angle [deg]')
     ax[0, 2].set_xlabel('Impact angle [deg]')
 
-    # Hide the 6th and unused axis
+    # Hide the 6th and unused axis.
     ax[1, 2].set_axis_off()
 
     plt.show()
 
-    # Save the figure to file
+    # Save the figure to file.
     fig.savefig('Descent scenarios - critical area.png', format='png', dpi=300)
+
 
 if __name__ == '__main__':
     figure_angle_vs_speed()

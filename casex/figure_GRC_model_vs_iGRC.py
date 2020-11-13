@@ -1,6 +1,4 @@
 """
-Example 12
----------
 MISSING DOC
 """
 import matplotlib.pyplot as plt
@@ -10,36 +8,45 @@ import casex
 
 
 def figure_GRC_model_vs_iGRC():
-    # Data on person size
+    """MISSING DOC
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    None
+    """
+    # Data on person size.
     person_width = 0.3
     person_height = 1.8
     impact_angle = 9
 
-    # Instantiate necessary classes    
+    # Instantiate necessary classes.
     CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
 
-    # Sampling density 
+    # Sampling density.
     pop_density_samples = 400
     wingspan_samples = 200
 
-    # Plotting range for the impact angle
+    # Plotting range for the impact angle.
     wingspan = np.linspace(0, 12, wingspan_samples)
 
-    # Get the five scenario
+    # Get the five scenario.
     AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
 
     fig, ax = plt.subplots(1, 1, figsize=(13, 7))
 
-    # Speed range for the plot
+    # Speed range for the plot.
     pop_density = np.logspace(-3 + np.log10(5), 5 + np.log10(5), pop_density_samples)
 
-    # Initialize CA matrix
+    # Initialize CA matrix.
     GRC_matrix = np.zeros((pop_density_samples, wingspan_samples))
 
-    # Compute the CA matrix
+    # Compute the CA matrix.
     for j in range(len(wingspan)):
 
-        # Set impact speed in correspondence with wingspan
+        # Set impact speed in correspondence with wingspan.
         if wingspan[j] <= AFP.CA_parms[0].wingspan:
             column = 0
         elif wingspan[j] <= AFP.CA_parms[1].wingspan:
@@ -50,7 +57,7 @@ def figure_GRC_model_vs_iGRC():
             column = 3
 
         impact_speed = AFP.CA_parms[column].cruise_speed * 0.7
-        # impact_speed = AFP.CA_parms[column].ballistic_impact_velocity
+        # impact_speed = AFP.CA_parms[column].ballistic_impact_velocity.
 
         AFP.CA_parms[column].aircraft.width = wingspan[j]
 
@@ -62,7 +69,7 @@ def figure_GRC_model_vs_iGRC():
 
     ax2 = ax.twinx()
     im = ax2.imshow(np.ceil(GRC_matrix), extent=[wingspan[0], wingspan[-1], pop_density[0], pop_density[-1]],
-                        aspect='auto', origin='upper')
+                    aspect='auto', origin='upper')
 
     ax.set_zorder(ax2.get_zorder() + 1)
     ax.patch.set_visible(False)
@@ -75,9 +82,9 @@ def figure_GRC_model_vs_iGRC():
     ax.plot([wingspan[0], wingspan[-1]], [500, 500], 'w--')
     ax.plot([wingspan[0], wingspan[-1]], [5000, 5000], '--', color='lightgrey', linewidth=0.5)
     ax.plot([wingspan[0], wingspan[-1]], [50000, 50000], 'w--')
-    ax.plot(np.array([1, 1]), np.array([pop_density[0], pop_density[-1]]),'w--')
-    ax.plot(np.array([3, 3]), np.array([pop_density[0], pop_density[-1]]),'w--')
-    ax.plot(np.array([8, 8]), np.array([pop_density[0], pop_density[-1]]),'w--')
+    ax.plot(np.array([1, 1]), np.array([pop_density[0], pop_density[-1]]), 'w--')
+    ax.plot(np.array([3, 3]), np.array([pop_density[0], pop_density[-1]]), 'w--')
+    ax.plot(np.array([8, 8]), np.array([pop_density[0], pop_density[-1]]), 'w--')
 
     for i in range(8):
         if i == 3 or i == 7:
@@ -131,14 +138,15 @@ def figure_GRC_model_vs_iGRC():
     ax.text(12.9, 3.2 * 5000, '0.5%', horizontalalignment='center', verticalalignment='center', fontsize=12)
     ax.text(12.9, 3.2 * 50000, '0.0%', horizontalalignment='center', verticalalignment='center', fontsize=12)
 
-    # Show contours for the CA matrix  
+    # Show contours for the CA matrix.
     CS = ax.contour(wingspan, pop_density, GRC_matrix, np.arange(1, 18), colors='black')
     ax.clabel(CS, inline=1, fontsize=12, fmt="GRC %u")
 
     ax.set_ylabel('Population density [ppl/km^2]')
     ax.set_xlabel('Wingspan [m]')
     ax.set_yscale('log')
-    ax.set_title('GRC comparison (angle = {:d} deg, impact speed = 0.7 x max cruise, 1 m no slide)'.format(impact_angle))
+    ax.set_title(
+        'GRC comparison (angle = {:d} deg, impact speed = 0.7 x max cruise, 1 m no slide)'.format(impact_angle))
 
     y = np.array([0.005, 0.05, 0.5, 5, 50, 5e2, 5e3, 5e4, 5e5])
     ax.yaxis.set_major_locator(plt.FixedLocator(y))
@@ -153,7 +161,7 @@ def figure_GRC_model_vs_iGRC():
 
     plt.show()
 
-    # Save the figure to file
+    # Save the figure to file.
     fig.savefig('GRC comparison, {:d} degrees.png'.format(impact_angle), format='png', dpi=300)
 
 
