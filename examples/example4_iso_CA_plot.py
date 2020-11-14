@@ -1,12 +1,12 @@
 """
-Example 5
+Example 4
 ---------
 This example makes a colored plot of the lethal area for varying impact angle and impact speed. The size of the aircraft
 as well as the other parameters are fixed. The target is the first column in the iGRC table, where the lethal area
 is 10 m^2. Therefore, the iso-curve for to 10 m^2 is shown (in yellow) along with other iso curves for comparison
 (in white).
 
-The purpose is to give a relation between angle and speed for impacts to uncovered any potential relation between angle
+The purpose is to give a relation between angle and speed for impacts to uncover any potential relation between angle
 and speed in terms of fixed lethal area.
 
 The JARUS model is used throughout this example.
@@ -15,25 +15,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-import casex
+from casex import FrictionCoefficients, CriticalAreaModels, enums, AircraftSpecs
 
 
 def example4_iso_CA_plot():
-    # Data on person size
+    # Data on person size.
     person_width = 0.3
     person_height = 1.8
 
-    # Instantiate necessary classes    
-    FC = casex.friction_coefficient.FrictionCoefficients()
-    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
+    # Instantiate necessary classes.
+    FC = FrictionCoefficients()
+    CA = CriticalAreaModels(person_width, person_height)
 
-    # Set aircraft values
-    aircraft_type = casex.enums.AircraftType.FIXED_WING
+    # Set aircraft values.
+    aircraft_type = enums.AircraftType.FIXED_WING
     mass = 3
     friction_coefficient = 0.4
 
-    aircraft = casex.aircraft_specs.AircraftSpecs(aircraft_type, 1, 1, mass)
-    aircraft.set_fuel_type(casex.enums.FuelType.LION)
+    aircraft = AircraftSpecs(aircraft_type, 1, 1, mass)
+    aircraft.set_fuel_type(enums.FuelType.LION)
     aircraft.set_fuel_quantity(0)
     aircraft.set_friction_coefficient(friction_coefficient)
 
@@ -48,7 +48,7 @@ def example4_iso_CA_plot():
     Z_CA = np.zeros((X_speed.shape[0], Y_angle.shape[0]))
     for i, x in enumerate(X_speed):
         for j, y in enumerate(Y_angle):
-            Z_CA[j, i] = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle[j], 0)[0]
+            Z_CA[j, i] = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, x_speed[i], y_angle[j], 0)[0]
 
     fig = plt.figure()
     ax = plt.axes()
