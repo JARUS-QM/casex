@@ -7,6 +7,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
+from scipy import interpolate
 from descartes.patch import PolygonPatch
 from shapely import affinity
 from shapely.geometry import Polygon, Point, MultiPoint, LineString
@@ -132,6 +133,74 @@ class Obstacles:
         for k in range(0, num_of_obstacles):
             obs = [(0, 0), (length[k], 0), (length[k], width[k]), (0, width[k]), (0, 0)]
             self.obstacles.append(affinity.translate(Polygon(obs), trans_x[k], trans_y[k]))
+
+    def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu,
+                                                          length_sigma):
+        """MISSING DOC
+
+        Parameters
+        ----------
+        num_of_obstacles : int
+            MISSING DOC
+        width_mu : MISSING DOC
+            MISSING DOC
+        width_sigma : MISSING DOC
+            MISSING DOC
+        length_mu : MISSING DOC
+            MISSING DOC
+        length_sigma : MISSING DOC
+            MISSING DOC
+
+        Returns
+        -------
+        None
+        """
+        houses_along_street = 22
+
+        # Number of rows of houses per side length. This is expanded to cover the entire area (because the rows are curved)
+        rows_of_houses = 12
+        rows_of_houses = round(rows_of_houses * 1.25)
+
+        # Distance between two houses in each set of houses (neighbouring houses from separate streets)
+        distance_between_two_houses = 20
+        
+        self.num_of_obstacles = houses_along_street * 2 * rows_of_houses
+
+        width = stats.norm.rvs(size=self.num_of_obstacles, loc=width_mu, scale=width_sigma)
+        length = stats.norm.rvs(size=self.num_of_obstacles, loc=length_mu, scale=length_sigma)
+
+        # Points to create a curvy road
+        x_points = np.linspace(0, 1000, 11)
+        y_points = np.array([10, 40, 80, 100, 80, 50, 80, 120, 150, 210, 270])
+        coefs = interpolate.splrep(x_points, y_points)
+
+        # Compute position and rotation of houses
+        x = np.linspace(0, 1000, houses_along_street)
+        y = np.linspace(-250, 1000, rows_of_houses)
+        x2 = np.full(houses_along_street, 1000 / (houses_along_street + 1))
+        y2 = np.diff(interpolate.splev(x, coefs), prepend = -10)
+        r = []
+        for k in range(22):
+            #r.append(-math.atan2(y2[k], x2[k]) * 180 / math.pi)
+            r.append(0)
+
+        # Add houses, only those inside the trial area
+        counter = 0
+        for j in range(0, rows_of_houses):
+            for k in range(0, houses_along_street):
+                trans_x = interpolate.splev(x[k], coefs) + y[j]
+                trans_y = x[k]
+                if (trans_x > 0 and trans_y > 0 and trans_x < self.trial_area_sidelength and trans_y < self.trial_area_sidelength):
+                    obs = [(0, 0), (length[counter], 0), (length[counter], width[counter]), (0, width[counter]), (0, 0)]
+                    self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), r[k]), trans_x, trans_y))
+                counter = counter + 1
+                trans_x = trans_x + distance_between_two_houses
+                if (trans_x > 0 and trans_y > 0 and trans_x < self.trial_area_sidelength and trans_y < self.trial_area_sidelength):
+                    obs = [(0, 0), (length[counter], 0), (length[counter], width[counter]), (0, width[counter]), (0, 0)]
+                    self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), r[k]), trans_x, trans_y))
+                counter = counter + 1
+                
+        self.num_of_obstacles = len(self.obstacles)
 
     def generate_CAs(self, trials_count):
         """MISSING DOC
