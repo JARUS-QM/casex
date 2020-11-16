@@ -26,7 +26,7 @@ class AircraftSpecs:
         Mass of the aircraft in kg. This is the total mass at the time of crash, including fuel.
     aircraft_type : :class:`enums.AircraftType`
         The type of aircraft as given in :class:`enums.AircraftType`.
-    fuel_type : :class:'enums.FuelType
+    fuel_type : :class:`enums.FuelType`
         Fuel type, such as fossil fuels or batteries. Given in :class:`enums.FuelType`.
     fuel_quantity : float
         Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume of the battery.

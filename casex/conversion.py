@@ -9,6 +9,7 @@ class Conversion:
     Note that all methods are static, and can be called without instantiating :class:`Conversion`, i.e.
 
     .. code-block:: python
+
        length = casex.Conversion.ft_to_m(32)
     """
     @staticmethod
