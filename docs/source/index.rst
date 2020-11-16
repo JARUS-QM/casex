@@ -9,6 +9,7 @@ Overview
 
 .. toctree::
    :maxdepth: 2
+   :caption: Table of Contents
 
     Examples <examples>
     Reference <reference>
