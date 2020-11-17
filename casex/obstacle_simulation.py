@@ -25,7 +25,7 @@ def obstacle_simulation():
     ## CA properties.
     CA_width = 3
     CA_length = 67
-    trials_count = 200
+    trials_count = 2000
     trial_area_sidelength = 1000
     num_of_obstacles = 450
 
@@ -56,8 +56,11 @@ def obstacle_simulation():
 
     gen_polygons_time = time.time()
     if do_houses_along_roads:
+        houses_along_street = 22
+        rows_of_houses = 12
+        distance_between_two_houses = 20
         OS.generate_rectangular_obstacles_along_curves(obstacle_width_mu, obstacle_width_sigma,
-                                                         obstacle_length_mu, obstacle_length_sigma)
+                                                         obstacle_length_mu, obstacle_length_sigma, houses_along_street, rows_of_houses, distance_between_two_houses)
     else:
         OS.generate_rectangular_obstacles_normal_distributed(num_of_obstacles, obstacle_width_mu, obstacle_width_sigma,
                                                          obstacle_length_mu, obstacle_length_sigma)

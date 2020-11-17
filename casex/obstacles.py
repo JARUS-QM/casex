@@ -20,39 +20,39 @@ class Obstacles:
     Attributes
     ----------
     num_of_obstacles : int
-        MISSING DOC
+        Number of obstacles in the simulation.
     trials_count : int
-        MISSING DOC
+        Number of trials in the simulation.
     CA_width : float
-        MISSING DOC
-    CA_length : MISSING DOC
-        MISSING DOC
-    intersected_obstacles : MISSING DOC
-        MISSING DOC
-    closest : MISSING DOC
-        MISSING DOC
-    CA_cut_off_coords : MISSING DOC
-        MISSING DOC
-    obstacles_rtree : MISSING DOC
-        MISSING DOC
-    CA_lengths : MISSING DOC
-        MISSING DOC
-    total_obstacle_area : MISSING DOC
-        MISSING DOC
-    total_coverage : MISSING DOC
-        MISSING DOC
+        [m] Width of critical area.
+    CA_length : float
+        [m] Length of critical area.
+    intersected_obstacles : List of Polygon
+        List of all obstacles that have caused reduction in a CA.
+    closest : Point
+        The point closest to the beginning of a CA for each reduced CA.
+    CA_cut_off_coords : List of Point
+        Coordinates of CAs where they are cut off as a result of impact with an obstacle.
+    obstacles_rtree : STRtree
+        Intermediate variables for increasing computations speed. 
+    CA_lengths : Array of floats
+        List of the length of every CA after reduction
+    total_obstacle_area : float
+        [m^2] The total area of all obstacles not considering any overlap (sum of the area of every obstacle).
+    total_coverage : float
+        [m^2] The total area covered by obstacles. This means that overlapping areas are only counted once.
     trial_area_sidelength : float
         [m] Length of each side of the square trial area.
-    obstacles : MISSING DOC
-        MISSING DOC
-    CAs : MISSING DOC
-        MISSING DOC
-    CAs_reduced : MISSING DOC
-        MISSING DOC
-    num_of_empty_CA : MISSING DOC
-        MISSING DOC
-    num_of_reduced_CA : MISSING DOC
-        MISSING DOC
+    obstacles : List of Polygon
+        A list of all obstacles in the simulation.
+    CAs : List of Polygon
+        A list of all nominal CAs in the simulation (before potential reduction).
+    CAs_reduced : List of Polygon
+        A list of all CAs after potential reduction.
+    num_of_empty_CA : int
+        The count of how many CAs have become empty in the simulation.
+    num_of_reduced_CA : int
+        The count of how many CAs are reduced in the simulation.
     """
 
     def __init__(self, CA_width, CA_length, trial_area_sidelength):
@@ -102,20 +102,24 @@ class Obstacles:
 
     def generate_rectangular_obstacles_normal_distributed(self, num_of_obstacles, width_mu, width_sigma, length_mu,
                                                           length_sigma):
-        """MISSING DOC
+        """Generate a set of uniformly distributed rectangular obstacles.
+        
+        This method generates a number of rectangular obstacles which a co-linear with the axes, and with width and length
+        varying according to normal distributions with the mean and standard deviation as given by input parameters. The position
+        of the obstacles are uniformly distributed in 2D in the trial area.
 
         Parameters
         ----------
         num_of_obstacles : int
-            MISSING DOC
-        width_mu : MISSING DOC
-            MISSING DOC
-        width_sigma : MISSING DOC
-            MISSING DOC
-        length_mu : MISSING DOC
-            MISSING DOC
-        length_sigma : MISSING DOC
-            MISSING DOC
+            The number of obstacles to generate.
+        width_mu : float
+            The mean of the normal distribution of the width of the obstacles.
+        width_sigma : float
+            The standard deviation of the normal distribution of the width of the obstacles.
+        length_mu : float
+            The mean of the normal distribution of the length of the obstacles.
+        length_sigma : float
+            The standard deviation of the normal distribution of the length of the obstacles.
 
         Returns
         -------
@@ -134,29 +138,36 @@ class Obstacles:
             obs = [(0, 0), (length[k], 0), (length[k], width[k]), (0, width[k]), (0, 0)]
             self.obstacles.append(affinity.translate(Polygon(obs), trans_x[k], trans_y[k]))
 
-    def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu,
-                                                          length_sigma):
-        """MISSING DOC
+    def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu, length_sigma, houses_along_street, rows_of_houses, distance_between_two_houses):
+        """Generate a set of obstacles that follows a curve.
+        
+        Rectangular obstacles are generated so that they follow a vertical curve and located in parts. This is to
+        simulate houses along a road. The size and density of houses can be adjusted.
+        
+        An area larger than the trial area is covered with obstacles, but only the ones inside the trial
+        area are preserved. The number of obstacles is set to the number of obstacles preserved.
 
         Parameters
         ----------
-        num_of_obstacles : int
-            MISSING DOC
-        width_mu : MISSING DOC
-            MISSING DOC
-        width_sigma : MISSING DOC
-            MISSING DOC
-        length_mu : MISSING DOC
-            MISSING DOC
-        length_sigma : MISSING DOC
-            MISSING DOC
+        width_mu : float
+            [m] The mean of the normal distribution of the width of the obstacles.
+        width_sigma : float
+            The standard deviation of the normal distribution of the width of the obstacles.
+        length_mu : float
+            [m] The mean of the normal distribution of the length of the obstacles.
+        length_sigma : float
+            The standard deviation of the normal distribution of the length of the obstacles.
+        houses_along_street : float
+            The number of houses along the road (22 is a good starting number).
+        rows_of_houses : float
+            The number of rows of houses (12 is a good starting number).
+        distance_between_two_houses : float
+            [m] The distance between two houses that make up the pair of houses that shares a common border, but are on two different streets (20 m is a good starting number).
 
         Returns
         -------
         None
         """
-        houses_along_street = 22
-
         # Number of rows of houses per side length. This is expanded to cover the entire area (because the rows are curved)
         rows_of_houses = 12
         rows_of_houses = round(rows_of_houses * 1.25)
@@ -181,8 +192,7 @@ class Obstacles:
         y2 = np.diff(interpolate.splev(x, coefs), prepend = -10)
         r = []
         for k in range(22):
-            #r.append(-math.atan2(y2[k], x2[k]) * 180 / math.pi)
-            r.append(0)
+            r.append(-math.atan2(y2[k], x2[k]) * 180 / math.pi)
 
         # Add houses, only those inside the trial area
         counter = 0
@@ -203,7 +213,10 @@ class Obstacles:
         self.num_of_obstacles = len(self.obstacles)
 
     def generate_CAs(self, trials_count):
-        """MISSING DOC
+        """Generate a number of critical areas for simulation.
+        
+        A number of critical areas are generated with 2D uniformly distributed location and uniformly distributed
+        orientation between 0 and 360 degrees. They are have the width and length as set at initialization of the class.
 
         Parameters
         ----------
@@ -241,7 +254,10 @@ class Obstacles:
             self.CAs.append(CA_polygon)
 
     def compute_reduced_CAs(self):
-        """MISSING DOC
+        """Compute the reduction for each CA
+        
+        Any CA that intersects with an obstacles is reduced such as to no longer intersect with any obstacles. This method
+        runs through all CAs and all obstacles and produces a list of CAs that
 
         Parameters
         ----------
