@@ -12,6 +12,9 @@ to another.
 
 .. code-block:: python
 
+    import matplotlib.pyplot as plt
+    import numpy as np
+
     from casex import FrictionCoefficients, CriticalAreaModels, enums, AircraftSpecs
 
     # Data on person size.
