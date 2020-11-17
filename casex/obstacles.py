@@ -320,7 +320,6 @@ class Obstacles:
                         # If the obstacles splits the CA in multiple polygons, figure out which part we need
                         # (i.e. the one closest to the CA origin).
                         if CA_splitted.geom_type == 'MultiPolygon':
-                            dist = 10 * self.trial_area_sidelength  # Just a number sufficiently big.
 
                             # Iterate over all resulting polygons after splitting the CA.
                             for CA_split in CA_splitted:
@@ -571,7 +570,6 @@ class Obstacles:
             F = self.CA_width
 
         num_bins = int(round(4 * np.sqrt(self.trials_count)))
-        bins = np.linspace(0, self.CA_length * F, num_bins)
 
         ax.hist(np.array(self.CA_lengths) * F, num_bins, density=True, histtype='step', cumulative=True,
                 label="Simulated {:1.0f} trials".format(self.trials_count), edgecolor='black', linewidth=1.5)
@@ -585,21 +583,21 @@ class Obstacles:
 
     @staticmethod
     def set_limits(ax, x0, xN, y0, yN, step=1):
-        """MISSING DOC
+        """Set the axes limits for a axis in a plot.
 
         Parameters
         ----------
-        ax : MISSING DOC
+        ax : Handle MISSING DOC
             MISSING DOC
-        x0 : MISSING DOC
+        x0 : float
             MISSING DOC
-        xN : MISSING DOC
+        xN : float
             MISSING DOC
-        y0 : MISSING DOC
+        y0 : float
             MISSING DOC
-        yN : MISSING DOC
+        yN : float
             MISSING DOC
-        step : MISSING DOC, optional
+        step : int, optional
             MISSING DOC
 
         Returns
@@ -616,20 +614,23 @@ class Obstacles:
     def Minkowski_sum_convex_polygons(A, B):
         """Compute the polygon that is the Minkowski sum of two convex polygons A and B.
 
+        This methods is based on convex hull for computing the Minkowski sum, and it is
+        therefore required that both input polygons are convex, otherwise the result is not correct.
+
         The result is returned as a MultiPoint type.
 
         Parameters
         ----------
-        A : MISSING DOC
-            MISSING DOC
-        B : MISSING DOC
-            MISSING DOC
+        A : Polygon
+            The one polygon in the Minkowski sum.
+        B : Polygon
+            The other polygon in the Minkowski sum.
 
         Returns
         -------
-        C : MISSING DOC
-            MISSING DOC
-        """
+        C : MultiPoint
+            The result of the computation as a Multipoint (collection of points) and not a polygon.
+        """        
         Av = MultiPoint(A.exterior.coords)
         Bv = MultiPoint(B.exterior.coords)
         Cv = []
@@ -644,6 +645,10 @@ class Obstacles:
     @staticmethod
     def Minkowski_sum_convex_polygons_area(w, x, a, b, theta1, theta2):
         """Compute the area of the Minkowski sum of two rectangles polygons.
+        
+        This is a fast method for computing the Minkowski sum of two polygons that are both rectangles.
+        
+        For details on how this is done, see [lacour2021].
         
         Parameters
         ----------
@@ -674,19 +679,23 @@ class Obstacles:
     def Minkowski_difference_convex_polygons(A, B):
         """Compute the polygon that is the Minkowski difference of two convex polygons A and B.
 
+        Compute the Minkowski difference of two convex polygons. This methods is based on the Minkowski sum for
+        convex polygons, and it is
+        therefore required that both input polygons are convex, otherwise the result is not correct.
+
         The result is returned as a MultiPoint type.
 
         Parameters
         ----------
-        A : MISSING DOC
-            MISSING DOC
-        B : MISSING DOC
-            MISSING DOC
+        A : Polygon
+            The one polygon in the Minkowski difference.
+        B : Polygon
+            The other polygon in the Minkowski difference.
 
         Returns
         -------
-        C : MISSING DOC
-            MISSING DOC
+        C : MultiPoint
+            The result of the computation as a Multipoint (collection of points) and not a polygon.
         """
         Av = MultiPoint(A.exterior.coords)
         Bv = MultiPoint(B.exterior.coords)
@@ -701,54 +710,62 @@ class Obstacles:
 
     @staticmethod
     def mirror_polygon_in_origin(polygon):
-        """MISSING DOC
+        """Compute the mirror of a polygon by negative all corner coordinates.
 
         Parameters
         ----------
-        polygon : MISSING DOC
-            MISSING DOC
+        polygon : Polygon
+            A polygon to be mirrored.
 
         Returns
         -------
-        m : MISSING DOC
-            MISSING DOC
+        m : Polygon
+            A polygon that is the mirror of the original polygon
         """
         coords = polygon.exterior.coords
         print(coords[0])
 
-        m = Polygon([(-c[0], -c[1]) for c in coords])
+        mirrored = Polygon([(-c[0], -c[1]) for c in coords])
 
-        return m
+        return mirrored
 
     def cdf(self, x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
                   obstacle_length_sigma, pdf_resolution):
-        """MISSING DOC
+        """Compute the CDF for the length of the critical area when rectangular obstacles are present.
+        
+        This is the CDF for the length of the critical area when there are a given obstacle density of rectangular obstacles with
+        dimension given by normal distributions. To draw the full CDF, a typical input for x is an array ranging in value from
+        0 to the nominal length of the CA. Since this is usually a rather smooth curve, it can be approximated well by relatively
+        few x values (typically 10 or 15).
+        
+        For a more detailed explanation of the CDF, see [lacour2021]. MISSING DOC.
 
         Parameters
         ----------
-        x : MISSING DOC
-            MISSING DOC
-        obstacle_density : MISSING DOC
-            MISSING DOC
-        obstacle_width_mu : MISSING DOC
-            MISSING DOC
-        obstacle_width_sigma : MISSING DOC
-            MISSING DOC
-        obstacle_length_mu : MISSING DOC
-            MISSING DOC
-        obstacle_length_sigma : MISSING DOC
-            MISSING DOC
-        pdf_resolution : MISSING DOC
-            MISSING DOC
+        x : (List of) float(s)
+            [m] The length of the critical area for which the CDF is computed. This can be a scalar or an array.
+        obstacle_density : float
+            [1/m^2] The density of obstacles measured as the number of obstacles per square meter. Note that in many cases, the obstacles density is
+            given as obstacles per square kilometer. If so, the user must take care to divide by 1e6 before using this method.
+        obstacle_width_mu : float
+            The mean of the normal distribution of the width of the obstacles.
+        obstacle_width_sigma : float
+            The standard deviation of the normal distribution of the width of the obstacles.
+        obstacle_length_mu : float
+            The mean of the normal distribution of the length of the obstacles.
+        obstacle_length_sigma : float
+            The standard deviation of the normal distribution of the length of the obstacles.
+        pdf_resolution : int
+            The number of points for the discretization of the integrals. A good starting value is 15.
 
         Returns
         -------
-        p x : MISSING DOC
-            MISSING DOC
-        beta : MISSING DOC
-            MISSING DOC
-        acc_probability_check : MISSING DOC
-            MISSING DOC
+        p_x : (List of) float(s)
+            The CDF value for the given x. This return parameter has the same type as input x.
+        beta : float
+            The beta values as computed in [lacour2021]. MISSING DOC
+        acc_probability_check : float
+            A sanity check on the triple integral. This values should be relatively close to 1, especially for high value of pdf_resolution.
         """
         # Sample the obstacle PDF.
         width = np.linspace(obstacle_width_mu - 3 * obstacle_width_sigma, obstacle_width_mu + 3 * obstacle_width_sigma,
@@ -910,5 +927,3 @@ class Obstacles:
         ax.legend()
         ax.set_xlabel(r"$\theta$ (deg)")
         plt.show()
-
-        fig.savefig('test3_out.png', format='png', dpi=300)

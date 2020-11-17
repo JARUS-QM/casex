@@ -177,7 +177,7 @@ class CriticalAreaModels:
             # This seems to be the correct formula
             t_safe = (horizontal_impact_speed - velocity_min_kill) / acceleration
 
-            # Avoid having negative time.
+            # If t_safe is negative, it can safely be set to zero to be ignored in the following computations.
             t_safe = np.maximum(0, t_safe)
 
             # P. 17

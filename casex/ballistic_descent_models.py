@@ -15,21 +15,15 @@ class BallisticDescent2ndOrderDragApproximation:
     ----------
     aircraft : :class:'AircraftSpecs'
         MISSING DOC
-    distance_impact : float
-        MISSING DOC
     distance1 : float
         MISSING DOC
     distance2 : float
         MISSING DOC
     distance3 : float
         MISSING DOC
-    velocity_impact : float
-        MISSING DOC
     velocity_x : float
         MISSING DOC
     velocity_y : float
-        MISSING DOC
-    angle_impact : MISSING DOC
         MISSING DOC
     time_top : float
         MISSING DOC
@@ -84,7 +78,7 @@ class BallisticDescent2ndOrderDragApproximation:
     def compute_ballistic_distance(self, altitude, initial_velocity_x, initial_velocity_y):
         """Compute the distance, time, angle, and velocity of a ballistic descent impact.
     
-        One following parameters can be an :class:`numpy.array`
+        One of the following parameters can be an :class:`numpy.array`
         
         * altitude
         * initial_velocity_x
@@ -192,19 +186,22 @@ class BallisticDescent2ndOrderDragApproximation:
         v_ty = self.__compute_vy_down(t_i - t_top, Hd)
 
         # Return values.
-        self.distance_impact = x1 + x2 + x3
+        distance_impact = x1 + x2 + x3
+        velocity_impact = np.sqrt(np.power(v_tx, 2) + np.power(v_ty, 2))
+        angle_impact = np.arctan2(v_ty, v_tx)
+
+        # Additional values that may be of interest to the user.
+        # Then accessible as parameters.
         self.distance1 = x1
         self.distance2 = x2
         self.distance3 = x3
-        self.velocity_impact = np.sqrt(np.power(v_tx, 2) + np.power(v_ty, 2))
         self.velocity_x = v_tx
         self.velocity_y = v_ty
-        self.angle_impact = np.arctan2(v_ty, v_tx)
         self.time_top = t_top
         self.time_cross = t_c
         self.time_impact = t_i
 
-        return self.distance_impact, self.velocity_impact, self.angle_impact, self.time_impact
+        return distance_impact, velocity_impact, angle_impact, self.time_impact
 
     def __compute_gamma_and_c(self):
         self.c = 0.5 * self.aircraft.ballistic_frontal_area * self.rho * self.aircraft.ballistic_drag_coefficient

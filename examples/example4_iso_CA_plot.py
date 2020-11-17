@@ -24,7 +24,6 @@ def example4_iso_CA_plot():
     person_height = 1.8
 
     # Instantiate necessary classes.
-    FC = FrictionCoefficients()
     CA = CriticalAreaModels(person_width, person_height)
 
     # Set aircraft values.

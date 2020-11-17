@@ -16,12 +16,6 @@ This example shows this for the following parameters:
 Note that not all models include all of the above parameters. If a model does not include a
 specific parameters, it does not produce a vector output, even if a vector input is given
 for that parameter.
-
-Version history:
-V1.0: Original version [Oct 19, 2019]
-
-Authors:
-* Anders la Cour-Harbo, anders@lacourfamily.dk
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -51,11 +45,8 @@ def example3_vector_input():
     aircraft.set_fuel_quantity(5)
     aircraft.set_friction_coefficient(friction_coefficient)
 
-    # Use the same impact speed for all models.
-    # Computed here based on kinetic energy.
+    # Set impact speed and angle.
     impact_speed = 50
-
-    # Impact angle.
     impact_angle = 25
 
     # Fraction of overlap between lethal area from aircraft and from deflagration (explosion).
@@ -68,61 +59,54 @@ def example3_vector_input():
     # Compute the lethal area for the vector input parameters.
     p = []
 
-    # Varying width.
+    # This is how to very the width.
     v_width = np.linspace(1, 5, 100)
     aircraft.set_width(v_width)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
+    # This is how to vary the length.
     aircraft.set_width(width)
-    # Varying length.
     v_length = np.linspace(1, 5, 100)
     aircraft.set_length(v_length)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
-    aircraft.set_width(length)
-    # Varying impact_angle.
+    # This is how to vary the impact_angle.
+    aircraft.set_width(width)
     v_impact_angle = np.linspace(10, 80, 100)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
 
-    impact_angle = 25
     # Varying impact_speed.
     v_impact_speed = np.linspace(5, 40, 100)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
 
+    # This is how to vary the critical_area_overlap.
     impact_speed = 25
-    # Varying critical_area_overlap.
     v_critical_areas_overlap = np.linspace(0, 1, 100)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
 
-    # Varying fuel_quantity.
+    # This is how to vary the fuel_quantity.
     v_fuel_quantity = np.linspace(0, 10, 100)
     aircraft.set_fuel_quantity(v_fuel_quantity)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
+    # This is how to vary the friction coefficient (ground friction during slide).
     aircraft.set_fuel_quantity(5)
-    # Varying friction coefficient (ground friction during slide).
     v_friction_coefficient = np.linspace(0.2, 0.9, 100)
     aircraft.set_friction_coefficient(v_friction_coefficient)
-
     for model in enums.CriticalAreaModel:
         p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
-    aircraft.set_friction_coefficient(friction_coefficient)
 
     clr = ['blue', 'orange', 'red', 'green', 'purple']
 
-    # Plot this first example to the first of the four subplots.
+    # Now plotting all the results for all the models.
+    # Note that not all models support all types of variations, and therefore bellow
+    # some plots do not have all the models.
     for k in [0, 1, 2, 3, 4]:
         ax[0, 0].plot(v_width, p[k][0], color=clr[k], linewidth=1)
     ax[0, 0].set_xlabel('Width [m]', fontsize=12)

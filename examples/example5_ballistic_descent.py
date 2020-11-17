@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 from casex import BallisticDescent2ndOrderDragApproximation, enums, AircraftSpecs
 
-
 def example5_ballistic_descent():
     # Instantiate necessary classes.
     rho = 1.225
@@ -66,22 +65,22 @@ def example5_ballistic_descent():
     ax[0, 0].plot(initial_velocity_x, p[0][0], linewidth=2)
     ax[0, 0].set_xlabel('Initial velocity X [m/s]', fontsize=12)
     ax[0, 0].set_ylabel('Impact distance [m]', fontsize=12)
-    ax[0, 0].set_title('Impact distance for varying initial horizontal velocity')
+    ax[0, 0].set_title('Impact distance for varying initial horizontal velocity', fontsize=14)
 
     ax[0, 1].plot(initial_velocity_y, p[1][1], linewidth=2)
     ax[0, 1].set_xlabel('Initial velocity Y [m/s]', fontsize=12)
     ax[0, 1].set_ylabel('Impact velocity [m/s]', fontsize=12)
-    ax[0, 1].set_title('Impact distance for varying initial vertical velocity')
+    ax[0, 1].set_title('Impact distance for varying initial vertical velocity', fontsize=14)
 
     ax[1, 0].plot(drag_coef, p[2][2] * 180 / np.pi, linewidth=2)
     ax[1, 0].set_xlabel('Drag coefficient [-]', fontsize=12)
     ax[1, 0].set_ylabel('Angle [deg]', fontsize=12)
-    ax[1, 0].set_title('Impact angle for varying drag coefficient')
+    ax[1, 0].set_title('Impact angle for varying drag coefficient', fontsize=14)
 
     ax[1, 1].plot(initial_velocity_y, p[1][3], linewidth=2)
     ax[1, 1].set_xlabel('Initial velocity X [m/s]', fontsize=12)
     ax[1, 1].set_ylabel('Descent time [s]', fontsize=12)
-    ax[1, 1].set_title('Descent time for varying initial vertical velocity')
+    ax[1, 1].set_title('Descent time for varying initial vertical velocity', fontsize=14)
 
     plt.show()
 

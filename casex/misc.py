@@ -67,7 +67,9 @@ class NormalDistributionParameters:
     def compute_sampling(self, times_sigma, num_of_samples):
         """Computes a sampling of the normal distribution.
 
-        The normal distribution can be plotted using output set against input set.
+        The normal distribution can be plotted using output set against input set. This method computes the input set
+        as a linear function and the output set as the normal distribution from the input set. Both sets are parameters
+        in the class.
 
         Parameters
         ----------
@@ -78,10 +80,7 @@ class NormalDistributionParameters:
             
         Returns
         -------
-        input_set : float array
-            The domain for the sampling (i.e. the input to the distribution, or the x axis values).
-        output_set : float array
-            The value set for the sampling (i.e. the output of the distribution, or the y axis values).
+        None
         """
         self.input_set = np.linspace(self.mu - times_sigma * self.sigma, self.mu + times_sigma * self.sigma,
                                      num_of_samples)

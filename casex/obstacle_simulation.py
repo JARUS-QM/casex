@@ -22,7 +22,7 @@ def obstacle_simulation():
     """
     start_time = time.time()
 
-    ## CA properties.
+    # CA properties.
     CA_width = 3
     CA_length = 67
     trials_count = 2000
@@ -34,7 +34,7 @@ def obstacle_simulation():
     obstacle_length_mu = 9
     obstacle_length_sigma = 2
 
-    ## These are the values used in the simulation presented in Annex F Appendix B
+    # These are the values used in the simulation presented in Annex F Appendix B
     # CA_width = 3
     # CA_length = 67
     # trials_count = 200
@@ -71,7 +71,7 @@ def obstacle_simulation():
     OS.generate_CAs(trials_count)
     print('Generate polygons time:  {:1.3f} sec'.format(time.time() - gen_polygons_time))
 
-    ### Run trials.
+    # Run trials.
     intersection_time = time.time()
     OS.compute_reduced_CAs()
     OS.compute_CA_lengths()
@@ -88,7 +88,7 @@ def obstacle_simulation():
     else:
         print('Sanity check time:       None')
 
-    ### Compute the probability based on theory.
+    # Compute the probability based on theory.
     if do_theory:
         theory_time = time.time()
         x_resolution = 10
@@ -99,7 +99,7 @@ def obstacle_simulation():
         print('Theory time:             {:1.3f} sec'.format(time.time() - theory_time))
         beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
 
-    ### Create figure for visual output.
+    # Create figure for visual output.
     viz_time = time.time()
     show_CA_as_size = False
     fig = plt.figure(1, figsize=(12, 8), dpi=90)

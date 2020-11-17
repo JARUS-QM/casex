@@ -8,7 +8,6 @@ import numpy as np
 
 from casex import AircraftSpecs, enums, BallisticDescent2ndOrderDragApproximation
 
-
 class AnnexFParms:
     """This class provides support for redoing some of the computations found in Annex F.
     
@@ -17,53 +16,54 @@ class AnnexFParms:
     Attributes
     ----------
     wingspan : float
-        Same as width.
+        Characteristic dimension of the aircraft. See Annex F for more detailed explanation on what that is.
     critical_area_target : float
-        Size of the largest critical area for each size class.
+        [m^2] Size of the largest critical area for each size class.
     cruise_speed : float
-        Maximum cruise speed for each size class.
+        [m/s]Maximum cruise speed for each size class.
     mass : float
-        Assumed biggest mass for each size class.
+        [kg] Assumed biggest mass for each size class.
     KE_critical : float
-        Non-lethal energy during slide.
+        [J] Non-lethal energy during slide.
     friction_coefficient = 0.5 : float
-        The friction coefficient is assumed constant throughout Annex F.
+        [-] The friction coefficient is assumed constant at 0.5 throughout Annex F.
     glide_reduce = 0.7 : float
-        Reduction in glide speed relative to cruise speed.
+        [-] Reduction in glide speed relative to cruise speed.
     glide_speed : float
-        MISSING DOC
+        [m/s] The glide speed resulting from multiplying the cruise speed by glide_reduce.
     aircraft : :class:'AircraftSpecs'
-        MISSING DOC
+        The class contining information about the aircraft.
     scenario_angles = [9, 35, 80] : MISSING DOC
-       The three impact angles for the three descent scenarios. The 80 degrees is recomputed for each ballistic descent.
+        [deg]The three impact angles for the three descent scenarios. The 80 degrees is recomputed for each ballistic descent.
     terminal_velocity : float
-        Terminal velocity for aircraft.
+        [m/s] Terminal velocity for aircraft.
     ballistic_frontal_area : float
-        Assumed frontal area used in ballistic computations.
+        [m^2] Assumed frontal area used in ballistic computations.
     ballistic_drag_coefficient = 0.7 : float
-        Drag coefficient used for ballistic descent.
+        [-] Drag coefficient used for ballistic descent.
     ballistic_descent_altitude : float
-        Assumed altitude for beginning of ballistic descent.
+        [m] Assumed altitude for beginning of ballistic descent.
     ballistic_impact_velocity :float
-        Assumed horizontal velocity for beginning of ballistic descent.
+        [m/s] Assumed horizontal velocity for beginning of ballistic descent.
     ballistic_impact_angle : float
-        Computed impact angle.
+        [deg] Computed impact angle with 0 being horizontal.
     ballistic_distance : float
-        Computed horizontal distance traveled during ballistic descent.
+        [m] Computed horizontal distance traveled during ballistic descent.
     ballistic_impact_KE : float
-        Computed kinetic energy of aircraft just prior to impact.
+        [J] Computed kinetic energy of aircraft just prior to impact.
     ballistic_descent_time : float
-        Computed descent time for ballistic descent.
+        [s] Computed descent time for ballistic descent.
     rho = 1.225 : float
-        Density of air [kg/m^3].
+        [kg/m^3] Density of air.
     impact_angle : float
-        MISSING DOC
+        [deg] The impact angle of the aircraft when crashing, measure relative to horizontal.
     aircraft_type : :class:`enums.AircraftType`
-        MISSING DOC
+        The type of aircraft. This parameters is not currently used.
     horizontal_COR : float
-        MISSING DOC
+        [-] The coefficient of restitution for a near horizontal impact.
     vertical_COR : float
-        MISSING DOC
+        [-] The coefficient of restitution for a vertical impact. The actual COR is determined as a first order interpolation between horizontal_COR for 0 degrees and
+        vertical_COR for 90 degrees.
     """
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
     @dataclass
@@ -158,12 +158,12 @@ class AnnexFParms:
         Parameters
         ----------
         pop_dens : float
-            Population density [ppl/km^2] (Note that this function converts the density to ppl/m^2
+            [ppl/km^2] Population density  (Note that this function converts the density to ppl/m^2
             as needed for the equation).
         CA : float
-            Size of the critical area [m^2].
+            [m^2] Size of the critical area.
         TLOS : float, optional (default is 1e-6)
-            Target level of safety [fatalities per flight hour].
+            [fatalities per flight hour] Target level of safety.
             
         Returns
         -------
