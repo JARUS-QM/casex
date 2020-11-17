@@ -14,7 +14,7 @@ Example 1: Critical area
 .. literalinclude:: ../../../examples/example1_critical_area.py
     :lines: 31-51
 
-*Text explaining the output of the code*
+*Text explaining the output*
 
 .. code-block:: console
 
