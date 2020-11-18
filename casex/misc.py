@@ -19,12 +19,13 @@ class NormalDistributionParameters:
         The domain for the sampling (i.e. the input to the distribution, or the x axis values).
     output_set : float array
         The value set for the sampling (i.e. the output of the distribution, or the y axis values).
-    mu : float, optional (default is 0)
-        Mean of the normal distribution.
-    sigma : float, optional (default is 1)
-        Standard deviation of the normal distribution.
-    wrapping_type : :class:`enums.Wrapping`, optional (default is EWrapping.NONE)
-        The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi.
+    mu : float, optional
+        Mean of the normal distribution (the default is 0).
+    sigma : float, optional
+        Standard deviation of the normal distribution (the default is 1).
+    wrapping_type : :class:`enums.Wrapping`, optional
+        The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi
+        (the default is EWrapping.NONE).
     """
 
     def __init__(self, mu=0.0, sigma=1.0, wrapping_type=enums.Wrapping.NONE):
@@ -32,12 +33,13 @@ class NormalDistributionParameters:
         
         Parameters
         ----------
-        mu : float, optional (default is 0)
-            Mean of the normal distribution.
-        sigma : float, optional (default is 1)
-            Standard deviation of the normal distribution.
-        wrapping_type : :class:`enums.Wrapping`, optional (default is EWrapping.NONE)
-            The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi.
+        mu : float, optional
+            Mean of the normal distribution (the default is 0).
+        sigma : float, optional
+            Standard deviation of the normal distribution (the default is 1).
+        wrapping_type : :class:`enums.Wrapping`, optional
+            The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi
+            (the default is EWrapping.NONE).
         """
         self.input_set = None
         self.output_set = None

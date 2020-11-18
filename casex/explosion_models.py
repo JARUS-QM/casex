@@ -54,7 +54,7 @@ class ExplosionModels:
             [kg] Equivalent TNT mass to the explosive material.
             Use :class:`ComputeTNTEquivalentMass` to determine this value.
         K : float, optional
-            [kg/m^(1/3)] Scaling factor for acceptable risk. Default value is 7.14.
+            [kg/m^(1/3)] Scaling factor for acceptable risk (the default is 7.14).
             
         Returns
         -------      
