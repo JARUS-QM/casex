@@ -11,7 +11,8 @@ class AircraftSpecs:
     """Class to hold parameters on the aircraft used in area computations
     
     This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be
-    computed.
+    computed. Many of the these parameters are not used in computations of critical area, but are reserved for
+    future use.
 
     Attributes
     ----------
@@ -62,8 +63,6 @@ class AircraftSpecs:
         MISSING DOC
     max_LD_ratio : float
         MISSING DOC
-    
-    Many of the these parameters are not used in computations of critical area, but are reserved for future use.
     """
 
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
