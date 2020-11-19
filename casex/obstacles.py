@@ -519,30 +519,30 @@ class Obstacles:
         None
         """
         # Viz all the original CAs
-        if options.get("CAs") == "True":
+        if options.get("CAs"):
             for CA in self.CAs:
                 x, y = CA.exterior.coords.xy
                 ax.plot(x, y, '-', color=self.BLACK, linewidth=0.25)
-                if options.get("CA_first_point") == "True":
+                if options.get("CA_first_point"):
                     ax.plot(x[0], y[0], 'o', color=self.BLACK)
 
-        if options.get("CAs_reduced") == "True":
+        if options.get("CAs_reduced"):
             for CAr in self.CAs_reduced:
                 if not CAr.is_empty:
                     ax.add_patch(
                         PolygonPatch(CAr, facecolor='#6600cc', edgecolor=self.RED, alpha=1, zorder=3, linewidth=0.25))
 
-        if options.get("obstacles_original") == "True":
+        if options.get("obstacles_original"):
             for o in self.obstacles:
                 ax.add_patch(
                     PolygonPatch(o, facecolor='#00ff00', edgecolor='#000000', alpha=1, zorder=2, linewidth=0.25))
 
-        if options.get("obstacles_intersected") == "True":
+        if options.get("obstacles_intersected"):
             for o in self.intersected_obstacles:
                 ax.add_patch(
                     PolygonPatch(o, facecolor='#ff8800', edgecolor='#000000', alpha=1, zorder=2, linewidth=0.25))
 
-        if options.get("debug_points") == "True":
+        if options.get("debug_points"):
             for p in self.closest:
                 ax.plot(p.x, p.y, 'o', color='#ffff00')
 
