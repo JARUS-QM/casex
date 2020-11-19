@@ -4,7 +4,7 @@ MISSING DOC
 import matplotlib.pyplot as plt
 import numpy as np
 
-import casex
+from casex import CriticalAreaModels, AnnexFParms, enums
 
 
 def figure_GRC_model_vs_iGRC():
@@ -23,7 +23,7 @@ def figure_GRC_model_vs_iGRC():
     impact_angle = 9
 
     # Instantiate necessary classes.
-    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
+    CA = CriticalAreaModels(person_width, person_height)
 
     # Sampling density.
     pop_density_samples = 400
@@ -33,7 +33,7 @@ def figure_GRC_model_vs_iGRC():
     wingspan = np.linspace(0, 12, wingspan_samples)
 
     # Get the five scenario.
-    AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
+    AFP = AnnexFParms(impact_angle)
 
     fig, ax = plt.subplots(1, 1, figsize=(13, 7))
 
@@ -61,7 +61,7 @@ def figure_GRC_model_vs_iGRC():
 
         AFP.CA_parms[column].aircraft.width = wingspan[j]
 
-        M = 1e-6 * CA.critical_area(casex.enums.CriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed,
+        M = 1e-6 * CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed,
                                     impact_angle, 0, 0)[0]
 
         for i in range(len(pop_density)):

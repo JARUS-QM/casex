@@ -14,7 +14,7 @@ import math
 # This is used for the colorbar.
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-import casex
+from casex import AnnexFParms
 
 
 def figure_iGRC_CA_vs_PopDensity():
@@ -54,7 +54,7 @@ def figure_iGRC_CA_vs_PopDensity():
 
     # Instantiate the Annex F class. The impact angle is not relevant for this example, so the value is random.
     impact_angle = 35
-    AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
+    AFP = AnnexFParms(impact_angle)
 
     # Let CA span from 1 to 66k (we need to add a bit to the upper limit, so the numerics of the log10 does not
     # exclude he value from the axis).
