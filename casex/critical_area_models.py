@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from casex import enums, aircraft_specs, explosion_models, Conversion, constants, InvalidAircraftError
+from casex import enums, aircraft_specs, explosion_models, Conversion, constants, exceptions
 
 
 class CriticalAreaModels:
@@ -102,7 +102,7 @@ class CriticalAreaModels:
             critical_area_model = enums.CriticalAreaModel.RCC
 
         if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
-            raise InvalidAircraftError("Aircraft not recognized. Must be of type AircraftSpecs")
+            raise exceptions.InvalidAircraftError("Aircraft not recognized. Must be of type AircraftSpecs")
 
         # Instantiate necessary classes.
         exp = explosion_models.ExplosionModels()
