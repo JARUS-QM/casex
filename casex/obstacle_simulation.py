@@ -44,8 +44,8 @@ def obstacle_simulation():
     # obstacle_width_sigma = 6
     # obstacle_length_mu = 9
     # obstacle_length_sigma = 2
-    
-    # Bools to control the computations and visualization
+
+    # Booleans to control the computations and visualization
     do_compute_coverage = True
     do_sanity_check = False
     do_theory = True
@@ -59,12 +59,13 @@ def obstacle_simulation():
         houses_along_street = 22
         rows_of_houses = 12
         distance_between_two_houses = 20
-        OS.generate_rectangular_obstacles_along_curves(obstacle_width_mu, obstacle_width_sigma,
-                                                         obstacle_length_mu, obstacle_length_sigma, houses_along_street, rows_of_houses, distance_between_two_houses)
+        OS.generate_rectangular_obstacles_along_curves(obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
+                                                       obstacle_length_sigma, houses_along_street, rows_of_houses,
+                                                       distance_between_two_houses)
     else:
         OS.generate_rectangular_obstacles_normal_distributed(num_of_obstacles, obstacle_width_mu, obstacle_width_sigma,
-                                                         obstacle_length_mu, obstacle_length_sigma)
-    
+                                                             obstacle_length_mu, obstacle_length_sigma)
+
     # Number of obstacles may come from OS, so use that value
     obstacle_density = OS.num_of_obstacles / OS.trial_area_sidelength / OS.trial_area_sidelength
 
@@ -95,7 +96,7 @@ def obstacle_simulation():
         x = np.linspace(0, CA_length, x_resolution)
         pdf_resolution = 25
         p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
-                                                          obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
+                                                    obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
         print('Theory time:             {:1.3f} sec'.format(time.time() - theory_time))
         beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
 
@@ -105,8 +106,8 @@ def obstacle_simulation():
     fig = plt.figure(1, figsize=(12, 8), dpi=90)
     if do_viz:
         ax1 = fig.add_subplot(121)
-        OS.show_simulation(ax1, CAs="True", CAs_reduced="True", obstacles_original="True", obstacles_intersected="True",
-                           CA_first_point="False", debug_points="False")
+        OS.show_simulation(ax1, CAs=True, CAs_reduced=True, obstacles_original=True, obstacles_intersected=True,
+                           CA_first_point=False, debug_points=False)
         ax2 = fig.add_subplot(122)
     else:
         ax2 = fig.add_subplot(111)
@@ -141,7 +142,8 @@ def obstacle_simulation():
     if do_compute_coverage:
         print('Obstacle total area:     {:1.0f} m^2'.format(OS.total_obstacle_area))
         print('Obstacle coverage (num): {:1.0f} m^2'.format(OS.total_coverage))
-        print('Obstacle coverage (ana): {:1.0f} m^2'.format(OS.num_of_obstacles * obstacle_width_mu * obstacle_length_mu))
+        print('Obstacle coverage (ana): {:1.0f} m^2'.format(
+            OS.num_of_obstacles * obstacle_width_mu * obstacle_length_mu))
         print('Coverage ratio:          {:1.3f}'.format(OS.total_coverage / OS.total_obstacle_area))
     if do_theory:
         print('beta (numerical):        {:1.5f}'.format(beta_numerical))
@@ -162,7 +164,7 @@ def obstacle_simulation():
 
     plt.show()
 
-    #fig.savefig('Sim_random.png', format='png', dpi=300)
+    # fig.savefig('Sim_random.png', format='png', dpi=300)
 
 
 if __name__ == '__main__':

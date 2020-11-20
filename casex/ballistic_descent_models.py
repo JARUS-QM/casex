@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-from casex import constants
+from casex import constants, exceptions
 
 
 class BallisticDescent2ndOrderDragApproximation:
@@ -117,6 +117,13 @@ class BallisticDescent2ndOrderDragApproximation:
             MISSING DOC
         time impact: float
             [s] Time from event to impact.
+
+        Raises
+        ------
+        NegativeHorizontalVelocityError
+            If the initial horizontal velocity is negative.
+        HorizontalSmallerThanVerticalVelocityError
+            If the initial horizontal velocity is smaller than the initial vertical velocity.
         """
         # Update Gamma and c based on the drag coefficient(s).
         self.__compute_gamma_and_c()
@@ -133,10 +140,11 @@ class BallisticDescent2ndOrderDragApproximation:
         Gd = self.__compute_G_d(vi_y_m)
 
         if np.any(initial_velocity_x < 0):
-            raise Exception('This function does not support negative initial horizontal velocity.')
+            raise exceptions.NegativeHorizontalVelocityError(
+                "This function does not support negative initial horizontal velocity.")
         if np.any(initial_velocity_x < initial_velocity_y):
-            raise Exception('This function does not yet support initial horizontal velocity smaller than initial'
-                            ' vertical velocity.')
+            raise exceptions.HorizontalSmallerThanVerticalVelocityError(
+                "This function does not yet support initial horizontal velocity smaller than initial vertical velocity.")
 
         # Time of top point.
         t_top = self.__compute_t_top(vi_y_n)

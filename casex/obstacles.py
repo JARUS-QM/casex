@@ -104,9 +104,9 @@ class Obstacles:
                                                           length_sigma):
         """Generate a set of uniformly distributed rectangular obstacles.
         
-        This method generates a number of rectangular obstacles which a co-linear with the axes, and with width and length
-        varying according to normal distributions with the mean and standard deviation as given by input parameters. The position
-        of the obstacles are uniformly distributed in 2D in the trial area.
+        This method generates a number of rectangular obstacles which a co-linear with the axes, and with width and
+        length varying according to normal distributions with the mean and standard deviation as given by input
+        parameters. The position of the obstacles are uniformly distributed in 2D in the trial area.
 
         Parameters
         ----------
@@ -138,7 +138,8 @@ class Obstacles:
             obs = [(0, 0), (length[k], 0), (length[k], width[k]), (0, width[k]), (0, 0)]
             self.obstacles.append(affinity.translate(Polygon(obs), trans_x[k], trans_y[k]))
 
-    def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu, length_sigma, houses_along_street, rows_of_houses, distance_between_two_houses):
+    def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu, length_sigma,
+                                                    houses_along_street, rows_of_houses, distance_between_two_houses):
         """Generate a set of obstacles that follows a curve.
         
         Rectangular obstacles are generated so that they follow a vertical curve and located in parts. This is to
@@ -162,54 +163,56 @@ class Obstacles:
         rows_of_houses : float
             The number of rows of houses (12 is a good starting number).
         distance_between_two_houses : float
-            [m] The distance between two houses that make up the pair of houses that shares a common border, but are on two different streets (20 m is a good starting number).
+            [m] The distance between two houses that make up the pair of houses that shares a common border,
+            but are on two different streets (20 m is a good starting number).
 
         Returns
         -------
         None
         """
-        # Number of rows of houses per side length. This is expanded to cover the entire area (because the rows are curved)
+        # Number of rows of houses per side length. This is expanded to cover the entire area
+        # (because the rows are curved).
         rows_of_houses = 12
         rows_of_houses = round(rows_of_houses * 1.25)
 
-        # Distance between two houses in each set of houses (neighbouring houses from separate streets)
+        # Distance between two houses in each set of houses (neighbouring houses from separate streets).
         distance_between_two_houses = 20
-        
+
         self.num_of_obstacles = houses_along_street * 2 * rows_of_houses
 
         width = stats.norm.rvs(size=self.num_of_obstacles, loc=width_mu, scale=width_sigma)
         length = stats.norm.rvs(size=self.num_of_obstacles, loc=length_mu, scale=length_sigma)
 
-        # Points to create a curvy road
+        # Points to create a curvy road.
         x_points = np.linspace(0, 1000, 11)
         y_points = np.array([10, 40, 80, 100, 80, 50, 80, 120, 150, 210, 270])
         coefs = interpolate.splrep(x_points, y_points)
 
-        # Compute position and rotation of houses
+        # Compute position and rotation of houses.
         x = np.linspace(0, 1000, houses_along_street)
         y = np.linspace(-250, 1000, rows_of_houses)
         x2 = np.full(houses_along_street, 1000 / (houses_along_street + 1))
-        y2 = np.diff(interpolate.splev(x, coefs), prepend = -10)
+        y2 = np.diff(interpolate.splev(x, coefs), prepend=-10)
         r = []
         for k in range(22):
             r.append(-math.atan2(y2[k], x2[k]) * 180 / math.pi)
 
-        # Add houses, only those inside the trial area
+        # Add houses, only those inside the trial area.
         counter = 0
         for j in range(0, rows_of_houses):
             for k in range(0, houses_along_street):
                 trans_x = interpolate.splev(x[k], coefs) + y[j]
                 trans_y = x[k]
-                if (trans_x > 0 and trans_y > 0 and trans_x < self.trial_area_sidelength and trans_y < self.trial_area_sidelength):
+                if 0 < trans_x < self.trial_area_sidelength and 0 < trans_y < self.trial_area_sidelength:
                     obs = [(0, 0), (length[counter], 0), (length[counter], width[counter]), (0, width[counter]), (0, 0)]
                     self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), r[k]), trans_x, trans_y))
                 counter = counter + 1
                 trans_x = trans_x + distance_between_two_houses
-                if (trans_x > 0 and trans_y > 0 and trans_x < self.trial_area_sidelength and trans_y < self.trial_area_sidelength):
+                if 0 < trans_x < self.trial_area_sidelength and 0 < trans_y < self.trial_area_sidelength:
                     obs = [(0, 0), (length[counter], 0), (length[counter], width[counter]), (0, width[counter]), (0, 0)]
                     self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), r[k]), trans_x, trans_y))
                 counter = counter + 1
-                
+
         self.num_of_obstacles = len(self.obstacles)
 
     def generate_CAs(self, trials_count):
@@ -256,8 +259,8 @@ class Obstacles:
     def compute_reduced_CAs(self):
         """Compute the reduction for each CA
         
-        Any CA that intersects with an obstacles is reduced such as to no longer intersect with any obstacles. This method
-        runs through all CAs and all obstacles and produces a list of CAs that
+        Any CA that intersects with an obstacles is reduced such as to no longer intersect with any obstacles.
+        This method runs through all CAs and all obstacles and produces a list of CAs that.
 
         Parameters
         ----------
@@ -324,7 +327,7 @@ class Obstacles:
                             # Iterate over all resulting polygons after splitting the CA.
                             for CA_split in CA_splitted:
 
-                                # Look for the one where the distance to the beginning of the CA is (very close to) zero
+                                # Look for the one where the distance to the beginning of the CA is (very close to) zero.
                                 if (CA_split.distance(CA_original_coords[0]) < self.__epsilon) | (
                                         CA_split.distance(CA_original_coords[1]) < self.__epsilon):
                                     CA_polygon = CA_split
@@ -351,7 +354,7 @@ class Obstacles:
         This function finds all the coordinates of the non-rectangular (split) CA that were not in the original CA
         and the one closest to the beginning of the CA (called p_closest) will be used for creating the rectangle.
         When we compute a new CA polygon consisting of p_closest and the two points at the beginning
-        of the CA, plus a fourth point that make the polygon a rectangle
+        of the CA, plus a fourth point that make the polygon a rectangle.
         """
         # Get the coordinates of the input polygon as Points.
         CA_reduced_polygon_coords = MultiPoint(CA_polygon.exterior.coords)
@@ -516,30 +519,30 @@ class Obstacles:
         None
         """
         # Viz all the original CAs
-        if options.get("CAs") == "True":
+        if options.get("CAs"):
             for CA in self.CAs:
                 x, y = CA.exterior.coords.xy
                 ax.plot(x, y, '-', color=self.BLACK, linewidth=0.25)
-                if options.get("CA_first_point") == "True":
+                if options.get("CA_first_point"):
                     ax.plot(x[0], y[0], 'o', color=self.BLACK)
 
-        if options.get("CAs_reduced") == "True":
+        if options.get("CAs_reduced"):
             for CAr in self.CAs_reduced:
                 if not CAr.is_empty:
                     ax.add_patch(
                         PolygonPatch(CAr, facecolor='#6600cc', edgecolor=self.RED, alpha=1, zorder=3, linewidth=0.25))
 
-        if options.get("obstacles_original") == "True":
+        if options.get("obstacles_original"):
             for o in self.obstacles:
                 ax.add_patch(
                     PolygonPatch(o, facecolor='#00ff00', edgecolor='#000000', alpha=1, zorder=2, linewidth=0.25))
 
-        if options.get("obstacles_intersected") == "True":
+        if options.get("obstacles_intersected"):
             for o in self.intersected_obstacles:
                 ax.add_patch(
                     PolygonPatch(o, facecolor='#ff8800', edgecolor='#000000', alpha=1, zorder=2, linewidth=0.25))
 
-        if options.get("debug_points") == "True":
+        if options.get("debug_points"):
             for p in self.closest:
                 ax.plot(p.x, p.y, 'o', color='#ffff00')
 
@@ -630,7 +633,7 @@ class Obstacles:
         -------
         C : MultiPoint
             The result of the computation as a Multipoint (collection of points) and not a polygon.
-        """        
+        """
         Av = MultiPoint(A.exterior.coords)
         Bv = MultiPoint(B.exterior.coords)
         Cv = []
@@ -730,13 +733,13 @@ class Obstacles:
         return mirrored
 
     def cdf(self, x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
-                  obstacle_length_sigma, pdf_resolution):
+            obstacle_length_sigma, pdf_resolution):
         """Compute the CDF for the length of the critical area when rectangular obstacles are present.
         
-        This is the CDF for the length of the critical area when there are a given obstacle density of rectangular obstacles with
-        dimension given by normal distributions. To draw the full CDF, a typical input for x is an array ranging in value from
-        0 to the nominal length of the CA. Since this is usually a rather smooth curve, it can be approximated well by relatively
-        few x values (typically 10 or 15).
+        This is the CDF for the length of the critical area when there are a given obstacle density of rectangular
+        obstacles with dimension given by normal distributions. To draw the full CDF, a typical input for x is an array
+        ranging in value from 0 to the nominal length of the CA. Since this is usually a rather smooth curve, it can be
+        approximated well by relatively few x values (typically 10 or 15).
         
         For a more detailed explanation of the CDF, see [lacour2021]. MISSING DOC.
 
@@ -745,8 +748,9 @@ class Obstacles:
         x : (List of) float(s)
             [m] The length of the critical area for which the CDF is computed. This can be a scalar or an array.
         obstacle_density : float
-            [1/m^2] The density of obstacles measured as the number of obstacles per square meter. Note that in many cases, the obstacles density is
-            given as obstacles per square kilometer. If so, the user must take care to divide by 1e6 before using this method.
+            [1/m^2] The density of obstacles measured as the number of obstacles per square meter. Note that in many
+            cases, the obstacles density is given as obstacles per square kilometer. If so, the user must take care to
+            divide by 1e6 before using this method.
         obstacle_width_mu : float
             The mean of the normal distribution of the width of the obstacles.
         obstacle_width_sigma : float
@@ -765,7 +769,8 @@ class Obstacles:
         beta : float
             The beta values as computed in [lacour2021]. MISSING DOC
         acc_probability_check : float
-            A sanity check on the triple integral. This values should be relatively close to 1, especially for high value of pdf_resolution.
+            A sanity check on the triple integral. This values should be relatively close to 1, especially for high
+            value of pdf_resolution.
         """
         # Sample the obstacle PDF.
         width = np.linspace(obstacle_width_mu - 3 * obstacle_width_sigma, obstacle_width_mu + 3 * obstacle_width_sigma,
@@ -783,7 +788,7 @@ class Obstacles:
         pdf_length_step = (length[-1] - length[0]) / (pdf_resolution - 1)
         pdf_CA_orientation_step = (CA_orientation[-1] - CA_orientation[0]) / (pdf_resolution - 1)
 
-        # The assumption is that the input is a list, so if it is scalar, change it to a list
+        # The assumption is that the input is a list, so if it is scalar, change it to a list.
         if not isinstance(x, np.ndarray):
             x = np.array([x])
 
@@ -808,7 +813,7 @@ class Obstacles:
                 for index_w, w in enumerate(width):
                     for index_l, l in enumerate(length):
                         minkowski_area = self.Minkowski_sum_convex_polygons_area(self.CA_width, x_val, w, l,
-                                                                                     orientation_val, 0)
+                                                                                 orientation_val, 0)
                         p_width = pdf_width[index_w] * pdf_width_step
                         p_length = pdf_length[index_l] * pdf_length_step
                         p_orientation = pdf_CA_orientation[idx_orientation] * pdf_CA_orientation_step

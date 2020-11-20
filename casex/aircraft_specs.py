@@ -11,7 +11,8 @@ class AircraftSpecs:
     """Class to hold parameters on the aircraft used in area computations
     
     This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be
-    computed.
+    computed. Many of the these parameters are not used in computations of critical area, but are reserved for
+    future use.
 
     Attributes
     ----------
@@ -32,9 +33,9 @@ class AircraftSpecs:
         Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume of the battery.
     friction_coefficient : float
         Coefficient of friction between aircraft and ground. Appropriate values can be found using
-        :class:`FrictionCoefficients`. Default value is 0.6.
+        :class:`FrictionCoefficients` (the default is 0.6).
     coefficient_of_restitution : float
-        Coefficient of restitution expresses the loss of energy on impact. Default value is 0.7.
+        Coefficient of restitution expresses the loss of energy on impact (the default is 0.7).
     ballistic_frontal_area : float
         Frontal area of the aircraft during ballistic descent. This is the area size of the aircraft as projected
         in the direction of descent.
@@ -62,8 +63,6 @@ class AircraftSpecs:
         MISSING DOC
     max_LD_ratio : float
         MISSING DOC
-    
-    Many of the these parameters are not used in computations of critical area, but are reserved for future use.
     """
 
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
@@ -190,7 +189,6 @@ class AircraftSpecs:
         
         Parameters
         ----------
-        None
 
         Returns
         -------
@@ -267,8 +265,8 @@ class AircraftSpecs:
         Parameters
         ----------
         friction_coefficient : float
-            [-] Coefficient for the glide resistance. Default value if not set is 0.6.
- 
+            [-] Coefficient for the glide resistance (the default is 0.6).
+
         Returns
         -------
         None
@@ -286,7 +284,7 @@ class AircraftSpecs:
         Parameters
         ----------
         coefficient_of_restitution : float
-            [-] Coefficient of restitution for the ground impact. Default value if not set is 0.7.
+            [-] Coefficient of restitution for the ground impact (the default is 0.7).
  
         Returns
         -------
@@ -476,7 +474,6 @@ class AircraftSpecs:
  
         Parameters
         ----------
-        None
 
         Returns
         -------
@@ -540,7 +537,6 @@ class AircraftSpecs:
 
         Parameters
         ----------
-        None
  
         Returns
         -------

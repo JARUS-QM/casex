@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from casex import enums, aircraft_specs, explosion_models, Conversion, constants
+from casex import enums, aircraft_specs, explosion_models, Conversion, constants, exceptions
 
 
 class CriticalAreaModels:
@@ -16,9 +16,9 @@ class CriticalAreaModels:
     Attributes
     ----------
     buffer : float, optional
-        [m] Radius of a standard person as seen from above (default is 0.3 m).
+        [m] Radius of a standard person as seen from above (the default is 0.3 m).
     height : float, optional
-        [m] The altitude above the ground at which the aircraft can first impact a person (default is 1.8 m).
+        [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
     """
 
     def __init__(self, buffer=0.3, height=1.8):
@@ -27,9 +27,9 @@ class CriticalAreaModels:
         Parameters
         ----------          
         buffer : float, optional
-            [m] Radius of a standard person as seen from above (default is 0.3 m).
+            [m] Radius of a standard person as seen from above (the default is 0.3 m).
         height : float, optional
-            [m] The altitude above the ground at which the aircraft can first impact a person (default is 1.8 m).
+            [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
         """
         self.buffer = buffer
         self.height = height
@@ -90,6 +90,11 @@ class CriticalAreaModels:
             [m^2] The inert part of the critical area.
         deflagration area : float
             [m^2] The deflagration area as given by the deflagration model.
+
+        Raises
+        ------
+        InvalidAircraftError
+            If the aircraft is not of type AircraftSpecs.
         """
         # Check on input argument validity
         if not isinstance(critical_area_model, enums.CriticalAreaModel):
@@ -97,7 +102,7 @@ class CriticalAreaModels:
             critical_area_model = enums.CriticalAreaModel.RCC
 
         if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
-            raise Exception("Aircraft not recognized. Must be of type AircraftSpecs")
+            raise exceptions.InvalidAircraftError("Aircraft not recognized. Must be of type AircraftSpecs")
 
         # Instantiate necessary classes.
         exp = explosion_models.ExplosionModels()
@@ -404,4 +409,3 @@ class CriticalAreaModels:
         MISSING DOC
         """
         return np.sqrt(2 * KE / mass)
-

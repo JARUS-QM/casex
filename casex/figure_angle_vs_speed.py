@@ -4,7 +4,7 @@ MISSING DOC
 import matplotlib.pyplot as plt
 import numpy as np
 
-import casex
+from casex import CriticalAreaModels, AnnexFParms, enums
 
 
 def figure_angle_vs_speed():
@@ -22,7 +22,7 @@ def figure_angle_vs_speed():
     person_height = 1.8
 
     # Instantiate necessary class.
-    CA = casex.critical_area_models.CriticalAreaModels(person_width, person_height)
+    CA = CriticalAreaModels(person_width, person_height)
 
     # Sampling density.
     angle_samples = 100
@@ -35,7 +35,7 @@ def figure_angle_vs_speed():
     speed_plot_range = np.array([50, 70, 120, 250, 300])
 
     # Get the four scenario.
-    AFP = casex.annex_f_parms.AnnexFParms(impact_angle)
+    AFP = AnnexFParms(impact_angle)
 
     # Set to False to get plots in Annex F.
     # Set to True to see the CA matrix.
@@ -93,9 +93,8 @@ def figure_angle_vs_speed():
 
                 overlap = 0
 
-                CA_matrix[i, :] = CA.critical_area(casex.enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft,
-                                                   impact_speed_i, impact_angle, overlap, AFP.CA_parms[c].KE_critical)[
-                    0]
+                CA_matrix[i, :] = CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft,
+                                                   impact_speed_i, impact_angle, overlap, AFP.CA_parms[c].KE_critical)[0]
 
             # Show the CA matrix.
             if show_matrix:

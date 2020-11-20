@@ -8,6 +8,7 @@ import numpy as np
 
 from casex import AircraftSpecs, enums, BallisticDescent2ndOrderDragApproximation
 
+
 class AnnexFParms:
     """This class provides support for redoing some of the computations found in Annex F.
     
@@ -32,9 +33,10 @@ class AnnexFParms:
     glide_speed : float
         [m/s] The glide speed resulting from multiplying the cruise speed by glide_reduce.
     aircraft : :class:'AircraftSpecs'
-        The class contining information about the aircraft.
+        The class containing information about the aircraft.
     scenario_angles = [9, 35, 80] : MISSING DOC
-        [deg]The three impact angles for the three descent scenarios. The 80 degrees is recomputed for each ballistic descent.
+        [deg] The three impact angles for the three descent scenarios. The 80 degrees is recomputed for each ballistic
+        descent.
     terminal_velocity : float
         [m/s] Terminal velocity for aircraft.
     ballistic_frontal_area : float
@@ -62,9 +64,10 @@ class AnnexFParms:
     horizontal_COR : float
         [-] The coefficient of restitution for a near horizontal impact.
     vertical_COR : float
-        [-] The coefficient of restitution for a vertical impact. The actual COR is determined as a first order interpolation between horizontal_COR for 0 degrees and
-        vertical_COR for 90 degrees.
+        [-] The coefficient of restitution for a vertical impact. The actual COR is determined as a first order
+        interpolation between horizontal_COR for 0 degrees and vertical_COR for 90 degrees.
     """
+
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
     @dataclass
     class CAParameters:
@@ -90,7 +93,7 @@ class AnnexFParms:
         Parameters
         ----------
         impact_angle : float
-            The impact angle of the descending aircraft, measured relative to the ground [deg].
+            [deg] The impact angle of the descending aircraft, measured relative to the ground.
         """
         self.glide_reduce = 0.7
         self.friction_coefficient = 0.5
@@ -162,8 +165,8 @@ class AnnexFParms:
             as needed for the equation).
         CA : float
             [m^2] Size of the critical area.
-        TLOS : float, optional (default is 1e-6)
-            [fatalities per flight hour] Target level of safety.
+        TLOS : float, optional
+            [fatalities per flight hour] Target level of safety (the default is 1e-6).
             
         Returns
         -------
