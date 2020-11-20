@@ -34,9 +34,8 @@ def figure_iGRC_CA_vs_PopDensity():
     # Use a reduced granularity on the CA axis.
     show_reduced_CA_axis = True
 
-    # Uses the old SORA quantization (only applicable if show_reduced_CA_axis is True).
+    # Uses the SORA V2.0 quantization (only applicable if show_reduced_CA_axis is True).
     show_old_quantization = True
-    show_old_quantization = show_old_quantization and show_reduced_CA_axis
 
     # Show the iGRC numbers as iGRC-X instead of just X.
     show_iGRC_prefix = True
@@ -51,6 +50,66 @@ def figure_iGRC_CA_vs_PopDensity():
     show_x_wingspan = True
     show_x_velocity = True
     show_x_CA = False
+    
+    # If CA is shown, show it above the figure instead of below
+    show_x_CA_above = False
+
+    # Show a title
+    show_title = True
+    
+    # Save the image
+    save_image = False
+    filename = ''
+    
+    # Figure 1
+    if True:
+        show_with_obstacles = False
+        show_reduced_CA_axis = False
+        show_old_quantization = False
+        show_iGRC_prefix = True
+        show_additional_grid = False
+        show_colorbar = False
+        show_x_wingspan = False
+        show_x_velocity = False
+        show_x_CA = True
+        show_x_CA_above = False
+        show_title = False
+        save_image = True
+        filename = '_img1'
+
+    # Figure 2
+    if False:
+        show_with_obstacles = False
+        show_reduced_CA_axis = False
+        show_old_quantization = False
+        show_iGRC_prefix = True
+        show_additional_grid = False
+        show_colorbar = False
+        show_x_wingspan = True
+        show_x_velocity = True
+        show_x_CA = True
+        show_x_CA_above = True
+        show_title = False
+        save_image = True
+        filename = '_img2'
+
+    # Figure 3
+    if False:
+        show_with_obstacles = False
+        show_reduced_CA_axis = True
+        show_old_quantization = True
+        show_iGRC_prefix = True
+        show_additional_grid = False
+        show_colorbar = False
+        show_x_wingspan = True
+        show_x_velocity = False
+        show_x_CA = False
+        show_x_CA_above = False
+        show_title = False
+        save_image = True
+        filename = '_img3'
+
+    show_old_quantization = show_old_quantization and show_reduced_CA_axis
 
     # Instantiate the Annex F class. The impact angle is not relevant for this example, so the value is random.
     impact_angle = 35
@@ -91,19 +150,28 @@ def figure_iGRC_CA_vs_PopDensity():
         CA_ticks_additional = np.log10(np.array([20, 50, 100, 500, 1000, 5E3, 10E3, 4E4, 10E4]))
     else:
         CA_ticks_additional = []
-    ax.set_xticks(np.sort(np.concatenate([CA_ticks, CA_ticks_additional])))
+        
+    xtick_actual_values = np.sort(np.concatenate([CA_ticks, CA_ticks_additional]))
 
     # Add x tick labels.
     xtick_wingspan = ['1', 'n/a', '0.5', '1.2', '3', '1.6', '3.9', '8', '4.5', '9.5', '20', '22', '36']
     xtick_velocity = ['25', 'n/a', '35', '35', '35', '75', '75', '75', '150', '150', '150', '200', '200']
-    xtick_CA = ['6.5', '20', '50', '10', '200', '500', '1k', '2k', '5k', '10k', '20k', '40k', '66k']
+    xtick_CA = [6.5, 20, 50, 10, 200, 500, 1000, 2000, 5000, 10000, 20000, 40000, 66000]
 
+    #  Change CA tick labels to accommodate many labels
+    for k in range(len(xtick_CA)):
+        if show_additional_grid and xtick_CA[k] >= 1000:
+            xtick_CA[k] = str(xtick_CA[k] / 1000) + 'k'
+        else:
+            xtick_CA[k] = str(xtick_CA[k])
+    
     # Add units to x tick labels.
     for k in range(len(xtick_wingspan)):
         xtick_wingspan[k] = xtick_wingspan[k] + ' m'
         xtick_velocity[k] = xtick_velocity[k] + ' m/s'
         xtick_CA[k] = xtick_CA[k] + ' m$^2$'
 
+    # Remove unit on the two n/a
     xtick_wingspan[1] = 'n/a'
     xtick_velocity[1] = 'n/a'
 
@@ -118,9 +186,10 @@ def figure_iGRC_CA_vs_PopDensity():
                 xtick_actual_label[k] += '\n'
             xtick_actual_label[k] += xtick_velocity[k]
         if show_x_CA:
-            if show_x_velocity or show_x_wingspan:
-                xtick_actual_label[k] += '\n'
-            xtick_actual_label[k] += xtick_CA[k]
+            if not show_x_CA_above:
+                if show_x_velocity or show_x_wingspan:
+                    xtick_actual_label[k] += '\n'
+                xtick_actual_label[k] += xtick_CA[k]
 
     # Create the x axis label.
     x_actual_label = ''
@@ -134,16 +203,31 @@ def figure_iGRC_CA_vs_PopDensity():
         if show_x_velocity or show_x_wingspan:
             x_actual_label += ' + '
         x_actual_label += 'Critical area'
+        if show_x_CA_above:
+            x_actual_label += ' (above)'
+        
 
-    # Remove additional xtick labels is they are not requested.
+    # Remove additional xtick labels if they are not requested.
     if not show_additional_grid:
         xtick_actual_label = [xtick_actual_label[i] for i in [0, 4, 7, 10]]
+        xtick_CA = [xtick_CA[i] for i in [0, 4, 7, 10]]
 
     # Add empty labels at both ends.
     xtick_actual_label.insert(0, '')
     xtick_actual_label.append('')
-
+    xtick_CA.insert(0, '')
+    xtick_CA.append('')
+    
+    # Set tick values and labels
+    ax.set_xticks(xtick_actual_values)
     ax.set_xticklabels(xtick_actual_label, fontsize='16')
+
+    if show_x_CA and show_x_CA_above:
+        ax2 = ax.twiny()
+        ax2.tick_params(labeltop=True)
+        ax2.set_xticks(xtick_actual_values)
+        ax2.set_xticklabels(xtick_CA, fontsize='16')
+        
 
     # pop_density axis tick values in log10.
     if show_reduced_CA_axis:
@@ -155,6 +239,7 @@ def figure_iGRC_CA_vs_PopDensity():
     else:
         pop_density_ticks_additional = []
     ax.set_yticks(np.sort(np.concatenate([pop_density_ticks, pop_density_ticks_additional])))
+    
     # pop_density axis actual names at the ticks.
     if not show_additional_grid:
         if show_reduced_CA_axis:
@@ -164,11 +249,6 @@ def figure_iGRC_CA_vs_PopDensity():
     else:
         ax.set_yticklabels(
             ['', 0.1, 1, 5, 10, 20, 50, 100, 200, 400, 800, 1500, '3k', '8k', '15k', '30k', '60k', '100k', '500k'])
-
-    if show_additional_grid:
-        ax.tick_params(axis='both', which='major', labelsize=7)
-    else:
-        ax.tick_params(axis='both', which='major', labelsize=9)
 
     # Show vertical lines.
     for k in CA_ticks:
@@ -199,15 +279,17 @@ def figure_iGRC_CA_vs_PopDensity():
     x = np.diff(CA_ticks) / 2 + CA_ticks[0:len(CA_ticks) - 1:1]
     y = np.diff(pop_density_ticks) / 2 + pop_density_ticks[0:len(pop_density_ticks) - 1:1]
 
-    iGRC_fontsize = 12
+    iGRC_fontsize = 14
 
     if show_reduced_CA_axis:
+        # The old iGRC values
         old_iGRC = [
             [1, 2, 3, 4, 0],
             [3, 4, 5, 6, 0],
             [5, 6, 8, 10, 0],
             [8, 0, 0, 0, 0]
         ]
+        # The new iGRC values
         new_iGRC = [
             [1, 3, 4, 5, 5],
             [5, 6, 7, 8, 9],
@@ -254,31 +336,39 @@ def figure_iGRC_CA_vs_PopDensity():
                 clr = 'yellow'
             else:
                 clr = 'mediumblue'
-            ax.text(bands_x[k], bands_y[k], '{}'.format(k), color=clr, weight='bold', fontsize=10)
+            ax.text(bands_x[k], bands_y[k], '{}'.format(k), color=clr, weight='bold', fontsize=12)
 
     # Set axes labels.
-    ax.set_ylabel('Population density [ppl/km$^2$]', fontsize='16')
-    ax.set_xlabel(x_actual_label, fontsize='16')
+    ax.set_ylabel('Population density [ppl/km$^2$]', fontsize='18')
+    ax.set_xlabel(x_actual_label, fontsize='18')
 
     # Set axis limits.
     ax.set_xlim(math.log10(CA[0]), math.log10(CA[-1]))
     ax.set_ylim(math.log10(pop_density[-1]), math.log10(pop_density[0]))
 
-    ax.tick_params(axis="x", labelsize=14)
-    ax.tick_params(axis="y", labelsize=14)
+    if show_additional_grid:
+        ax.tick_params(axis='both', which='major', labelsize=9)
+        if show_x_CA_above:
+            ax2.tick_params(axis='both', which='major', labelsize=9)
+    else:
+        ax.tick_params(axis='both', which='major', labelsize=16)
+        if show_x_CA_above:
+            ax2.tick_params(axis='both', which='major', labelsize=16)
 
-    title = 'Critical area iso plot'
-    if show_old_quantization:
-        title += ', old SORA quantization'
-    if show_with_obstacles:
-        title += ', reduced CA due to obstacles'
+    if show_title:
+        title = 'Critical area iso plot'
+        if show_old_quantization:
+            title += ', old SORA quantization'
+        if show_with_obstacles:
+            title += ', reduced CA due to obstacles'
 
-    ax.set_title(title, fontsize='20')
+        ax.set_title(title, fontsize='20')
 
     plt.show()
 
     # Use this to generate a PNG file of the plot.
-    fig.savefig('iGRC_CA_vs_pop_density_img4.png', format='png', dpi=300)
+    if save_image:
+        fig.savefig('iGRC_CA_vs_pop_density' + filename + '.png', format='png', dpi=300)
 
 
 if __name__ == '__main__':
