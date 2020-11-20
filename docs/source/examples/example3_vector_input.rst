@@ -19,7 +19,7 @@ specific parameters, it does not produce a vector output, even if a vector input
 for that parameter.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 26-168
+    :lines: 20-151
 
 *Text explaining the output*
 

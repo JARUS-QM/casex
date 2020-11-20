@@ -5,7 +5,7 @@ Example 6: Obstacles
 *General text explaining what the example shows*
 
 .. literalinclude:: ../../../examples/example6_obstacles.py
-    :lines: 6-76
+    :lines: 6-75
 
 *Text explaining the console output*
 

@@ -7,12 +7,12 @@ Example 1: Critical area
 *Text explaining the first part of the code*
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 6-29
+    :lines: 6-28
 
 *Text explaining the second part of the code*
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 31-51
+    :lines: 30-50
 
 *Text explaining the output*
 

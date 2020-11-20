@@ -11,7 +11,7 @@ It also shows how to modify an existing setup to change from one aircraft
 to another.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 12-99
+    :lines: 12-98
 
 *Text explaining the output*
 
