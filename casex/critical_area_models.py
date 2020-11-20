@@ -11,7 +11,7 @@ from casex import enums, aircraft_specs, explosion_models, Conversion, constants
 
 
 class CriticalAreaModels:
-    """MISSING DOC
+    """This class provide methods for computing critical area for a variety of models.
 
     Attributes
     ----------
@@ -40,7 +40,7 @@ class CriticalAreaModels:
         The models are described in more detail in SORA Annex F. References for each model is given in the code.
         
         This function supports one of the following input parameters to be a vector, which will give a vector of the
-        same size as output:
+        same size as output: MISSING DOC [Does this become list?]
             
         * impact_speed
         * impact_angle
@@ -102,7 +102,7 @@ class CriticalAreaModels:
             critical_area_model = enums.CriticalAreaModel.RCC
 
         if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
-            raise exceptions.InvalidAircraftError("Aircraft not recognized. Must be of type AircraftSpecs")
+            raise exceptions.InvalidAircraftError("Aircraft not recognized. Must be of type AircraftSpecs.")
 
         # Instantiate necessary classes.
         exp = explosion_models.ExplosionModels()
@@ -241,7 +241,7 @@ class CriticalAreaModels:
         
         Sliding distance computed based on the assumption
             
-        .. math:: F = -f\cdot w,
+        .. math:: F = -f \cdot w,
             
         where F is the frictional force, f the frictional coefficient, and w the body weight.
         The slide distance is the length of the slide between impact and the body coming to rest.
@@ -254,7 +254,7 @@ class CriticalAreaModels:
         velocity : float
             [m/s] Horizontal component of the impact velocity.
         friction_coefficient : float
-            [] Friction coefficient, typically between 0.4 and 0.7.
+            [-] Friction coefficient, typically between 0.4 and 0.7.
         
         Returns
         -------
@@ -295,15 +295,20 @@ class CriticalAreaModels:
 
     @staticmethod
     def check_glide_angle(glide_angle):
-        """Performs a sanity check on the glide angle.
+        """Checks the glide angle.
+        
+        Issues a warning if the glide angle is out of range, or close to zero (which produces unrealistic results in the CA model).
+        It also flips the glide angle if it is between 90 and 180 degrees.
 
         Parameters
         ----------
-        MISSING DOC
+        glide_angle : float
+            [deg] The glide angle to be checked.
 
         Returns
         -------
-        MISSING DOC
+        glide_angle : float
+            [deg] The glide angle, which is either the same as the input, or flipped if needed.
         """
         # glide_angle out of range.
         if np.any(glide_angle < 0) or np.any(glide_angle > 180):
@@ -333,13 +338,14 @@ class CriticalAreaModels:
         Parameters
         ----------
         impact_angle : float
-            MISSING DOC
+            [deg] Impact angle of the aircraft.
         impact_speed : float
-            MISSING DOC
+            [m/s] Impact speed of the aircraft (speed in the direction of travel).
 
         Returns
         -------
-        MISSING DOC
+        horizontal_speed : float
+            [m/s] The horizontal compotent of the impact speed.
         """
         # Note that we use .abs, since cosine is negative for angles between 90 and 180.
         return np.fabs(np.cos(np.radians(impact_angle))) * impact_speed
@@ -351,30 +357,32 @@ class CriticalAreaModels:
         Parameters
         ----------
         glide_ratio : float
-            MISSING DOC
+            [-] The ratio between vertical and horizontal speed during glide.
         impact_speed : float
-            MISSING DOC
+            [m/s] The impact speed of the aircraft (in the direction of travel).
 
         Returns
         -------
-        MISSING DOC
+        horizontal_speed : float
+            [m/s] The horizontal compotent of the impact speed.
         """
         return (glide_ratio / np.power(np.power(glide_ratio, 2) + 1, 0.5)) * impact_speed
 
     @staticmethod
     def vertical_speed_from_angle(impact_angle, impact_speed):
-        """Compute vertical speed from descent angle.
+        """Compute vertical speed from impact angle.
 
         Parameters
         ----------
         impact_angle : float
-            MISSING DOC
+            [deg] Impact angle of the aircraft.
         impact_speed : float
-            MISSING DOC
+            [m/s] Impact speed of the aircraft (speed in the direction of travel).
 
         Returns
         -------
-        MISSING DOC
+        vertical_speed : float
+            [m/s] The vertical compotent of the impact speed.
         """
         return np.sin(np.radians(impact_angle)) * impact_speed
 
@@ -385,11 +393,12 @@ class CriticalAreaModels:
         Parameters
         ----------
         glide_ratio : float
-            MISSING DOC
+            [-] The ratio between vertical and horizontal speed during glide.
 
         Returns
         -------
-        MISSING DOC
+        glide_angle : float
+            [deg] The glide angle for the given glide ratio.
         """
         return np.rad2deg(np.arctan2(1, glide_ratio))
 
@@ -400,12 +409,13 @@ class CriticalAreaModels:
         Parameters
         ----------
         KE : float
-            MISSING DOC
+            [J] Kinetic energy of the aircraft.
         mass : float
-            MISSING DOC
+            [kg] Mass of the aircraft.
 
         Returns
         -------
-        MISSING DOC
+        speed : float
+            [m/s] The speed associated with the given kinetic energi and mass.
         """
         return np.sqrt(2 * KE / mass)
