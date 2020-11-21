@@ -80,8 +80,8 @@ class AircraftSpecs:
             [kg] Mass of the aircraft.
         fuel_type : :class:'enums.FuelType, optional
             MISSING DOC
-        fuel_quantity : float
-            MISSING DOC
+        fuel_quantity : float, optional
+            MISSING DOC (the default is 0).
         """
         self.ballistic_frontal_area = None
         self.ballistic_drag_coefficient = None

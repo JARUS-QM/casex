@@ -335,49 +335,49 @@ class Figures:
         fig.savefig('GRC comparison, {:d} degrees.png'.format(impact_angle), format='png', dpi=300)
 
     @staticmethod
-    def figure_iGRC_CA_vs_PopDensity():
+    def figure_iGRC_CA_vs_PopDensity(filename, show_with_obstacles=False, show_reduced_CA_axis=True,
+                                     show_old_quantization=True, show_iGRC_prefix=True, show_additional_grid=False,
+                                     show_colorbar=False, show_x_wingspan=True, show_x_velocity=True, show_x_CA=False,
+                                     show_x_CA_above=False, show_title=True, save_image=False):
         """MISSING DOC
 
         Parameters
         ----------
+        filename : str
+            Name of the output file (only applicable if save_image is True).
+        show_with_obstacles : bool, optional
+            If True show the calculated iGRC values with a reduction as shown in Annex F Table 17
+            (the default is False).
+        show_reduced_CA_axis : bool, optional
+            If True use a reduced granularity on the CA axis (the default is True).
+        show_old_quantization : bool, optional
+            If True uses the SORA V2.0 quantization (only applicable if show_reduced_CA_axis is True)
+            (the default is True).
+        show_iGRC_prefix : bool, optional
+            If True show the iGRC numbers as iGRC-X instead of just X (the default is True).
+        show_additional_grid : bool, optional
+            If True show additional grid lines. Makes it a bit cluttered, but assists in reading the table
+            (the default is False).
+        show_colorbar : bool, optional
+            If True show colorbar instead of numbers for the background ISO plot (the default is False).
+        show_x_wingspan : bool, optional
+            MISSING DOC (the default is True).
+        show_x_velocity : bool, optional
+            MISSING DOC (the default is True).
+        show_x_CA : bool, optional
+            MISSING DOC (the default is False).
+        show_x_CA_above : bool, optional
+            If True and CA is shown, show it above the figure instead of below (the default is False).
+        show_title : bool, optional
+            If True show the title (the default is True).
+        save_image : bool, optional
+            If True save the image to a PNG with the given filename.
 
         Returns
         -------
         None
         """
         # TODO: Update this when Annex F is finished.
-        # Show the calculated iGRC values with a reduction as shown in Annex F Table 17.
-        show_with_obstacles = False
-
-        # Use a reduced granularity on the CA axis.
-        show_reduced_CA_axis = True
-
-        # Uses the SORA V2.0 quantization (only applicable if show_reduced_CA_axis is True).
-        show_old_quantization = True
-
-        # Show the iGRC numbers as iGRC-X instead of just X.
-        show_iGRC_prefix = True
-
-        # Show additional grid lines. Makes it a bit cluttered, but assist in reading the table.
-        show_additional_grid = False
-
-        # Show colorbar instead of numbers for the background ISO plot.
-        show_colorbar = False
-
-        # Turn on/off three different labels on the x axis.
-        show_x_wingspan = True
-        show_x_velocity = True
-        show_x_CA = False
-
-        # If CA is shown, show it above the figure instead of below
-        show_x_CA_above = False
-
-        # Show a title
-        show_title = True
-
-        # Save the image
-        save_image = False
-        filename = ''
 
         # Figure 1
         if True:
