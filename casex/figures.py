@@ -379,54 +379,6 @@ class Figures:
         """
         # TODO: Update this when Annex F is finished.
 
-        # Figure 1
-        if True:
-            show_with_obstacles = False
-            show_reduced_CA_axis = False
-            show_old_quantization = False
-            show_iGRC_prefix = True
-            show_additional_grid = False
-            show_colorbar = False
-            show_x_wingspan = False
-            show_x_velocity = False
-            show_x_CA = True
-            show_x_CA_above = False
-            show_title = False
-            save_image = True
-            filename = '_img1'
-
-        # Figure 2
-        if False:
-            show_with_obstacles = False
-            show_reduced_CA_axis = False
-            show_old_quantization = False
-            show_iGRC_prefix = True
-            show_additional_grid = False
-            show_colorbar = False
-            show_x_wingspan = True
-            show_x_velocity = True
-            show_x_CA = True
-            show_x_CA_above = True
-            show_title = False
-            save_image = True
-            filename = '_img2'
-
-        # Figure 3
-        if False:
-            show_with_obstacles = False
-            show_reduced_CA_axis = True
-            show_old_quantization = True
-            show_iGRC_prefix = True
-            show_additional_grid = False
-            show_colorbar = False
-            show_x_wingspan = True
-            show_x_velocity = False
-            show_x_CA = False
-            show_x_CA_above = False
-            show_title = False
-            save_image = True
-            filename = '_img3'
-
         show_old_quantization = show_old_quantization and show_reduced_CA_axis
 
         # Instantiate the Annex F class. The impact angle is not relevant for this example, so the value is random.
