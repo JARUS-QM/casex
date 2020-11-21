@@ -13,3 +13,4 @@ from .ballistic_descent_models import *
 from .obstacles import *
 from .annex_f_parms import *
 from .exceptions import *
+from .figures import *
