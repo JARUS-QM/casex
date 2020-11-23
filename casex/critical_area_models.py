@@ -37,7 +37,8 @@ class CriticalAreaModels:
     def critical_area(self, critical_area_model, aircraft, impact_speed, impact_angle, critical_areas_overlap, var1=-1):
         """Computes the lethal area as modeled by different models.
         
-        The models are described in more detail in SORA Annex F :cite:`JARUS_AnnexF`. References for each model is given in the code.
+        The models are described in more detail in SORA Annex F :cite:`JARUS_AnnexF`. References for each model is given
+        in the code.
         
         This function supports one of the following input parameters to be a vector, which will give a vector of the
         same size as output:
@@ -56,7 +57,8 @@ class CriticalAreaModels:
         Parameters
         ----------       
         critical_area_model : :class:`enums.CriticalAreaModel`
-            Choice of model (RCC :cite:`RangeCommandersCouncil1999`, RTI :cite:`Montgomery1995`, FAA :cite:`FAA2011`, NAWCAD :cite:`Ball2012`, JARUS :cite:`JARUS_AnnexF`). See SORA Annex F for details :cite:`JARUS_AnnexF`.
+            Choice of model (RCC :cite:`RangeCommandersCouncil1999`, RTI :cite:`Montgomery1995`, FAA :cite:`FAA2011`,
+            NAWCAD :cite:`Ball2012`, JARUS :cite:`JARUS_AnnexF`). See SORA Annex F for details :cite:`JARUS_AnnexF`.
         aircraft : :class:`casex.AircraftSpecs`
             Class with information about the aircraft.
         impact_speed : float

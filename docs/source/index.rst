@@ -21,5 +21,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. bibliography:: bibtex.bib
-   :style: plain
+.. include:: zbibliography.rst
