@@ -651,7 +651,7 @@ class Obstacles:
         
         This is a fast method for computing the Minkowski sum of two polygons that are both rectangles.
         
-        For details on how this is done, see [lacour2021].
+        For details on how this is done, see :cite:`lacour2021`.
         
         Parameters
         ----------
@@ -741,7 +741,7 @@ class Obstacles:
         ranging in value from 0 to the nominal length of the CA. Since this is usually a rather smooth curve, it can be
         approximated well by relatively few x values (typically 10 or 15).
         
-        For a more detailed explanation of the CDF, see [lacour2021]. MISSING DOC.
+        For a more detailed explanation of the CDF, see :cite:`lacour2021`.
 
         Parameters
         ----------
@@ -767,7 +767,7 @@ class Obstacles:
         p_x : (List of) float(s)
             The CDF value for the given x. This return parameter has the same type as input x.
         beta : float
-            The beta values as computed in [lacour2021]. MISSING DOC
+            The beta values as computed in :cite:`lacour`.
         acc_probability_check : float
             A sanity check on the triple integral. This values should be relatively close to 1, especially for high
             value of pdf_resolution.

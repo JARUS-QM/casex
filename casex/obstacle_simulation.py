@@ -25,7 +25,7 @@ def obstacle_simulation():
     # CA properties.
     CA_width = 3
     CA_length = 67
-    trials_count = 2000
+    trials_count = 200000
     trial_area_sidelength = 1000
     num_of_obstacles = 450
 
@@ -50,6 +50,7 @@ def obstacle_simulation():
     do_sanity_check = False
     do_theory = True
     do_viz = True
+    do_not_show_CAs = True
     do_houses_along_roads = True
 
     OS = Obstacles(CA_width, CA_length, trial_area_sidelength)
@@ -106,7 +107,7 @@ def obstacle_simulation():
     fig = plt.figure(1, figsize=(12, 8), dpi=90)
     if do_viz:
         ax1 = fig.add_subplot(121)
-        OS.show_simulation(ax1, CAs=True, CAs_reduced=True, obstacles_original=True, obstacles_intersected=True,
+        OS.show_simulation(ax1, CAs=(not do_not_show_CAs), CAs_reduced=(not do_not_show_CAs), obstacles_original=True, obstacles_intersected=(not do_not_show_CAs),
                            CA_first_point=False, debug_points=False)
         ax2 = fig.add_subplot(122)
     else:
@@ -147,24 +148,26 @@ def obstacle_simulation():
         print('Coverage ratio:          {:1.3f}'.format(OS.total_coverage / OS.total_obstacle_area))
     if do_theory:
         print('beta (numerical):        {:1.5f}'.format(beta_numerical))
-        print('beta (numerical sanity): {:1.5f}'.format(OS.num_of_empty_CA / trials_count))
         print('beta (analytical):       {:1.5f}'.format(beta_analytical))
+        print('fractiona of empty CA):  {:1.3f}'.format(OS.num_of_empty_CA / trials_count))
     if do_sanity_check:
         print('PDF sanity check:        {:1.3f}'.format(sanity_check))
 
     # Show the curve from theory    
     if do_theory:
         if not show_CA_as_size:
-            ax2.plot(x, p_x, '.')
+            ax2.plot(x, p_x, '.', label='Model CDF')
         else:
-            ax2.plot(x * OS.CA_width, p_x, '.')
-        ax2.plot(0, beta_analytical, 'o', color='#00ff00')
-        ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color='#0000ff')
-        ax2.plot(0, beta_numerical, 'o', color='#ff0000')
+            ax2.plot(x * OS.CA_width, p_x, '.', label='Model CDF')
+        ax2.plot(0, beta_analytical, 'o', color='#00ff00', label='beta anlytical')
+        ax2.plot(0, beta_numerical, 'o', color='#ff0000', label='beta numerical')
+        ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color='#0000ff', label='Frac of empty CA')
+        ax2.legend(loc="upper left", )
+        
 
     plt.show()
 
-    # fig.savefig('Sim_random.png', format='png', dpi=300)
+    fig.savefig('Sim_random.png', format='png', dpi=300)
 
 
 if __name__ == '__main__':

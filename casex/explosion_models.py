@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Class for computing the explosion and deflagration models.
 """
 import math
 
@@ -14,8 +14,8 @@ class ExplosionModels:
     This class implements a model for the lethal area for an explosion, the lethal thermal area for
     explosion as well as deflagration, and the size of a deflagration fireball (which is also considered lethal).
     
-    The main sources for the models are [6]_, [7]_, [8]_, and a brief review of explosion and deflagration is given
-    in JARUS SORA annex F [1]_.
+    The main sources for the models are :cite:`DepartmentofDefense2012`, :cite:`Ball2012`, :cite:`Hardwicke2009`, and a brief review of explosion and deflagration is given
+    in JARUS SORA annex F :cite:`JARUS_AnnexF`.
     
     The models are all based on TNT equivalent mass, since this is how the literature does it. This means that for any
     of the models it is necessary to convert the fuel amount to a given TNT mass which has the same energy density.
@@ -34,19 +34,19 @@ class ExplosionModels:
         .. math:: D = K  W^{1/3}
             
         where :math:`K` [m/kg^(1/3)] is a scaling factor for the acceptable risk and W [kg] is the TNT equivalent mass
-        [6]_, [7]_, [8]_.
+        :cite:`DepartmentofDefense2012`, :cite:`Ball2012`, :cite:`Hardwicke2009`.
         
         A recommended value for the scaling factor for 3.5 psi overpressure is 18 ft/lb :math:`^{1/3}` (also called K18,
         for unprotected persons), which is equal to
         
         .. math:: K = 7.14
             
-        For details on this value, see [6]_.
+        For details on this value, see :cite:`DepartmentofDefense2012`.
         
         .. note:: The area given by the used model assumes a near-perfect combustion of the fuel, which typically
                   requires a close to ideal mixing of fuel and oxidizer. As this normally do not happen during an
                   aircraft crash, the model tends to be rather conservative in the estimate of the lethal area.
-                  For more detail on this, please consult JARUS SORA annex F [1]_.
+                  For more detail on this, please consult JARUS SORA Annex F :cite:`JARUS_AnnexF`.
                 
         Parameters
         ----------      
@@ -155,7 +155,7 @@ class ExplosionModels:
         """Compute lethal area for thermal radiation (deflagration).
         
         Computes the lethal area for deflagration based on the thermal radiation.
-        Model is taken from [7]_ page 61.
+        Model is taken from :cite:`Ball2012` page 61.
         
         .. note:: See note for :class:`lethal_area_explosion`.
         
@@ -182,7 +182,7 @@ class ExplosionModels:
     def fireball_area(TNT_mass):
         """Compute lethal area for fireball (deflagration).
         
-        Compute the size of a fireball for a given amount of propellant. The model is found in [7]_ page 62.
+        Compute the size of a fireball for a given amount of propellant. The model is found in :cite:`Ball2012` page 62.
 
         .. note:: See note for :class:`lethal_area_explosion`.
         

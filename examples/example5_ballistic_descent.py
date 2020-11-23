@@ -10,8 +10,7 @@ from casex import BallisticDescent2ndOrderDragApproximation, enums, AircraftSpec
 
 
 # Instantiate necessary classes.
-rho = 1.225
-BDM = BallisticDescent2ndOrderDragApproximation(rho)
+BDM = BallisticDescent2ndOrderDragApproximation()
 
 # Set aircraft values.
 aircraft_type = enums.AircraftType.FIXED_WING

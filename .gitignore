@@ -233,3 +233,4 @@ pip-selfcheck.json
 .idea/vcs.xml
 casex/__pycache__/
 examples/__pycache__/
+*.png

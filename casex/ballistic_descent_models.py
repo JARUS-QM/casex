@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Class supports computation of a ballistic descent under the influence of gravity and drag.
 """
 import warnings
 
@@ -9,42 +9,42 @@ from casex import constants, exceptions
 
 
 class BallisticDescent2ndOrderDragApproximation:
-    """MISSING DOC
+    """Class supports computation of a ballistic descent under the influence of gravity and drag.
+    
+    The model used is the standard second order drag model, expect it has been modified to support fast calculations.
+    Details on this can be found in :cite:`lacour2021`.
 
     Attributes
     ----------
     aircraft : :class:'AircraftSpecs'
-        MISSING DOC
+        Class holding information about the aircraft.
     distance1 : float
-        MISSING DOC
+        [m] Horizontal distance travelled between start time of descent and time :variable:'time_top' TO BE CHECKED.
     distance2 : float
-        MISSING DOC
+        [m] Horizontal distance travelled between time :variable:'time_top' TO BE CHECKED and time :variable:'time_cross' TO BE CHECKED.
     distance3 : float
-        MISSING DOC
+        [m] Horizontal distance travelled between time :variable:'time_cross' TO BE CHECKED and time :variable:'time_impact' TO BE CHECKED.
     velocity_x : float
-        MISSING DOC
+        [m/s] Horizontal part of the impact velocity.
     velocity_y : float
-        MISSING DOC
+        [m/s] Vertical part of the impact velocity.
     time_top : float
-        MISSING DOC
+        [s] Time from start of descent to reaching the top of the descent curve. This is 0 if the descent starts with a descent.
     time_cross : float
-        MISSING DOC
+        [s] Time from start of descent to reaching the point, where the vertical velocity exceeds the horizontal velocity.
     time_impact : float
-        MISSING DOC
+        [s] Time from start of descent to impact.
     c : float
-        MISSING DOC
-    gamma : MISSING DOC
-        MISSING DOC
-    rho : float
-        MISSING DOC
+        This represents the multiplication of frontal area, air density, and drag coefficient, which often appears together in the computations. The :variable:'c' TO BE CHECKED attribute is just a placeholder for this multiplication.
+    gamma : float
+        A placeholder for :math:'sqrt(mass * gravity / c)'. TO BE CHECKED
     """
-    def __init__(self, rho):
+    def __init__(self):
         """Constructor
 
         Parameters
         ----------
-        rho : float
-            MISSING DOC
+
         """
         self.aircraft = None
         self.distance_impact = None
@@ -61,14 +61,13 @@ class BallisticDescent2ndOrderDragApproximation:
         self.c = None
         self.gamma = None
 
-        self.rho = rho
-
     def set_aircraft(self, aircraft):
-        """MISSING DOC
+        """Set the aircraft.
 
         Parameters
         ----------
-        MISSING DOC
+        aircraft : :class:'AircraftSpecs'
+            Class holding information about the aircraft.
 
         Returns
         -------
@@ -109,13 +108,13 @@ class BallisticDescent2ndOrderDragApproximation:
             
         Returns
         -------
-        distance impact : float
+        distance:impact : float
             [m] Horizontal distance for impact relative to event point.
-        velocity impact: float
-            [m/s] Impact velocity.
-        angle impact : MISSING DOC
-            MISSING DOC
-        time impact: float
+        velocity_impact: float
+            [m/s] The impact velocity.
+        angle_impact : float
+            [deg] The impact angle (relative to horizontal).
+        time_impact: float
             [s] Time from event to impact.
 
         Raises
@@ -212,7 +211,7 @@ class BallisticDescent2ndOrderDragApproximation:
         return distance_impact, velocity_impact, angle_impact, self.time_impact
 
     def __compute_gamma_and_c(self):
-        self.c = 0.5 * self.aircraft.ballistic_frontal_area * self.rho * self.aircraft.ballistic_drag_coefficient
+        self.c = 0.5 * self.aircraft.ballistic_frontal_area * constants.AIR_DENSITY * self.aircraft.ballistic_drag_coefficient
         self.gamma = np.sqrt(self.aircraft.mass * constants.GRAVITY / self.c)
 
     def __compute_t_top(self, init_v_y):

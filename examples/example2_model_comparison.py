@@ -3,7 +3,7 @@ Example 2
 --------
 This example shows the basics of using the different models in casex.
 It shows how to set up the necessary parameters and variables, and how
-to call the lethal_model function to calculate lethal areas for the
+to call the critical area method to calculate critical areas for the
 models.
 
 It also shows how to modify an existing setup to change from one aircraft

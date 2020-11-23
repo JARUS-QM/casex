@@ -17,52 +17,46 @@ class AircraftSpecs:
     Attributes
     ----------
     width : float
-        The width of the aircraft is the horizontal size of the aircraft orthogonal to the direction of travel.
+        [m] The width of the aircraft is the horizontal size of the aircraft orthogonal to the direction of travel.
         This value is used to determine the width of the glide and slide areas. Therefore, this value is the wingspan
         for fixed wing aircraft, the rotor diameter for rotorcraft, and the rotortip to rotortip distance for
         multirotor aircraft.
     length : float
-        Length of the aircraft. The concept is the same as width. The length is only used in the RCC model.
+        [m] Length of the aircraft. The concept is the same as width. The length is only used in the RCC model.
     mass : float
-        Mass of the aircraft in kg. This is the total mass at the time of crash, including fuel.
+        [kg] Mass of the aircraft in kg. This is the total mass at the time of crash, including fuel.
     aircraft_type : :class:`enums.AircraftType`
         The type of aircraft as given in :class:`enums.AircraftType`.
     fuel_type : :class:`enums.FuelType`
         Fuel type, such as fossil fuels or batteries. Given in :class:`enums.FuelType`.
     fuel_quantity : float
-        Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume of the battery.
+        [L] Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume of the battery.
     friction_coefficient : float
-        Coefficient of friction between aircraft and ground. Appropriate values can be found using
+        [-] Coefficient of friction between aircraft and ground. Appropriate values can be found using
         :class:`FrictionCoefficients` (the default is 0.6).
     coefficient_of_restitution : float
-        Coefficient of restitution expresses the loss of energy on impact (the default is 0.7).
+        [-] Coefficient of restitution expresses the loss of energy on impact (the default is 0.7).
     ballistic_frontal_area : float
-        Frontal area of the aircraft during ballistic descent. This is the area size of the aircraft as projected
+        [m^2] Frontal area of the aircraft during ballistic descent. This is the area size of the aircraft as projected
         in the direction of descent.
     ballistic_drag_coefficient : float
-        Drag coefficient of the aircraft during ballistic descent. For future use.
+        [-] Drag coefficient of the aircraft during ballistic descent. For future use.
     glide_drag_coefficient : float
-        Drag coefficient of the aircraft during glide descent.
-    wing_area : float
-        Wing area of a fixed wing aircraft.
+        [-] Drag coefficient of the aircraft during glide descent.
     max_flight_time : float
-        Maximum flight time on the given amount of fuel. For future use.
+        [s] Maximum flight time on the given amount of fuel. For future use.
     cruise_speed : float
-        Cruise speed of the aircraft.
+        [m/s] Cruise speed of the aircraft.
     glide_speed : float
-        Glide speed of the aircraft when descending in a glide without thrust.
+        [m/s] Glide speed of the aircraft when descending in a glide without thrust.
     glide_ratio : float
-        Glide ratio of the aircraft when descending in an optimal glide angle without thrust.
+        [-] Glide ratio of the aircraft when descending in an optimal glide angle without thrust.
     parachute_deployment_time : float
-        Deployment time for the parachute, measured from the time deployment is signalled to full deployment.
+        [s] Deployment time for the parachute, measured from the time deployment is signalled to full deployment.
     parachute_area : float
-        Area of the parachute generating drag during descent and full deployment.
+        [m^2] Area of the parachute generating drag during descent and full deployment.
     parachute_drag_coef : float
-        Drag coefficient.
-    Oswald_efficiency_number : float
-        MISSING DOC
-    max_LD_ratio : float
-        MISSING DOC
+        [-] Drag coefficient.
     """
 
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
@@ -79,14 +73,13 @@ class AircraftSpecs:
         mass : float
             [kg] Mass of the aircraft.
         fuel_type : :class:'enums.FuelType, optional
-            MISSING DOC
+            The type of fuel used in the aircraft. Defaut is `FuelType.GASOLINE`.
         fuel_quantity : float, optional
-            MISSING DOC (the default is 0).
+            [L] The quantity of fuel in liters. Default is 0, which means that no deflagration is assumed upon crash.
         """
         self.ballistic_frontal_area = None
         self.ballistic_drag_coefficient = None
         self.glide_drag_coefficient = None
-        self.wing_area = None
         self.max_flight_time = None
         self.cruise_speed = None
         self.glide_speed = None
@@ -94,8 +87,6 @@ class AircraftSpecs:
         self.parachute_deployment_time = None
         self.parachute_area = None
         self.parachute_drag_coef = None
-        self.Oswald_efficiency_number = None
-        self.max_LD_ratio = None
 
         self.reset_values()
 
@@ -120,7 +111,9 @@ class AircraftSpecs:
     def set_aircraft_type(self, aircraft_type):
         """Set aircraft type.
         
-        This value is currently not used in any computation, and is reserved for future use.
+        The type of aircraft such as fixed wing or rotorcraft.
+        
+        .. note: This value is currently not used in any computation, and is reserved for future use.
                 
         Parameters
         ----------
@@ -132,7 +125,7 @@ class AircraftSpecs:
         None
         """
         if not isinstance(aircraft_type, enums.AircraftType):
-            warnings.warn("Aircraft type not recognized. Type set to fixed wing.")
+            warnings.warn("Aircraft type not recognized. Type set to FIXED_WING.")
             self.aircraft_type = enums.AircraftType.FIXED_WING
         else:
             self.aircraft_type = aircraft_type
@@ -197,30 +190,16 @@ class AircraftSpecs:
         if np.any(self.mass <= 0):
             warnings.warn("Non-positive mass does not make sense. Subsequent results are invalid.")
         elif np.any(self.mass < 1):
-            warnings.warn("This toolbox is not designed for a mass below 1 kg. Subsequent results cannot be trusted.")
+            warnings.warn("This package is not designed for a mass below 1 kg. Subsequent results cannot be trusted.")
         if np.any(self.width <= 0):
             warnings.warn("Non-positive width does not make sense. Subsequent results are invalid.")
         elif np.any(self.width < 0.1):
-            warnings.warn("This toolbox is not designed for a width below 0.1 m. Subsequent results cannot be trusted.")
+            warnings.warn("This package is not designed for a width below 0.1 m. Subsequent results cannot be trusted.")
         if np.any(self.length <= 0):
             warnings.warn("Non-positive length does not make sense. Subsequent results are invalid.")
         elif np.any(self.length < 0.1):
             warnings.warn(
-                "This toolbox is not designed for a length below 0.1 m. Subsequent results cannot be trusted.")
-
-    def set_wing_area(self, wing_area):
-        """Set the aircraft wing area (only relevant for fixed wing aircraft).        
-                
-        Parameters
-        ----------
-        wing_area : float
-            [m^2] Wing area of the aircraft.
-            
-        Returns
-        -------
-        None
-        """
-        self.wing_area = wing_area
+                "This package is not designed for a length below 0.1 m. Subsequent results cannot be trusted.")
 
     def set_fuel_type(self, fuel_type):
         """Set the type of fuel.
@@ -433,90 +412,40 @@ class AircraftSpecs:
         self.parachute_area = parachute_area
         self.parachute_drag_coef = parachute_drag_coef
 
-    def set_Oswald_efficiency_number(self, Oswald_efficiency_number):
-        """Set Oswald efficiency number for glide.
- 
-        Parameters
-        ----------
-        Oswald_efficiency_number : float
-            [-] Oswald efficiency number.
-
-        Returns
-        -------
-        None
-        """
-        if np.any(Oswald_efficiency_number <= 0):
-            warnings.warn("Non-positive Oswald efficiency number does not make sense. Subsequent results are invalid.")
-
-        self.Oswald_efficiency_number = Oswald_efficiency_number
-
-    def set_max_LD_ratio(self, max_LD_ratio):
-        """Set maximum L/D ratio.
- 
-        Parameters
-        ----------
-        max_LD_ratio : float
-            [-] Maximum ratio between lift and drag.
-
-        Returns
-        -------
-        None
-        """
-        if np.any(max_LD_ratio <= 0):
-            warnings.warn("Non-positive lift to drag ratio does not make sense. Subsequent results are invalid.")
-
-        self.max_LD_ratio = max_LD_ratio
-
-    def compute_best_glide_speed_wing_area(self):
-        """Compute the optimal glide speed based on wing area.
-        
-        NOTE THAT THIS FUNCTION IS UNTESTED!!
- 
-        Parameters
-        ----------
-
-        Returns
-        -------
-        glide speed : float
-            [m/s] Optimal glide speed.
-        """
-        nom = 4 * np.power(self.mass, 2) * np.power(constants.GRAVITY, 2) * np.power(
-            np.cos(np.atan2(1, self.max_LD_ratio)), 2)
-        denom = np.pi * np.power(constants.AIR_DENSITY, 2) * self.glide_drag_coefficient * self.wing_area * np.power(
-            self.width, 2) * self.Oswald_efficiency_number
-
-        return np.power(np.divide(nom, denom), 1 / 4)
-
-    def terminal_velocity(self, rho):
+    def terminal_velocity(self):
         """Compute terminal velocity for free falling aircraft.
 
         Parameters
         ----------
-        MISSING DOC
 
         Returns
         -------
-        MISSING DOC
+        terminal_velocity : float
+            [m/s] The terminal velocity for the aircraft.
         """
         return np.sqrt(
-            2 * self.mass * constants.GRAVITY / rho / self.ballistic_frontal_area / self.ballistic_drag_coefficient)
+            2 * self.mass * constants.GRAVITY / constants.AIR_DENSITY / self.ballistic_frontal_area / self.ballistic_drag_coefficient)
 
     def COR_from_impact_angle(self, impact_angle, angles=None, CoRs=None):
-        """MISSING DOC
+        """Compute a coefficient of restitution for a given impact angle.
+        
+        This method assumes an affine relation between impact angle and CoR. Therefore, two angles and two CoR values are use to determine
+        this relation. The default is as describedin Annex F that the CoR is 0.9 at a 9 degree impact and 0.6 at a 90 degree (vertical) impact.
+        This values are used as defaults, but others can be specified.
         
         Parameters
         ----------        
         impact_angle : float
             [deg] The impact angle between 0 and 90.
-        angles : MISSING DOC
-            MISSING DOC
-        CoRs : MISSING DOC
-            MISSING DOC
+        angles : float array, optional
+            [deg] Array with two diufferent angle of impact values. Default = [9, 90].
+        CoRs : float array, optional
+            [-] Array with two COR values corresponding to the two angles. Default is [0.9, 0.6].
 
         Returns
         -------
         coefficient of restitution : float
-            The coefficient of restitution for the given impact angle.
+            [-] The coefficient of restitution for the given impact angle.
         """
         if angles is None:
             angles = [9, 90]
@@ -546,7 +475,6 @@ class AircraftSpecs:
         self.width = None
         self.length = None
         self.mass = None
-        self.wing_area = None
         self.cruise_speed = None
         self.max_flight_time = None
         self.fuel_type = None
@@ -559,5 +487,3 @@ class AircraftSpecs:
         self.parachute_deployment_time = None
         self.parachute_area = None
         self.parachute_drag_coef = None
-        self.Oswald_efficiency_number = None
-        self.max_LD_ratio = None

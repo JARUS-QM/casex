@@ -1,10 +1,10 @@
 """MISSING DOC
 
 .. data:: GRAVITY
-    Density of air at sea level [kg/m^3]
+    [kg/m^3] Density of air at sea level
 
 .. data:: AIR_DENSITY
-    Gravitational constant [kg/m/s^2]
+    [kg/m/s^2] Gravitational constant
 """
 GRAVITY = 9.82 
 AIR_DENSITY = 1.225

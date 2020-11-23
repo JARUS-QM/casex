@@ -1,7 +1,7 @@
 """
 Example 1
 ---------
-MISSING DOC
+This examples provide the basic functionality for computing a critical area.
 """
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs
 

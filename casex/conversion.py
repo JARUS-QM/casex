@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Provide functionality for converting between imperial and metric system.
 """
 
 

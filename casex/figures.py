@@ -17,8 +17,10 @@ class Figures:
     """
 
     @staticmethod
-    def figure_angle_vs_speed(show_matrix=False, show_contours=False):
-        """MISSING DOC
+    def figure_angle_vs_speed(show_matrix=False, show_contours=False, save_fig=False):
+        """Recreates the figure in Annex F relating impact angles and impact speed for the different size classes.
+
+        This method also outputs a variety of computations for the ballistic descent as listed in Annex F Appendix A :cite:`JARUS_AnnexF`.
 
         Parameters
         ----------
@@ -26,7 +28,9 @@ class Figures:
             Set to False to get plots in Annex F (the default is False).
         show_contours : bool, optional
             Set to True to see the CA matrix (the default is False).
-
+        save_fig : bool, optional
+            Set to true to save the figure (the default is False).
+            
         Returns
         -------
         None
@@ -171,10 +175,11 @@ class Figures:
         plt.show()
 
         # Save the figure to file.
-        fig.savefig('Descent scenarios - critical area.png', format='png', dpi=300)
+        if save_fig:
+            fig.savefig('Descent scenarios - critical area.png', format='png', dpi=300)
 
     @staticmethod
-    def figure_GRC_model_vs_iGRC():
+    def figure_GRC_model_vs_iGRC(save_fig=False):
         """MISSING DOC
 
         Parameters
@@ -332,46 +337,47 @@ class Figures:
         plt.show()
 
         # Save the figure to file.
-        fig.savefig('GRC comparison, {:d} degrees.png'.format(impact_angle), format='png', dpi=300)
+        if save_fig:
+            fig.savefig('GRC comparison, {:d} degrees.png'.format(impact_angle), format='png', dpi=300)
 
     @staticmethod
     def figure_iGRC_CA_vs_PopDensity(filename, show_with_obstacles=False, show_reduced_CA_axis=True,
                                      show_old_quantization=True, show_iGRC_prefix=True, show_additional_grid=False,
                                      show_colorbar=False, show_x_wingspan=True, show_x_velocity=True, show_x_CA=False,
-                                     show_x_CA_above=False, show_title=True, save_image=False):
-        """MISSING DOC
+                                     show_x_CA_above=False, show_title=True, save_fig=False):
+        """Recreates the figures showing iGRC values and iGRC table in Annex F Section 1 :cite:`JARUS_AnnexF`.
 
         Parameters
         ----------
         filename : str
             Name of the output file (only applicable if save_image is True).
         show_with_obstacles : bool, optional
-            If True show the calculated iGRC values with a reduction as shown in Annex F Table 17
-            (the default is False).
+            If True show the calculated iGRC values with a reduction due to obstalces (see Annex F Appendix A)
+            (default is False).
         show_reduced_CA_axis : bool, optional
-            If True use a reduced granularity on the CA axis (the default is True).
+            If True use a reduced granularity on the CA axis (default is True).
         show_old_quantization : bool, optional
             If True uses the SORA V2.0 quantization (only applicable if show_reduced_CA_axis is True)
-            (the default is True).
+            (default is True).
         show_iGRC_prefix : bool, optional
-            If True show the iGRC numbers as iGRC-X instead of just X (the default is True).
+            If True show the iGRC numbers as iGRC-X instead of just X (default is True).
         show_additional_grid : bool, optional
             If True show additional grid lines. Makes it a bit cluttered, but assists in reading the table
-            (the default is False).
+            (default is False).
         show_colorbar : bool, optional
-            If True show colorbar instead of numbers for the background ISO plot (the default is False).
+            If True show colorbar instead of numbers for the background ISO plot (default is False).
         show_x_wingspan : bool, optional
-            MISSING DOC (the default is True).
+            If True show wingspan on the x axis (default is True).
         show_x_velocity : bool, optional
-            MISSING DOC (the default is True).
+            If True show velocities on the x axis (default is True).
         show_x_CA : bool, optional
-            MISSING DOC (the default is False).
+            If True show size of CA on the x axis (default is False).
         show_x_CA_above : bool, optional
-            If True and CA is shown, show it above the figure instead of below (the default is False).
+            If True and CA is shown, show it above the figure instead of below (default is False).
         show_title : bool, optional
-            If True show the title (the default is True).
+            If True show the title (default is True).
         save_image : bool, optional
-            If True save the image to a PNG with the given filename.
+            If True save the image to a PNG with the given filename (default is False).
 
         Returns
         -------
@@ -636,5 +642,5 @@ class Figures:
         plt.show()
 
         # Use this to generate a PNG file of the plot.
-        if save_image:
+        if save_fig:
             fig.savefig('iGRC_CA_vs_pop_density' + filename + '.png', format='png', dpi=300)

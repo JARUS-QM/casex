@@ -1,12 +1,12 @@
 """
-MISSING DOC
+This class provides support for redoing some of the computations found in Annex F.
 """
 import math
 from dataclasses import dataclass
 
 import numpy as np
 
-from casex import AircraftSpecs, enums, BallisticDescent2ndOrderDragApproximation
+from casex import AircraftSpecs, enums, BallisticDescent2ndOrderDragApproximation, constants
 
 
 class AnnexFParms:
@@ -34,9 +34,9 @@ class AnnexFParms:
         [m/s] The glide speed resulting from multiplying the cruise speed by glide_reduce.
     aircraft : :class:'AircraftSpecs'
         The class containing information about the aircraft.
-    scenario_angles = [9, 35, 80] : MISSING DOC
-        [deg] The three impact angles for the three descent scenarios. The 80 degrees is recomputed for each ballistic
-        descent.
+    scenario_angles = [9, 35, 80] : float array
+        [deg] The three impact angles for the three descent scenarios. The 80 degrees is not actually used but
+        recomputed for each ballistic descent.
     terminal_velocity : float
         [m/s] Terminal velocity for aircraft.
     ballistic_frontal_area : float
@@ -55,8 +55,6 @@ class AnnexFParms:
         [J] Computed kinetic energy of aircraft just prior to impact.
     ballistic_descent_time : float
         [s] Computed descent time for ballistic descent.
-    rho = 1.225 : float
-        [kg/m^3] Density of air.
     impact_angle : float
         [deg] The impact angle of the aircraft when crashing, measure relative to horizontal.
     aircraft_type : :class:`enums.AircraftType`
@@ -97,7 +95,6 @@ class AnnexFParms:
         """
         self.glide_reduce = 0.7
         self.friction_coefficient = 0.5
-        self.rho = 1.225
         self.ballistic_drag_coefficient = 0.7
         self.scenario_angles = np.array([9, 35, 80])
 
@@ -119,7 +116,7 @@ class AnnexFParms:
         self.horizontal_COR = 0.9
         self.vertical_COR = 0.6
 
-        BDM = BallisticDescent2ndOrderDragApproximation(self.friction_coefficient)
+        BDM = BallisticDescent2ndOrderDragApproximation()
 
         # Compute the parameters for each of the 5 size classes.
         for k in range(5):
@@ -143,7 +140,7 @@ class AnnexFParms:
                                                                     [self.horizontal_COR, self.vertical_COR]))
 
             # Compute terminal velocity.
-            self.CA_parms[k].terminal_velocity = self.CA_parms[k].aircraft.terminal_velocity(self.rho)
+            self.CA_parms[k].terminal_velocity = self.CA_parms[k].aircraft.terminal_velocity()
 
             BDM.set_aircraft(self.CA_parms[k].aircraft)
             p = BDM.compute_ballistic_distance(self.CA_parms[k].ballistic_descent_altitude,

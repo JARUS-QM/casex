@@ -11,7 +11,7 @@ from casex import enums
 
 
 class NormalDistributionParameters:
-    """MISSING DOC
+    """Class for provide support for generating and using normaal distributions
 
     Attributes
     ----------
@@ -25,7 +25,7 @@ class NormalDistributionParameters:
         Standard deviation of the normal distribution (the default is 1).
     wrapping_type : :class:`enums.Wrapping`, optional
         The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi
-        (the default is EWrapping.NONE).
+        (the default is `EWrapping.NONE`).
     """
 
     def __init__(self, mu=0.0, sigma=1.0, wrapping_type=enums.Wrapping.NONE):
@@ -39,7 +39,7 @@ class NormalDistributionParameters:
             Standard deviation of the normal distribution (the default is 1).
         wrapping_type : :class:`enums.Wrapping`, optional
             The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi
-            (the default is EWrapping.NONE).
+            (the default is `EWrapping.NONE`).
         """
         self.input_set = None
         self.output_set = None
@@ -62,7 +62,7 @@ class NormalDistributionParameters:
                 self.mu = self.mu + 2 * math.pi
                 
     def __reset_values(self):
-        # MISSING DOC
+        # Resets the input and output sets.
         self.input_set = None
         self.output_set = None
     
@@ -90,29 +90,29 @@ class NormalDistributionParameters:
 
 
 class InitialSpeeds:
-    """MISSING DOC
+    """Class for holding initial speeds for ballistic descent.
 
     Attributes
     ----------
-    initial_speed_x : MISSING DOC
-        MISSING DOC
-    initial_speed_y : MISSING DOC
-        MISSING DOC
+    initial_speed_x : float
+        [m/s] The initial horizontal speed.
+    initial_speed_y : float
+        [m/s] The initial vertical speed.
     """
 
     def __init__(self, initial_speed_x_mu, initial_speed_x_sigma, initial_speed_y_mu, initial_speed_y_sigma):
-        """MISSING DOC
+        """Constructor
 
         Parameters
         ----------
-        initial_speed_x_mu : MISSING DOC
-            MISSING DOC
-        initial_speed_x_sigma : MISSING DOC
-            MISSING DOC
-        initial_speed_y_mu : MISSING DOC
-            MISSING DOC
-        initial_speed_y_sigma : MISSING DOC
-            MISSING DOC
+        initial_speed_x_mu : float
+            [m/s] The mean value of the normal distribution for the initial horizontal speed.
+        initial_speed_x_sigma : float
+            The standard deviation of the normal distribution for the initial horizontal speed.
+        initial_speed_y_mu : float
+            [m/s] The mean value of the normal distribution for the initial vertical speed.
+        initial_speed_y_sigma : float
+            The standard deviation of the normal distribution for the initial vertical speed.
         """
         if initial_speed_x_mu < 0:
             warnings.warn("Initial horizontal speed (along x axis) cannot be negative. Subsequent results are invalid.")

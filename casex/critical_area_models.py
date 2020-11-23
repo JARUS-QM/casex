@@ -1,5 +1,5 @@
 """
-MISSING DOC
+This class provide methods for computing critical area for a variety of models.
 """
 import math
 import warnings
@@ -37,10 +37,10 @@ class CriticalAreaModels:
     def critical_area(self, critical_area_model, aircraft, impact_speed, impact_angle, critical_areas_overlap, var1=-1):
         """Computes the lethal area as modeled by different models.
         
-        The models are described in more detail in SORA Annex F. References for each model is given in the code.
+        The models are described in more detail in SORA Annex F :cite:`JARUS_AnnexF`. References for each model is given in the code.
         
         This function supports one of the following input parameters to be a vector, which will give a vector of the
-        same size as output: MISSING DOC [Does this become list?]
+        same size as output:
             
         * impact_speed
         * impact_angle
@@ -56,7 +56,7 @@ class CriticalAreaModels:
         Parameters
         ----------       
         critical_area_model : :class:`enums.CriticalAreaModel`
-            Choice of model (RCC [5]_, RTI [3]_, FAA [2]_, NAWCAD [7]_, JARUS [1]_). See SORA Annex F for details [1]_.
+            Choice of model (RCC :cite:`RangeCommandersCouncil1999`, RTI :cite:`Montgomery1995`, FAA :cite:`FAA2011`, NAWCAD :cite:`Ball2012`, JARUS :cite:`JARUS_AnnexF`). See SORA Annex F for details :cite:`JARUS_AnnexF`.
         aircraft : :class:`casex.AircraftSpecs`
             Class with information about the aircraft.
         impact_speed : float
@@ -68,13 +68,13 @@ class CriticalAreaModels:
         var1 : float, optional
             An additional variable that is used in FAA, NAWCAD, and JARUS models.
             For the FAA model, `var1` = :math:`F_A`, the ratio of secondary debris field to primary debris field. If not
-            specified, :math:`F_A` = 4.36 will be used. See [2]_ page 98.
+            specified, :math:`F_A` = 4.36 will be used. See :cite:`FAA2011` page 98.
 
             For the NAWCAD model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1)
             the value 73.2 J is used.
 
             For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1),
-            the following is done (see Annex F section A.5 for details): `var1` is set to 290 J, except when the width
+            the following is done (see Annex F Appendix A for details): `var1` is set to 290 J, except when the width
             of the aircraft is <= 1 m, in which case `var1` is set to 2 * 290 J.
         
         Returns
@@ -83,9 +83,9 @@ class CriticalAreaModels:
             [m^2] Size of the critical area for the selected model.
         estimated glide area : float
             [m^2] The glide and slide areas are estimated as the relation between the glide and slide distances
-            multiplied by the glide+slide area. The glide area is returned as the second output.
+            multiplied by the glide+slide area.
         estimated slide area : float
-            [m^2] The estimated slide area is returned as the third output.
+            [m^2] The estimated slide area.
         critical area inert : float
             [m^2] The inert part of the critical area.
         deflagration area : float
@@ -116,7 +116,7 @@ class CriticalAreaModels:
             # Slide distance based on friction.
             slide_distance_friction = self.slide_distance_friction(horizontal_impact_speed,
                                                                    aircraft.friction_coefficient)
-            # [5, p. D-4]
+            # [RCC, p. D-4]
             glide_area = np.multiply(aircraft.length + glide_distance + 2 * self.buffer,
                                      aircraft.width + 2 * self.buffer)
             slide_area = np.multiply(slide_distance_friction, aircraft.width + 2 * self.buffer)
@@ -132,10 +132,10 @@ class CriticalAreaModels:
             slide_area = slide_distance_friction * (2 * self.buffer + aircraft.width)
 
         elif critical_area_model == enums.CriticalAreaModel.FAA:
-            # [2, p. 99]
+            # [FAA, p. 99]
             r_D = self.buffer + aircraft.width / 2
 
-            # F_A comes from table 6-5 in [2, p. 98]. Here using the median for 20/80 distribution between hard and
+            # F_A comes from table 6-5 in [FAA, p. 98]. Here using the median for 20/80 distribution between hard and
             # soft surfaces.
             if var1 == -1:
                 F_A = 4.36
@@ -164,13 +164,13 @@ class CriticalAreaModels:
             slide_area = LA_inert - glide_area
 
         elif critical_area_model == enums.CriticalAreaModel.NAWCAD:
-            # All from [7]
+            # All from NAWCAD model
             if var1 == -1:
                 KE_lethal = Conversion.ftlb_to_J(54)
             else:
                 KE_lethal = var1
 
-            # P. 18 (the following equation is just KE to mass and velocity, not taken from [7])
+            # P. 18 (the following equation is just KE to mass and velocity, not taken from NAWCAD)
             velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
 
             # Intermediate variable
@@ -247,7 +247,7 @@ class CriticalAreaModels:
         The slide distance is the length of the slide between impact and the body coming to rest.
         
         This is a standard assumption found in most sources that includes friction.
-        See for instance [7]_.
+        See for instance :cite:`Ball2012`.
         
         Parameters
         ----------
