@@ -29,7 +29,7 @@ class Figures:
         show_contours : bool, optional
             Set to True to see the CA matrix (the default is False).
         save_fig : bool, optional
-            Set to true to save the figure (the default is False).
+            If True save the figure to a PNG (default is False).
             
         Returns
         -------
@@ -184,6 +184,8 @@ class Figures:
 
         Parameters
         ----------
+        save_fig : bool, optional
+            If True save the figure to a PNG (default is False).
 
         Returns
         -------
@@ -376,8 +378,8 @@ class Figures:
             If True and CA is shown, show it above the figure instead of below (default is False).
         show_title : bool, optional
             If True show the title (default is True).
-        save_image : bool, optional
-            If True save the image to a PNG with the given filename (default is False).
+        save_fig : bool, optional
+            If True save the figure to a PNG with the given filename (default is False).
 
         Returns
         -------
