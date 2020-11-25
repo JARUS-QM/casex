@@ -5,7 +5,7 @@ Example 5: Ballistic descent
 *General text explaining what the example shows*
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
-    :lines: 6-85
+    :lines: 6-84
 
 *Text explaining the console output*
 

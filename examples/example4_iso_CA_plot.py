@@ -61,5 +61,7 @@ fig.colorbar(im, cax=cax, orientation='vertical')
 
 ax.set_xlabel('Angle [deg]')
 ax.set_ylabel('Speed  [m/s]')
-ax.set_title('Lethal area [m^2] for {:d} m, {:d} kg, {:1.1f} fric'.format(AFP.CA_parms[0].wingspan, AFP.CA_parms[0].mass, AFP.friction_coefficient))
+ax.set_title('Lethal area [m^2] for {:d} m, {:d} kg, {:1.1f} fric'.format(AFP.CA_parms[0].wingspan,
+                                                                          AFP.CA_parms[0].mass,
+                                                                          AFP.friction_coefficient))
 plt.show()

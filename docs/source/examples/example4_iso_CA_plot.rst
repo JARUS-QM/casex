@@ -13,7 +13,7 @@ and speed in terms of fixed lethal area.
 The JARUS model is used throughout this example.
 
 .. literalinclude:: ../../../examples/example4_iso_CA_plot.py
-    :lines: 14-69
+    :lines: 14-67
 
 *Text explaining the output*
 
