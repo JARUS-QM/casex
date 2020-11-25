@@ -11,6 +11,7 @@ Reference
     Conversion <reference/Conversion>
     CriticalAreaModels <reference/CriticalAreaModels>
     enums <reference/enums>
+    Exceptions <reference/exceptions>
     ExplosionModels <reference/ExplosionModels>
     FrictionCoefficients <reference/FrictionCoefficients>
     misc <reference/misc>
