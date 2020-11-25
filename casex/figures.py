@@ -433,7 +433,7 @@ class Figures:
         # Add x tick labels.
         xtick_wingspan = ['1', 'n/a', '0.5', '1.2', '3', '1.6', '3.9', '8', '4.5', '9.5', '20', '22', '36']
         xtick_velocity = ['25', 'n/a', '35', '35', '35', '75', '75', '75', '150', '150', '150', '200', '200']
-        xtick_CA = [6.5, 20, 50, 10, 200, 500, 1000, 2000, 5000, 10000, 20000, 40000, 66000]
+        xtick_CA = [6.5, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 40000, 66000]
 
         #  Change CA tick labels to accommodate many labels
         for k in range(len(xtick_CA)):

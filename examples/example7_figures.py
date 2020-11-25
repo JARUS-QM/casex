@@ -16,7 +16,7 @@ figures.figure_angle_vs_speed()
 figures.figure_GRC_model_vs_iGRC()
 
 # Figure 1.
-figures.figure_iGRC_CA_vs_PopDensity(filename="_img1", show_reduced_CA_axis=False, show_old_quantization=False, 
+figures.figure_iGRC_CA_vs_PopDensity(filename="_img1", show_reduced_CA_axis=False, show_old_quantization=False,
                                      show_x_wingspan=False, show_x_velocity=False, show_x_CA=True,
                                      show_x_CA_above=False)
 

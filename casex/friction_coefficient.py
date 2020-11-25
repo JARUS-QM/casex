@@ -40,6 +40,10 @@ class FrictionCoefficients:
               As such, these are the authors' best guesses at appropriate coefficients.
               The true coefficient depends on the state of the materials (wet, dry, greased, etc.) and the actual
               material (e.g. there are numerous types of concrete, soil, etc.).
+              
+    .. note:: There are combinations of materials for which there is not coefficient available. This is
+                du to lack of information. If anyone has such information, please contact the authors, and
+                addition coefficient can be included in a update of this package.
     
     .. warning:: The friction coefficients provided are guidance only!
                  Ultimate responsibility for correct choice and use of friction coefficient rests with the user!
@@ -80,7 +84,7 @@ class FrictionCoefficients:
 
     @staticmethod
     def __on_concrete(aircraft_material):
-        # MISSING DOC
+        # Friction coefficients for various materials against concrete.
         return {
             AircraftMaterial.GLASSFIBER: 0.2,
             AircraftMaterial.CARBONFIBER: -1,        # TODO: To be updated
@@ -93,7 +97,7 @@ class FrictionCoefficients:
 
     @staticmethod
     def __on_asphalt(aircraft_material):
-        # MISSING DOC
+        # Friction coefficients for various materials against asphalt.
         return {
             AircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
             AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
@@ -106,7 +110,7 @@ class FrictionCoefficients:
 
     @staticmethod
     def __on_grass(aircraft_material):
-        # MISSING DOC
+        # Friction coefficients for various materials against grass.
         return {
             AircraftMaterial.GLASSFIBER: 0.15,
             AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
@@ -119,7 +123,7 @@ class FrictionCoefficients:
 
     @staticmethod
     def __on_sand(aircraft_material):
-        # MISSING DOC
+        # Friction coefficients for various materials against sand.
         return {
             AircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
             AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
@@ -132,7 +136,7 @@ class FrictionCoefficients:
 
     @staticmethod
     def __on_soil(aircraft_material):
-        # MISSING DOC
+        # Friction coefficients for various materials against soil.
         return {
             AircraftMaterial.GLASSFIBER: -1,        # TODO: To be updated
             AircraftMaterial.CARBONFIBER: -1,       # TODO: To be updated
