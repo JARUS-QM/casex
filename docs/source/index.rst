@@ -23,3 +23,4 @@ Indices and tables
 
 .. bibliography:: bibtex.bib
    :style: plain
+   :all:
