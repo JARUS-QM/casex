@@ -7,7 +7,7 @@ descent.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from casex import BallisticDescent2ndOrderDragApproximation, enums, AircraftSpecs
+from casex import BallisticDescent2ndOrderDragApproximation, enums, AircraftSpecs, AnnexFParms
 
 
 # Instantiate necessary classes.
