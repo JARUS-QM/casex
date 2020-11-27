@@ -1,6 +1,6 @@
-======================
+===========================================
 Example 4: Isoparametric critical area plot
-======================
+===========================================
 
 This example makes a colored plot of the lethal area for varying impact angle and
 impact speed. The size of the aircraft
