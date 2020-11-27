@@ -72,7 +72,7 @@ for model in enums.CriticalAreaModel:
     p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, critical_areas_overlap))
 
 # This is how to vary the impact_angle.
-aircraft.set_width(width)
+aircraft.set_length(length)
 v_impact_angle = np.linspace(10, 80, 100)
 for model in enums.CriticalAreaModel:
     p.append(CA.critical_area(model, aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
@@ -83,7 +83,6 @@ for model in enums.CriticalAreaModel:
     p.append(CA.critical_area(model, aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
 
 # This is how to vary the critical_area_overlap.
-impact_speed = 25
 v_critical_areas_overlap = np.linspace(0, 1, 100)
 for model in enums.CriticalAreaModel:
     p.append(CA.critical_area(model, aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
@@ -109,43 +108,43 @@ clr = ['blue', 'orange', 'red', 'green', 'purple']
 for k in [0, 1, 2, 3, 4]:
     ax[0, 0].plot(v_width, p[k][0], color=clr[k], linewidth=1)
 ax[0, 0].set_xlabel('Width [m]', fontsize=12)
-ax[0, 0].set_ylabel('Lethal area', fontsize=12)
+ax[0, 0].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[0, 0].legend(['RCC', 'RTI', 'FAA', 'NAWCAD', 'JARUS'], loc=0, ncol=2, fontsize=9)
 
 for k in [5]:
     ax[0, 1].plot(v_length, p[k][0], color=clr[k - 5], linewidth=1)
 ax[0, 1].set_xlabel('Length [m]', fontsize=12)
-ax[0, 1].set_ylabel('Lethal area', fontsize=12)
+ax[0, 1].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[0, 1].legend(['RCC'], loc=0, ncol=2, fontsize=9)
 
 for k in [10, 11, 12, 13, 14]:
     ax[0, 2].plot(v_impact_angle, p[k][0], color=clr[k - 10], linewidth=1)
 ax[0, 2].set_xlabel('Impact angle [deg]', fontsize=12)
-ax[0, 2].set_ylabel('Lethal area', fontsize=12)
+ax[0, 2].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[0, 2].legend(['RCC', 'RTI', 'FAA', 'NAWCAD', 'JARUS'], loc=0, ncol=2, fontsize=9)
 
 for k in [15, 16, 18, 19]:
     ax[1, 0].plot(v_impact_speed, p[k][0], color=clr[k - 15], linewidth=1)
 ax[1, 0].set_xlabel('Impact speed [m/s]', fontsize=12)
-ax[1, 0].set_ylabel('Lethal area', fontsize=12)
+ax[1, 0].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[1, 0].legend(['RCC', 'RTI', 'NAWCAD', 'JARUS'], loc=0, ncol=2, fontsize=9)
 
 for k in [20, 21, 22, 23, 24]:
     ax[1, 1].plot(v_critical_areas_overlap * 100, p[k][0], color=clr[k - 20], linewidth=1)
 ax[1, 1].set_xlabel('Lethal area overlap [%]', fontsize=12)
-ax[1, 1].set_ylabel('Lethal area', fontsize=12)
+ax[1, 1].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[1, 1].legend(['RCC', 'RTI', 'FAA', 'NAWCAD', 'JARUS'], loc=0, ncol=2, fontsize=9)
 
 for k in [25, 26, 27, 28, 29]:
     ax[1, 2].plot(v_fuel_quantity, p[k][0], color=clr[k - 25], linewidth=1)
 ax[1, 2].set_xlabel('Fuel quantity [L]', fontsize=12)
-ax[1, 2].set_ylabel('Lethal area', fontsize=12)
+ax[1, 2].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[1, 2].legend(['RCC', 'RTI', 'FAA', 'NAWCAD', 'JARUS'], loc=0, ncol=2, fontsize=9)
 
 for k in [30, 31, 33, 34]:
     ax[2, 0].plot(v_friction_coefficient, p[k][0], color=clr[k - 30], linewidth=1)
 ax[2, 0].set_xlabel('Friction coefficient [-]', fontsize=12)
-ax[2, 0].set_ylabel('Lethal area', fontsize=12)
+ax[2, 0].set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax[2, 0].legend(['RCC', 'RTI', 'NAWCAD', 'JARUS'], loc=0, ncol=2, fontsize=9)
 
 plt.show()

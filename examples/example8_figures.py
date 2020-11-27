@@ -1,5 +1,5 @@
 """
-Example 7
+Example 8
 ---------
 This example reproduces the figures in Annex F :cite:`JARUS_AnnexF`.
 
@@ -11,23 +11,16 @@ from casex import Figures
 
 figures = Figures()
 
-# Figure 1.
 figures.figure_angle_vs_speed()
 
-# Figure 2.
-figures.figure_GRC_model_vs_iGRC()
-
-# Figure 3.
 figures.figure_iGRC_CA_vs_PopDensity(filename="_img1", show_reduced_CA_axis=False, show_old_quantization=False,
                                      show_x_wingspan=False, show_x_velocity=False, show_x_CA=True,
-                                     show_x_CA_above=False)
+                                     show_x_CA_above=False, show_model_CA=True, show_colorbar=True)
 
-# Figure 4.
 figures.figure_iGRC_CA_vs_PopDensity(filename="_img2", show_reduced_CA_axis=False, show_old_quantization=False, 
                                      show_x_wingspan=True, show_x_velocity=True, show_x_CA=True,
                                      show_x_CA_above=True)
 
-# Figure 5.
 figures.figure_iGRC_CA_vs_PopDensity(filename="_img3", show_reduced_CA_axis=True, show_old_quantization=True, 
                                      show_x_wingspan=True, show_x_velocity=False, show_x_CA=False,
                                      show_x_CA_above=False)

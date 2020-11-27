@@ -10,4 +10,5 @@ Examples
     Example 4: iso CA plot <examples/example4_iso_CA_plot>
     Example 5: Ballistic descent <examples/example5_ballistic_descent>
     Example 6: Obstacles <examples/example6_obstacles>
-    Example 7: Figures <examples/example7_figures>
+    Example 7: JARUS model vs the iGRC values <examples/example7_JARUS_model_vs_iGRC>
+    Example 8: Figures <examples/example8_figures>

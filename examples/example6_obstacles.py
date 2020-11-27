@@ -1,7 +1,7 @@
 """
 Example 6
 ---------
-MISSING DOC
+The use of obstacles for reducing the critical area is demonstrated in this example.
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,27 +13,19 @@ from casex import Obstacles
 CA_width = 3
 
 # Nominal length (length of CA without obstacles).
-CA_length = 66.7
-
-houses_per_square_km = 800
+CA_length = 200/CA_width
 
 # Obstacle density in obstacles per square meter.
+houses_per_square_km = 800
 obstacle_density = houses_per_square_km / 1e6
 
-# Average width of house.
+# Average width of house and variation in house width.
 obstacle_width_mu = 23
-
-# Variation in house width.
 obstacle_width_sigma = 6
 
-# Average house length.
+# Average house length and variation in house length.
 obstacle_length_mu = 9
-
-# Variation in house length.
 obstacle_length_sigma = 2
-
-# Target CA size (only used for graphics).
-CA_of_interest = 120
 
 # Instantiate Obstacles class.
 OS = Obstacles(CA_width, CA_length, 0)
@@ -46,6 +38,9 @@ x = np.linspace(0, CA_length, x_resolution)
 # Resolution of PDFs in computations. Higher res gives better accuracy, but also longer computation time.
 # Value of 25 is usually good.
 pdf_resolution = 25
+
+# Target CA size (only used for graphics).
+CA_of_interest = 120
 
 # Compute the probability curve.
 p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
@@ -73,5 +68,3 @@ print('Probability of reduction to at most {:1.0f} m^2 is {:1.0f}%'.format(CA_of
 
 plt.grid()
 plt.show()
-
-fig.savefig('Obstacles_CDF.png', format='png', dpi=300)

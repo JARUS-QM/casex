@@ -1,7 +1,7 @@
 """
 Example 2
 --------
-This example shows the basics of using the different models in casex.
+This example shows the basics of using the different models in CasEx.
 It shows how to set up the necessary parameters and variables, and how
 to call the critical area method to calculate critical areas for the
 models.
@@ -35,7 +35,7 @@ aircraft = AircraftSpecs(aircraft_type, width, length, mass)
 aircraft.set_fuel_type(enums.FuelType.GASOLINE)
 aircraft.set_fuel_quantity(5)
 aircraft.set_friction_coefficient(friction_coefficient)
-aircraft.set_coefficient_of_restitution(0.7)  # default value, so in fact no need to set.
+aircraft.set_coefficient_of_restitution(0.7)
 
 # Use the same impact speed for all models.
 # Computed here based on kinetic energy.
@@ -89,7 +89,7 @@ for k in np.arange(0, 5):
     plt.bar(index + k * bar_width, [p[k][0], p[k + 5][0], p[k + 10][0], p[k + 15][0]], bar_width)
 
 ax.set_xlabel('Scenario', fontsize=12)
-ax.set_ylabel('Lethal area', fontsize=12)
+ax.set_ylabel('Lethal area [m$^2$]', fontsize=12)
 ax.xaxis.set_ticks(index + 2 * bar_width)
 ax.set_xticklabels(['4 m span, 25 deg', '4 m span, 65 deg', '1.8 m span, 25 deg', '1.8 m span, 65 deg'])
 

@@ -120,6 +120,7 @@ class AnnexFParms:
 
         # Compute the parameters for each of the 5 size classes.
         for k in range(5):
+            # Compute glide speed based on cruise speed
             self.CA_parms[k].glide_speed = self.glide_reduce * self.CA_parms[k].cruise_speed
 
             # Define the aircraft.
@@ -131,10 +132,11 @@ class AnnexFParms:
             self.CA_parms[k].aircraft.set_ballistic_drag_coefficient(self.ballistic_drag_coefficient)
             self.CA_parms[k].aircraft.set_friction_coefficient(self.friction_coefficient)
 
-            # The 1 m column uses 0.9 as CoR in all cases.
             if k == 0:
+                # The 1 m column uses 0.9 as CoR in all cases.
                 self.CA_parms[k].aircraft.set_coefficient_of_restitution(0.9)
             else:
+                # The other columns uses a CoR depending on angle.
                 self.CA_parms[k].aircraft.set_coefficient_of_restitution(
                     self.CA_parms[k].aircraft.COR_from_impact_angle(self.impact_angle, [self.scenario_angles[0], 90],
                                                                     [self.horizontal_COR, self.vertical_COR]))
@@ -142,6 +144,7 @@ class AnnexFParms:
             # Compute terminal velocity.
             self.CA_parms[k].terminal_velocity = self.CA_parms[k].aircraft.terminal_velocity()
 
+            # Compute ballistic descent values.
             BDM.set_aircraft(self.CA_parms[k].aircraft)
             p = BDM.compute_ballistic_distance(self.CA_parms[k].ballistic_descent_altitude,
                                                self.CA_parms[k].cruise_speed, 0)
@@ -155,15 +158,23 @@ class AnnexFParms:
     def iGRC(pop_dens, CA, TLOS=1E-6):
         """Compute the finale integer iGRC as described in Annex F.
         
+        This method computes the integer and the raw iGRC values for a given population density and
+        size of critical area. The TLOS, target level of safety, can also be set, but the default value
+        is :math:`10^{-6}` as described in Annex F.
+        
+        .. note:: This method converts the population density to ppl/m^2 as needed for the equation.
+                    But the unit for the input is ppl/km^2, since this is typicall how the density
+                    is known.
+        
         Parameters
         ----------
         pop_dens : float
-            [ppl/km^2] Population density  (Note that this function converts the density to ppl/m^2
-            as needed for the equation).
+            [ppl/km^2] Population density
         CA : float
             [m^2] Size of the critical area.
         TLOS : float, optional
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
+            This value is described in more detail in Annex F.
             
         Returns
         -------
@@ -172,6 +183,7 @@ class AnnexFParms:
         raw iGRC : float
             The raw iGRC before rounding up.
         """
+        # Note that the 1E-6 here is the conversion from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
 
         return math.ceil(raw_iGRC_value), raw_iGRC_value
