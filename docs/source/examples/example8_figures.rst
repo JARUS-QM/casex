@@ -15,16 +15,25 @@ angle and speed for a constant critical area. It is based on example 4,
 but include all five classes. In Annex F only the subplot for the 3 m
 class is shown.
 
-.. literalinclude:: ../../../examples/example6_obstacles.py
-    :lines: 14
+.. literalinclude:: ../../../examples/example8_figures.py
+    :lines: 10-26
 
+*Text explaining the first image output*
 
+.. image:: images/example_8_1.png
 
+*Text explaining the second image output*
 
-.. image:: images/example_6.png
+.. image:: images/example_8_2.png
 
+*Text explaining the third image output*
 
+.. image:: images/example_8_3.png
 
-.. code-block:: console
+*Text explaining the fourth image output*
 
-    Probability of reduction to at most 120 m^2 is 62%
+.. image:: images/example_8_4.png
+
+.. bibliography:: ../bibtex.bib
+   :style: plain
+   :filter: docname in docnames

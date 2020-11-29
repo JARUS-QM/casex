@@ -48,9 +48,6 @@ axis is linear, while the population density axis is logarithmic.
 
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
     :lines: 17-18
-    
-
 
 
 .. image:: images/example_7.png
-
