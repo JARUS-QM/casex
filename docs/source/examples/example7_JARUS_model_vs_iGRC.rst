@@ -2,12 +2,9 @@
 Example 7: JARUS model vs the iGRC values
 =========================================
 
-In this example we compare the iGRC table in Annex F with the actual
-output of the JARUS model. This is done by plotting the critical area
-for a variety of wingspan and population densities.
-This is similar to the iGRC figures that can
-be computed with the :class:`Figures` class, which do the same thing, but
-for the simplified model.
+In this example we compare the iGRC table in Annex F with the actual output of the JARUS model. This is done by plotting
+the critical area for a variety of wingspan and population densities. This is similar to the iGRC figures that can be
+computed with the :class:`Figures` class, which do the same thing, but for the simplified model.
 
 We start with setting standard person parameters.
 
