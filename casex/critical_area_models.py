@@ -11,7 +11,16 @@ from casex import enums, aircraft_specs, explosion_models, Conversion, constants
 
 
 class CriticalAreaModels:
-    """This class provide methods for computing critical area for a variety of models.
+    """
+    This class is used for computing the critical area for a crash when the basic parameters for the
+    aircraft is known. It support five different models, including the JARUS model, as described in
+    Appendix B in Annex F :cite:`JARUS_AnnexF`.
+    
+    The main method in this class is `critical_area`, which computes the size of the critical area given
+    a number of input arguments relating to the aircraft.
+    
+    There are two attributes in this class for describing
+    a standard person, namely `buffer` and `height`.
 
     Attributes
     ----------
@@ -37,18 +46,18 @@ class CriticalAreaModels:
     def critical_area(self, critical_area_model, aircraft, impact_speed, impact_angle, critical_areas_overlap, var1=-1):
         """Computes the lethal area as modeled by different models.
         
-        The models are described in more detail in SORA Annex F :cite:`JARUS_AnnexF`. References for each model is given
+        The models are described in more detail in Annex F :cite:`JARUS_AnnexF`. References for each model is given
         in the code.
         
         This function supports one of the following input parameters to be a vector, which will give a vector of the
         same size as output:
             
-        * impact_speed
-        * impact_angle
-        * critical_area_overlap
-        * aircraft.width
-        * aircraft.length
-        * aircraft.fuel_quantity
+        * `impact_speed`
+        * `impact_angle`
+        * `critical_area_overlap`
+        * `aircraft.width`
+        * `aircraft.length`
+        * `aircraft.fuel_quantity`
         
         This vector is given as ``numpy.array``, and only one of the parameters can be a vector for each call.
         The return values are then also ``numpy.array`` IF the input parameter that is a ``numpy.array`` is used in the
@@ -58,7 +67,7 @@ class CriticalAreaModels:
         ----------       
         critical_area_model : :class:`enums.CriticalAreaModel`
             Choice of model (RCC :cite:`RangeCommandersCouncil1999`, RTI :cite:`Montgomery1995`, FAA :cite:`FAA2011`,
-            NAWCAD :cite:`Ball2012`, JARUS :cite:`JARUS_AnnexF`). See SORA Annex F for details :cite:`JARUS_AnnexF`.
+            NAWCAD :cite:`Ball2012`, JARUS :cite:`JARUS_AnnexF`). See Annex F for details :cite:`JARUS_AnnexF`.
         aircraft : :class:`casex.AircraftSpecs`
             Class with information about the aircraft.
         impact_speed : float
@@ -66,7 +75,7 @@ class CriticalAreaModels:
         impact_angle : float
             [deg] Impact angle relative to ground (90 is vertical, straight down).
         critical_areas_overlap : float
-            [0 to 1] Fraction of overlap between lethal area from glide and from explosion/deflagration.
+            [0 to 1] Fraction of overlap between lethal area from glide/slide and from explosion/deflagration.
         var1 : float, optional
             An additional variable that is used in FAA, NAWCAD, and JARUS models.
             For the FAA model, `var1` = :math:`F_A`, the ratio of secondary debris field to primary debris field. If not
@@ -76,22 +85,22 @@ class CriticalAreaModels:
             the value 73.2 J is used.
 
             For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1),
-            the following is done (see Annex F Appendix A for details): `var1` is set to 290 J, except when the width
-            of the aircraft is <= 1 m, in which case `var1` is set to 2 * 290 J.
+            the following is done (see Annex F Appendix A :cite:`JARUS_AnnexF` for details): `var1` is set to 290 J, except when the width
+            of the aircraft is <= 1 m, in which case `var1` is set to :math:`2 \cdot 290` J.
         
         Returns
         -------       
         critical area : float
-            [m^2] Size of the critical area for the selected model.
+            [:math:`\mathrm{m}^2`] Size of the critical area for the selected model.
         estimated glide area : float
-            [m^2] The glide and slide areas are estimated as the relation between the glide and slide distances
+            [:math:`\mathrm{m}^2`] The glide and slide areas are estimated as the relation between the glide and slide distances
             multiplied by the glide+slide area.
         estimated slide area : float
-            [m^2] The estimated slide area.
+            [:math:`\mathrm{m}^2`] The estimated slide area.
         critical area inert : float
-            [m^2] The inert part of the critical area.
+            [:math:`\mathrm{m}^2`] The inert part of the critical area.
         deflagration area : float
-            [m^2] The deflagration area as given by the deflagration model.
+            [:math:`\mathrm{m}^2`] The deflagration area as given by the deflagration model.
 
         Raises
         ------
@@ -248,7 +257,8 @@ class CriticalAreaModels:
             
         .. math:: F = -f \cdot w,
             
-        where F is the frictional force, f the frictional coefficient, and w the body weight.
+        where :math:`F` is the frictional force, :math:`f` the frictional coefficient,
+        and :math:`w` the body weight.
         The slide distance is the length of the slide between impact and the body coming to rest.
         
         This is a standard assumption found in most sources that includes friction.

@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Recreates some of the figures in Annex F :cite:`JARUS_AnnexF`.
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,13 +8,82 @@ import math
 # This is used for the colorbar.
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from casex import CriticalAreaModels, AnnexFParms, enums
+from casex import CriticalAreaModels, AnnexFParms, enums, Obstacles
 
 
 class Figures:
-    """MISSING DOC
-
     """
+    This class provides some static methods that will were used to make some of the
+    figures in Annex F :cite:`JARUS_AnnexF`. The methods take a number of boolean
+    variables to control the content of the figures. The specific choice of parameters
+    for each figure is shown in example 8.
+    """
+
+    @staticmethod
+    def figure_obstacle_critical_area_reduction(save_fig=False):
+        """Recreates the figure in Annex F Appendix B for the CA reduction used in the iGRC table..
+
+        Parameters
+        ----------
+        save_fig : bool, optional
+            If True save the figure to a PNG (default is False).
+            
+        Returns
+        -------
+        None
+        """
+        # Wingspan and length of CA
+        CA_width = 3
+        CA_length = 200/CA_width
+
+        # Obstacle density in obstacles per square meter.
+        obstacle_density = 850 / 1e6
+
+        # Average width and lengft of house and variation in house width and length.
+        obstacle_width_mu = 17
+        obstacle_width_sigma = 3
+        obstacle_length_mu = 8
+        obstacle_length_sigma = 2
+
+        OS = Obstacles(CA_width, CA_length, 0)
+
+        x = np.linspace(0, CA_length, 10)
+
+        CA_of_interest = 120
+        
+        # Compute the probability curve.
+        p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
+                                            obstacle_length_mu, obstacle_length_sigma, 25)
+
+        # Compute probability for specific CA size (for graphics).
+        p_x2 = OS.cdf(CA_of_interest / CA_width, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
+              obstacle_length_mu, obstacle_length_sigma, 25)
+
+        print('Probability of reduction to at most {:1.0f} m^2 is {:1.0f}%'.format(CA_of_interest, p_x2[0][0] * 100))
+
+        # Plot the curve and the target CA.
+        fig = plt.figure(figsize=(12, 8))
+        ax = plt.axes()
+        ax.plot(x * CA_width, p_x, linewidth=3)
+
+        ax.set_xlabel('Critical area [m$^2$]', fontsize=16)
+        ax.set_xlim([0, x[-1] * CA_width])
+
+        ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange', linewidth=3)
+        ax.plot([CA_of_interest, CA_of_interest], [p_x[0], p_x2[0][0]], '--', color='orange', linewidth=3)
+
+        ax.set_ylim([p_x[0], math.ceil(p_x[-1] * 10) / 10])
+        ax.set_ylabel('Probability', fontsize=16)
+        
+        ax.tick_params(axis='both', which='major', labelsize=14)
+
+        plt.grid()
+        plt.show()
+
+        # Save the figure to file.
+        if save_fig:
+            fig.savefig('Obstacles_critical_area_reduction.png', format='png', dpi=300)
+
 
     @staticmethod
     def figure_angle_vs_speed(show_matrix=False, show_contours=False, save_fig=False):

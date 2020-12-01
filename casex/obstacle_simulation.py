@@ -25,25 +25,14 @@ def obstacle_simulation():
     # CA properties.
     CA_width = 3
     CA_length = 67
-    trials_count = 200000
+    trials_count = 20
     trial_area_sidelength = 1000
     num_of_obstacles = 450
 
-    obstacle_width_mu = 22
+    obstacle_width_mu = 14
     obstacle_width_sigma = 3
-    obstacle_length_mu = 9
+    obstacle_length_mu = 7
     obstacle_length_sigma = 2
-
-    # These are the values used in the simulation presented in Annex F Appendix B
-    # CA_width = 3
-    # CA_length = 67
-    # trials_count = 200
-    # trial_area_sidelength = 1000
-    # num_of_obstacles = 800
-    # obstacle_width_mu = 23
-    # obstacle_width_sigma = 6
-    # obstacle_length_mu = 9
-    # obstacle_length_sigma = 2
 
     # Booleans to control the computations and visualization
     do_compute_coverage = True
@@ -57,8 +46,8 @@ def obstacle_simulation():
 
     gen_polygons_time = time.time()
     if do_houses_along_roads:
-        houses_along_street = 22
-        rows_of_houses = 12
+        houses_along_street = 30
+        rows_of_houses = 15
         distance_between_two_houses = 20
         OS.generate_rectangular_obstacles_along_curves(obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
                                                        obstacle_length_sigma, houses_along_street, rows_of_houses,

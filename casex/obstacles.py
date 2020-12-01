@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Support both computation and simulation of the reduction of critical area.
 """
 import math
 import warnings
@@ -15,7 +15,13 @@ from shapely.strtree import STRtree
 
 
 class Obstacles:
-    """MISSING DOC
+    """This class has methods for computing the theoretical reduction in the size of the
+    critical area when there are obstacles in the ground area as well as for simulating
+    this reduction.
+    
+    The theoretical reduction is based on the work :cite:`lacour2021`.
+    
+    Examples of how to 
 
     Attributes
     ----------
@@ -172,7 +178,6 @@ class Obstacles:
         """
         # Number of rows of houses per side length. This is expanded to cover the entire area
         # (because the rows are curved).
-        rows_of_houses = 12
         rows_of_houses = round(rows_of_houses * 1.25)
 
         # Distance between two houses in each set of houses (neighbouring houses from separate streets).
@@ -189,20 +194,20 @@ class Obstacles:
         coefs = interpolate.splrep(x_points, y_points)
 
         # Compute position and rotation of houses.
-        x = np.linspace(0, 1000, houses_along_street)
-        y = np.linspace(-250, 1000, rows_of_houses)
-        x2 = np.full(houses_along_street, 1000 / (houses_along_street + 1))
-        y2 = np.diff(interpolate.splev(x, coefs), prepend=-10)
+        y = np.linspace(0+0.1, 1000-2*length_mu, houses_along_street)
+        x = np.linspace(-250, 1000, rows_of_houses)
+        y2 = np.full(houses_along_street, 1000 / (houses_along_street + 1))
+        x2 = np.diff(interpolate.splev(y, coefs), prepend=-10)
         r = []
-        for k in range(22):
-            r.append(-math.atan2(y2[k], x2[k]) * 180 / math.pi)
+        for k in range(houses_along_street):
+            r.append(-math.atan2(x2[k], y2[k]) * 180 / math.pi)
 
         # Add houses, only those inside the trial area.
         counter = 0
         for j in range(0, rows_of_houses):
             for k in range(0, houses_along_street):
-                trans_x = interpolate.splev(x[k], coefs) + y[j]
-                trans_y = x[k]
+                trans_x = interpolate.splev(y[k], coefs) + x[j]
+                trans_y = y[k]
                 if 0 < trans_x < self.trial_area_sidelength and 0 < trans_y < self.trial_area_sidelength:
                     obs = [(0, 0), (length[counter], 0), (length[counter], width[counter]), (0, width[counter]), (0, 0)]
                     self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), r[k]), trans_x, trans_y))
@@ -745,7 +750,7 @@ class Obstacles:
 
         Parameters
         ----------
-        x : (List of) float(s)
+        x : float array
             [m] The length of the critical area for which the CDF is computed. This can be a scalar or an array.
         obstacle_density : float
             [1/m^2] The density of obstacles measured as the number of obstacles per square meter. Note that in many
@@ -764,10 +769,10 @@ class Obstacles:
 
         Returns
         -------
-        p_x : (List of) float(s)
+        p_x : float array
             The CDF value for the given x. This return parameter has the same type as input x.
         beta : float
-            The beta values as computed in :cite:`lacour`.
+            The beta values as computed in :cite:`lacour2021`.
         acc_probability_check : float
             A sanity check on the triple integral. This values should be relatively close to 1, especially for high
             value of pdf_resolution.

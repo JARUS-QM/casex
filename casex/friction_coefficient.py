@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Friction coefficients between a variety of aircraft materials and ground types.
 """
 import warnings
 
@@ -7,8 +7,7 @@ from casex.enums import AircraftMaterial, GroundMaterial
 
 
 class FrictionCoefficients:
-    """Friction coefficients between a variety of aircraft materials and ground types.
-    
+    """
     This class provides some help to determine an appropriate friction coefficient for a sliding aircraft.
     The values provided here are guidance only, and not all combinations of aircraft material and ground type is
     known in this class.

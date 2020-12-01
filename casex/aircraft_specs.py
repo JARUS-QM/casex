@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Class to hold parameters on the aircraft used in area computations.
 """
 import warnings
 import numpy as np
@@ -8,8 +8,7 @@ from casex import enums, constants
 
 
 class AircraftSpecs:
-    """Class to hold parameters on the aircraft used in area computations
-    
+    """    
     This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be
     computed. Many of the these parameters are not used in computations of critical area, but are reserved for
     future use.
@@ -26,11 +25,12 @@ class AircraftSpecs:
     mass : float
         [kg] Mass of the aircraft in kg. This is the total mass at the time of crash, including fuel.
     aircraft_type : :class:`enums.AircraftType`
-        The type of aircraft as given in :class:`enums.AircraftType`.
+        The type of aircraft.
     fuel_type : :class:`enums.FuelType`
-        Fuel type, such as fossil fuels or batteries. Given in :class:`enums.FuelType`.
+        Fuel type, such as fossil fuels or batteries. Defaut is `FuelType.GASOLINE`.
     fuel_quantity : float
-        [L] Quantity of fuel in L. For batteries the quantity is also given in L, i.e. the volume of the battery.
+        [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
+            i.e. the volume of the battery. Default is 0, which means that no deflagration is assumed upon crash.
     friction_coefficient : float
         [-] Coefficient of friction between aircraft and ground. Appropriate values can be found using
         :class:`FrictionCoefficients` (the default is 0.6).
@@ -65,7 +65,7 @@ class AircraftSpecs:
         Parameters
         ----------        
         aircraft_type : :class:`enums.AircraftType`
-            Type of aircraft as given by enums.AircraftType.
+            Type of aircraft.
         width : float
             [m] Width of aircraft (wingspan, characteristic dimension).
         length : float
@@ -73,9 +73,10 @@ class AircraftSpecs:
         mass : float
             [kg] Mass of the aircraft.
         fuel_type : :class:'enums.FuelType, optional
-            The type of fuel used in the aircraft. Defaut is `FuelType.GASOLINE`.
+            Fuel type, such as fossil fuels or batteries. Defaut is `FuelType.GASOLINE`.
         fuel_quantity : float, optional
-            [L] The quantity of fuel in liters. Default is 0, which means that no deflagration is assumed upon crash.
+            [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
+                i.e. the volume of the battery. Default is 0, which means that no deflagration is assumed upon crash.
         """
         self.ballistic_frontal_area = None
         self.ballistic_drag_coefficient = None

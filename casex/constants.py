@@ -1,4 +1,4 @@
-"""MISSING DOC
+"""Constant used throughout the package.
 
 .. data:: GRAVITY
     [kg/m^3] Density of air at sea level

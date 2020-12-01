@@ -9,21 +9,21 @@ from casex import constants, exceptions
 
 
 class BallisticDescent2ndOrderDragApproximation:
-    """Class supports computation of a ballistic descent under the influence of gravity and drag.
-    
-    The model used is the standard second order drag model, expect it has been modified to support fast calculations.
-    Details on this can be found in :cite:`lacour2021`.
+    """    
+    This class allows for computation of ballistic descent using a variation of the standard
+    second order drag model. In this implementation it has been modified to support
+    fast calculations. Details on this can be found in :cite:`lacour2021`.
 
     Attributes
     ----------
     aircraft : :class:'AircraftSpecs'
         Class holding information about the aircraft.
     distance1 : float
-        [m] Horizontal distance travelled between start time of descent and time :variable:'time_top' TO BE CHECKED.
+        [m] Horizontal distance travelled between start time of descent and time `time_top`.
     distance2 : float
-        [m] Horizontal distance travelled between time :variable:'time_top' TO BE CHECKED and time :variable:'time_cross' TO BE CHECKED.
+        [m] Horizontal distance travelled between time `time_top` and time `time_cross`.
     distance3 : float
-        [m] Horizontal distance travelled between time :variable:'time_cross' TO BE CHECKED and time :variable:'time_impact' TO BE CHECKED.
+        [m] Horizontal distance travelled between time `time_cross` and time `time_impact`.
     velocity_x : float
         [m/s] Horizontal part of the impact velocity.
     velocity_y : float
@@ -35,9 +35,11 @@ class BallisticDescent2ndOrderDragApproximation:
     time_impact : float
         [s] Time from start of descent to impact.
     c : float
-        This represents the multiplication of frontal area, air density, and drag coefficient, which often appears together in the computations. The :variable:'c' TO BE CHECKED attribute is just a placeholder for this multiplication.
+        This represents the multiplication of frontal area, air density, and drag coefficient, which often appears
+        together in the computations. The `c` attribute is just a placeholder for this multiplication.
     gamma : float
-        A placeholder for :math:'sqrt(mass * gravity / c)'. TO BE CHECKED
+        A placeholder for :math:`\sqrt{m \cdot g / c}`, where :math:`m` is the mass
+        of the aircraft, and :math:`g` is the gravitatonal constant.
     """
     def __init__(self):
         """Constructor
@@ -66,7 +68,7 @@ class BallisticDescent2ndOrderDragApproximation:
 
         Parameters
         ----------
-        aircraft : :class:'AircraftSpecs'
+        aircraft : :class:`AircraftSpecs`
             Class holding information about the aircraft.
 
         Returns
@@ -79,23 +81,23 @@ class BallisticDescent2ndOrderDragApproximation:
     
         One of the following parameters can be an :class:`numpy.array`
         
-        * altitude
-        * initial_velocity_x
-        * initial_velocity_y
-        * aircraft.ballistic_drag_coefficient
-        * aircraft.ballistic_frontal_area
+        * `altitude`
+        * `initial_velocity_x`
+        * `initial_velocity_y`
+        * `aircraft.ballistic_drag_coefficient`
+        * `aircraft.ballistic_frontal_area`
         
         and the output will also be an :class:`numpy.array` for the outputs that depends on the parameters given as an
-        :class:`numpy.array`. Note that :class:`aircraft` refers to the variable set with the methods
+        :class:`numpy.array`. Note that `aircraft` refers to the variable set with the methods
         :class:`set_aircraft`.
         
         Requirements
         ------------
         The following requirements apply to the inputs
         
-        * :class:`initial_velocity_x` must be positive.
-        * :class:`initial_velocity_x` must be larger than :class:`initial_velocity_y`.
-        * absolute value of :class:`initial_velocity_y` must be less than the terminal velocity.
+        * `initial_velocity_x` must be positive.
+        * `initial_velocity_x` must be larger than `initial_velocity_y`.
+        * absolute value of `initial_velocity_y` must be less than the terminal velocity.
         
         Parameters
         ----------
@@ -108,7 +110,7 @@ class BallisticDescent2ndOrderDragApproximation:
             
         Returns
         -------
-        distance:impact : float
+        distance_impact : float
             [m] Horizontal distance for impact relative to event point.
         velocity_impact: float
             [m/s] The impact velocity.

@@ -24,3 +24,5 @@ figures.figure_iGRC_CA_vs_PopDensity(filename="_img2", show_reduced_CA_axis=Fals
 figures.figure_iGRC_CA_vs_PopDensity(filename="_img3", show_reduced_CA_axis=True, show_old_quantization=True, 
                                      show_x_wingspan=True, show_x_velocity=False, show_x_CA=False,
                                      show_x_CA_above=False)
+
+figures.figure_obstacle_critical_area_reduction()

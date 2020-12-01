@@ -1,5 +1,5 @@
 """
-This class provides support for redoing some of the computations found in Annex F.
+This class provides support for redoing some of the computations found in Annex F :cite:`JARUS_AnnexF`.
 """
 import math
 from dataclasses import dataclass
@@ -10,14 +10,13 @@ from casex import AircraftSpecs, enums, BallisticDescent2ndOrderDragApproximatio
 
 
 class AnnexFParms:
-    """This class provides support for redoing some of the computations found in Annex F.
-    
-    It contains the following parameters for the 5 size classes in the iGRC table:
+    """This class contains the following parameters for the 5 size classes in the iGRC table:
 
     Attributes
     ----------
     wingspan : float
-        Characteristic dimension of the aircraft. See Annex F for more detailed explanation on what that is.
+        Characteristic dimension of the aircraft. See Annex F :cite:`JARUS_AnnexF`
+        for more detailed explanation on what that is.
     critical_area_target : float
         [m^2] Size of the largest critical area for each size class.
     cruise_speed : float
@@ -27,12 +26,12 @@ class AnnexFParms:
     KE_critical : float
         [J] Non-lethal energy during slide.
     friction_coefficient = 0.5 : float
-        [-] The friction coefficient is assumed constant at 0.5 throughout Annex F.
+        [-] The friction coefficient is assumed constant at 0.5 throughout Annex F :cite:`JARUS_AnnexF`.
     glide_reduce = 0.7 : float
         [-] Reduction in glide speed relative to cruise speed.
     glide_speed : float
         [m/s] The glide speed resulting from multiplying the cruise speed by glide_reduce.
-    aircraft : :class:'AircraftSpecs'
+    aircraft : :class:`AircraftSpecs`
         The class containing information about the aircraft.
     scenario_angles = [9, 35, 80] : float array
         [deg] The three impact angles for the three descent scenarios. The 80 degrees is not actually used but
@@ -62,8 +61,9 @@ class AnnexFParms:
     horizontal_COR : float
         [-] The coefficient of restitution for a near horizontal impact.
     vertical_COR : float
-        [-] The coefficient of restitution for a vertical impact. The actual COR is determined as a first order
-        interpolation between horizontal_COR for 0 degrees and vertical_COR for 90 degrees.
+        [-] The coefficient of restitution for a vertical impact. The actual COR is determined
+        as a first order interpolation between `horizontal_COR` for 0 degrees and `vertical_COR`
+        for 90 degrees.
     """
 
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
@@ -156,15 +156,15 @@ class AnnexFParms:
 
     @staticmethod
     def iGRC(pop_dens, CA, TLOS=1E-6):
-        """Compute the finale integer iGRC as described in Annex F.
+        """Compute the finale integer iGRC as described in Annex F :cite:`JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
         size of critical area. The TLOS, target level of safety, can also be set, but the default value
-        is :math:`10^{-6}` as described in Annex F.
+        is :math:`10^{-6}` as described in Annex F :cite:`JARUS_AnnexF`.
         
         .. note:: This method converts the population density to ppl/m^2 as needed for the equation.
-                    But the unit for the input is ppl/km^2, since this is typicall how the density
-                    is known.
+                    This is because the unit for the input is ppl/km^2, since this is typically
+                    how the density is known.
         
         Parameters
         ----------
@@ -174,7 +174,7 @@ class AnnexFParms:
             [m^2] Size of the critical area.
         TLOS : float, optional
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
-            This value is described in more detail in Annex F.
+            This value is described in more detail in Annex F :cite:`JARUS_AnnexF`.
             
         Returns
         -------

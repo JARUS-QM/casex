@@ -1,5 +1,5 @@
 """
-MISSING DOC
+Miscellaneous classes for supporting the package.
 """
 import math
 import warnings
@@ -11,7 +11,7 @@ from casex import enums
 
 
 class NormalDistributionParameters:
-    """Class for provide support for generating and using normaal distributions
+    """Class for provide support for generating and using normal distributions.
 
     Attributes
     ----------
@@ -24,7 +24,7 @@ class NormalDistributionParameters:
     sigma : float, optional
         Standard deviation of the normal distribution (the default is 1).
     wrapping_type : :class:`enums.Wrapping`, optional
-        The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi
+        The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to :math:`\pi`
         (the default is `EWrapping.NONE`).
     """
 
@@ -38,7 +38,7 @@ class NormalDistributionParameters:
         sigma : float, optional
             Standard deviation of the normal distribution (the default is 1).
         wrapping_type : :class:`enums.Wrapping`, optional
-            The wrapping type for mu. When set to EWrapping.PI2PI, mu is wrapped to the interval -pi to pi
+            The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to :math:`\pi`
             (the default is `EWrapping.NONE`).
         """
         self.input_set = None
