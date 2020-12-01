@@ -117,3 +117,7 @@ The printed values
     40 m      200 m/s     1000 m    107 m/s   110 m/s   62 deg    1559 m     16.4 s    60750 kJ
     
 are the same as found in the ballistic table in Appendix A of Annex F :cite:`JARUS_AnnexF`.
+
+.. bibliography:: ../bibtex.bib
+   :style: plain
+   :filter: docname in docnames
