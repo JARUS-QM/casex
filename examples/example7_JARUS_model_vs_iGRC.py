@@ -55,12 +55,12 @@ for j in range(len(wingspan)):
     AFP.CA_parms[column].aircraft.width = wingspan[j]
 
     # Compute the critical area value for the given wingspan.
-    M = 1e-6 * CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed,
+    M = CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed,
                                 impact_angle, 0, -1)[0]
 
     # Compute the corresponding GRC value for all population densities.
     for i in range(len(pop_density)):
-        GRC_matrix[i, j] = 1 - np.log10(1e-6 / (pop_density[i] * M))
+        GRC_matrix[i, j] = AnnexFParms.iGRC(pop_density[i], M)
 
 # A number of lists used for plotting.
 x_ticks = [1, 3, 8, 20]

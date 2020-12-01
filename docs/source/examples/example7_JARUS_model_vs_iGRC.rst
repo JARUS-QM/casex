@@ -46,11 +46,38 @@ We instantiate the Annex F parmeters class :class:`AnnexFParms`.
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
     :lines: 31
     
-Initialize the background matrix with zeros
+Initialize the background matrix with zeros.
 
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
     :lines: 34
 
-And
+We run a for loop over the range of the wingspan.
+
+.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+    :lines: 37
+
+Now, for every value of the wingspan, we want to use the aircraft values
+associated with the wingspan, i.e. the appropriate column in the iGRC table.
+
+.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+    :lines: 40-49
+    
+We get the maximum impact speed for the column and set the aircraft width to match
+the current value from the for loop.
+
+.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+    :lines: 51-55
+
+We then compute the size of the critical area using the standard values
+from Annex F (including the assumptions on the kinetic energy, which we
+get by setting a -1 as the last input). Since there is not deflagration, the
+overlap is set to zero.
+
+.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+    :lines: 58-59
+    
+Finally, we populate the background matric for the plot, that is the iGRC values
+associated with the 
+
 
 .. image:: images/example_7.png
