@@ -431,6 +431,6 @@ class CriticalAreaModels:
         Returns
         -------
         speed : float
-            [m/s] The speed associated with the given kinetic energi and mass.
+            [m/s] The speed associated with the given kinetic energy and mass.
         """
         return np.sqrt(2 * KE / mass)

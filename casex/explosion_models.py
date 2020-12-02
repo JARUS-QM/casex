@@ -70,6 +70,7 @@ class ExplosionModels:
         This value is used for the explosion and deflagration computations.
         
         Available types of fuels are:
+
         +----------------------+----------------------------+-------------------+
         | Fuel type            | Energy density             | Mass density      |
         +======================+============================+===================+

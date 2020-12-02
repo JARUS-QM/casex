@@ -11,14 +11,13 @@ class FrictionCoefficients:
     This class provides some help to determine an appropriate friction coefficient for a sliding aircraft.
     The values provided here are guidance only, and not all combinations of aircraft material and ground type is
     known in this class.
-    
+
     The coefficient takes the following values.
+
     +-------------------------+------------------------------------------------------+
     |                         | Ground type                                          |
     +-------------------------+----------+----------+----------+----------+----------+
-    |                         | Concrete | Asphalt  | Grass    | Sand     | Soil     | 
-    +                         +----------+----------+----------+----------+----------+
-    | Aircraft material       |                                                      |
+    | Aircraft material       | Concrete | Asphalt  | Grass    | Sand     | Soil     |
     +=========================+==========+==========+==========+==========+==========+
     | Glass fiber             | 0.2      | n/a      | 0.15     | n/a      | n/a      |
     +-------------------------+----------+----------+----------+----------+----------+
