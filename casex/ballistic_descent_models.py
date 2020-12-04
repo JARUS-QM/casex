@@ -29,9 +29,11 @@ class BallisticDescent2ndOrderDragApproximation:
     velocity_y : float
         [m/s] Vertical part of the impact velocity.
     time_top : float
-        [s] Time from start of descent to reaching the top of the descent curve. This is 0 if the descent starts with a descent.
+        [s] Time from start of descent to reaching the top of the descent curve. This is 0 if the descent starts with a
+        descent.
     time_cross : float
-        [s] Time from start of descent to reaching the point, where the vertical velocity exceeds the horizontal velocity.
+        [s] Time from start of descent to reaching the point, where the vertical velocity exceeds the horizontal
+        velocity.
     time_impact : float
         [s] Time from start of descent to impact.
     c : float
@@ -42,12 +44,6 @@ class BallisticDescent2ndOrderDragApproximation:
         of the aircraft, and :math:`g` is the gravitatonal constant.
     """
     def __init__(self):
-        """Constructor
-
-        Parameters
-        ----------
-
-        """
         self.aircraft = None
         self.distance_impact = None
         self.distance1 = None
@@ -73,6 +69,7 @@ class BallisticDescent2ndOrderDragApproximation:
 
         Returns
         -------
+        None
         """
         self.aircraft = aircraft
 
