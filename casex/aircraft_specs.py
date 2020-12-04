@@ -27,10 +27,10 @@ class AircraftSpecs:
     aircraft_type : :class:`enums.AircraftType`
         The type of aircraft.
     fuel_type : :class:`enums.FuelType`
-        Fuel type, such as fossil fuels or batteries. Defaut is `FuelType.GASOLINE`.
+        Fuel type, such as fossil fuels or batteries (the default is `FuelType.GASOLINE`).
     fuel_quantity : float
         [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
-            i.e. the volume of the battery. Default is 0, which means that no deflagration is assumed upon crash.
+        i.e. the volume of the battery (the default is 0, which means that no deflagration is assumed upon crash).
     friction_coefficient : float
         [-] Coefficient of friction between aircraft and ground. Appropriate values can be found using
         :class:`FrictionCoefficients` (the default is 0.6).
@@ -57,27 +57,25 @@ class AircraftSpecs:
         [m^2] Area of the parachute generating drag during descent and full deployment.
     parachute_drag_coef : float
         [-] Drag coefficient.
+
+    Parameters
+    ----------
+    aircraft_type : :class:`enums.AircraftType`
+        Type of aircraft.
+    width : float
+        [m] Width of aircraft (wingspan, characteristic dimension).
+    length : float
+        [m] Length of aircraft.
+    mass : float
+        [kg] Mass of the aircraft.
+    fuel_type : :class:'enums.FuelType, optional
+        Fuel type, such as fossil fuels or batteries (the default is `FuelType.GASOLINE`).
+    fuel_quantity : float, optional
+        [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
+        i.e. the volume of the battery (the default is 0, which means that no deflagration is assumed upon crash).
     """
 
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
-        """Constructor
-        
-        Parameters
-        ----------        
-        aircraft_type : :class:`enums.AircraftType`
-            Type of aircraft.
-        width : float
-            [m] Width of aircraft (wingspan, characteristic dimension).
-        length : float
-            [m] Length of aircraft.
-        mass : float
-            [kg] Mass of the aircraft.
-        fuel_type : :class:'enums.FuelType, optional
-            Fuel type, such as fossil fuels or batteries. Defaut is `FuelType.GASOLINE`.
-        fuel_quantity : float, optional
-            [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
-                i.e. the volume of the battery. Default is 0, which means that no deflagration is assumed upon crash.
-        """
         self.ballistic_frontal_area = None
         self.ballistic_drag_coefficient = None
         self.glide_drag_coefficient = None
@@ -424,24 +422,24 @@ class AircraftSpecs:
         terminal_velocity : float
             [m/s] The terminal velocity for the aircraft.
         """
-        return np.sqrt(
-            2 * self.mass * constants.GRAVITY / constants.AIR_DENSITY / self.ballistic_frontal_area / self.ballistic_drag_coefficient)
+        return np.sqrt(2 * self.mass * constants.GRAVITY / constants.AIR_DENSITY / self.ballistic_frontal_area /
+                       self.ballistic_drag_coefficient)
 
     def COR_from_impact_angle(self, impact_angle, angles=None, CoRs=None):
         """Compute a coefficient of restitution for a given impact angle.
         
-        This method assumes an affine relation between impact angle and CoR. Therefore, two angles and two CoR values are use to determine
-        this relation. The default is as describedin Annex F that the CoR is 0.9 at a 9 degree impact and 0.6 at a 90 degree (vertical) impact.
-        This values are used as defaults, but others can be specified.
+        This method assumes an affine relation between impact angle and CoR. Therefore, two angles and two CoR values
+        are used to determine this relation. The default is as described in Annex F that the CoR is 0.9 at a 9 degree
+        impact and 0.6 at a 90 degree (vertical) impact. This values are used as defaults, but others can be specified.
         
         Parameters
         ----------        
         impact_angle : float
             [deg] The impact angle between 0 and 90.
         angles : float array, optional
-            [deg] Array with two diufferent angle of impact values. Default = [9, 90].
+            [deg] Array with two different angle of impact values (the default is [9, 90]).
         CoRs : float array, optional
-            [-] Array with two COR values corresponding to the two angles. Default is [0.9, 0.6].
+            [-] Array with two COR values corresponding to the two angles (the default is [0.9, 0.6]).
 
         Returns
         -------
