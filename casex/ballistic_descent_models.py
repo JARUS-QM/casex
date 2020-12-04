@@ -41,7 +41,7 @@ class BallisticDescent2ndOrderDragApproximation:
         together in the computations. The `c` attribute is just a placeholder for this multiplication.
     gamma : float
         A placeholder for :math:`\sqrt{m \cdot g / c}`, where :math:`m` is the mass
-        of the aircraft, and :math:`g` is the gravitatonal constant.
+        of the aircraft, and :math:`g` is the gravitational constant.
     """
     def __init__(self):
         self.aircraft = None

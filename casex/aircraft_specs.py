@@ -13,6 +13,22 @@ class AircraftSpecs:
     computed. Many of the these parameters are not used in computations of critical area, but are reserved for
     future use.
 
+    Parameters
+    ----------
+    aircraft_type : :class:`enums.AircraftType`
+        Type of aircraft.
+    width : float
+        [m] Width of aircraft (wingspan, characteristic dimension).
+    length : float
+        [m] Length of aircraft.
+    mass : float
+        [kg] Mass of the aircraft.
+    fuel_type : :class:'enums.FuelType, optional
+        Fuel type, such as fossil fuels or batteries (the default is `FuelType.GASOLINE`).
+    fuel_quantity : float, optional
+        [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
+        i.e. the volume of the battery (the default is 0, which means that no deflagration is assumed upon crash).
+
     Attributes
     ----------
     width : float
@@ -57,22 +73,6 @@ class AircraftSpecs:
         [m^2] Area of the parachute generating drag during descent and full deployment.
     parachute_drag_coef : float
         [-] Drag coefficient.
-
-    Parameters
-    ----------
-    aircraft_type : :class:`enums.AircraftType`
-        Type of aircraft.
-    width : float
-        [m] Width of aircraft (wingspan, characteristic dimension).
-    length : float
-        [m] Length of aircraft.
-    mass : float
-        [kg] Mass of the aircraft.
-    fuel_type : :class:'enums.FuelType, optional
-        Fuel type, such as fossil fuels or batteries (the default is `FuelType.GASOLINE`).
-    fuel_quantity : float, optional
-        [L] The quantity of fuel in liters. For batteries the quantity is also given in L,
-        i.e. the volume of the battery (the default is 0, which means that no deflagration is assumed upon crash).
     """
 
     def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):

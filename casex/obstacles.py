@@ -21,7 +21,16 @@ class Obstacles:
     
     The theoretical reduction is based on the work :cite:`lacour2021`.
     
-    Examples of how to 
+    Examples of how to MISSING DOC
+
+    Parameters
+    ----------
+    CA_width : float
+        [m] Width of the nominal CA.
+    CA_length : float
+        [m] Length of the nominal CA.
+    trial_area_sidelength : float
+        [m] Length of each side of the square trial area.
 
     Attributes
     ----------
@@ -62,17 +71,6 @@ class Obstacles:
     """
 
     def __init__(self, CA_width, CA_length, trial_area_sidelength):
-        """Constructor
-        
-        Parameters
-        ----------
-        CA_width : float
-            [m] Width of the nominal CA.
-        CA_length : float
-            [m] Length of the nominal CA.
-        trial_area_sidelength : float
-            [m] Length of each side of the square trial area.
-        """
         self.CA_width = CA_width
         self.CA_length = CA_length
         self.trials_count = None

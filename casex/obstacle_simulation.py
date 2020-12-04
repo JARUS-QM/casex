@@ -96,8 +96,8 @@ def obstacle_simulation():
     fig = plt.figure(1, figsize=(12, 8), dpi=90)
     if do_viz:
         ax1 = fig.add_subplot(121)
-        OS.show_simulation(ax1, CAs=(not do_not_show_CAs), CAs_reduced=(not do_not_show_CAs), obstacles_original=True, obstacles_intersected=(not do_not_show_CAs),
-                           CA_first_point=False, debug_points=False)
+        OS.show_simulation(ax1, CAs=(not do_not_show_CAs), CAs_reduced=(not do_not_show_CAs), obstacles_original=True,
+                           obstacles_intersected=(not do_not_show_CAs), CA_first_point=False, debug_points=False)
         ax2 = fig.add_subplot(122)
     else:
         ax2 = fig.add_subplot(111)
@@ -152,7 +152,6 @@ def obstacle_simulation():
         ax2.plot(0, beta_numerical, 'o', color='#ff0000', label='beta numerical')
         ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color='#0000ff', label='Frac of empty CA')
         ax2.legend(loc="upper left", )
-        
 
     plt.show()
 

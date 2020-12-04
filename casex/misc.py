@@ -13,12 +13,8 @@ from casex import enums
 class NormalDistributionParameters:
     """Class for provide support for generating and using normal distributions.
 
-    Attributes
+    Parameters
     ----------
-    input_set : float array
-        The domain for the sampling (i.e. the input to the distribution, or the x axis values).
-    output_set : float array
-        The value set for the sampling (i.e. the output of the distribution, or the y axis values).
     mu : float, optional
         Mean of the normal distribution (the default is 0).
     sigma : float, optional
@@ -27,8 +23,12 @@ class NormalDistributionParameters:
         The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to
         :math:`\pi` (the default is `EWrapping.NONE`).
 
-    Parameters
+    Attributes
     ----------
+    input_set : float array
+        The domain for the sampling (i.e. the input to the distribution, or the x axis values).
+    output_set : float array
+        The value set for the sampling (i.e. the output of the distribution, or the y axis values).
     mu : float, optional
         Mean of the normal distribution (the default is 0).
     sigma : float, optional
@@ -90,13 +90,6 @@ class NormalDistributionParameters:
 class InitialSpeeds:
     """Class for holding initial speeds for ballistic descent.
 
-    Attributes
-    ----------
-    initial_speed_x : float
-        [m/s] The initial horizontal speed.
-    initial_speed_y : float
-        [m/s] The initial vertical speed.
-
     Parameters
     ----------
     initial_speed_x_mu : float
@@ -107,6 +100,13 @@ class InitialSpeeds:
         [m/s] The mean value of the normal distribution for the initial vertical speed.
     initial_speed_y_sigma : float
         The standard deviation of the normal distribution for the initial vertical speed.
+
+    Attributes
+    ----------
+    initial_speed_x : float
+        [m/s] The initial horizontal speed.
+    initial_speed_y : float
+        [m/s] The initial vertical speed.
     """
 
     def __init__(self, initial_speed_x_mu, initial_speed_x_sigma, initial_speed_y_mu, initial_speed_y_sigma):

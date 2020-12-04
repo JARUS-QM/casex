@@ -22,14 +22,14 @@ class CriticalAreaModels:
     There are two attributes in this class for describing
     a standard person, namely `buffer` and `height`.
 
-    Attributes
+    Parameters
     ----------
     buffer : float, optional
         [m] Radius of a standard person as seen from above (the default is 0.3 m).
     height : float, optional
         [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
 
-    Parameters
+    Attributes
     ----------
     buffer : float, optional
         [m] Radius of a standard person as seen from above (the default is 0.3 m).

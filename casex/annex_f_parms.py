@@ -12,6 +12,11 @@ from casex import AircraftSpecs, enums, BallisticDescent2ndOrderDragApproximatio
 class AnnexFParms:
     """This class contains the following parameters for the 5 size classes in the iGRC table:
 
+    Parameters
+    ----------
+    impact_angle : float
+        [deg] The impact angle of the descending aircraft, measured relative to the ground.
+
     Attributes
     ----------
     wingspan : float
@@ -64,11 +69,6 @@ class AnnexFParms:
         [-] The coefficient of restitution for a vertical impact. The actual COR is determined
         as a first order interpolation between `horizontal_COR` for 0 degrees and `vertical_COR`
         for 90 degrees.
-
-    Parameters
-    ----------
-    impact_angle : float
-        [deg] The impact angle of the descending aircraft, measured relative to the ground.
     """
 
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
