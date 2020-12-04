@@ -28,18 +28,16 @@ class CriticalAreaModels:
         [m] Radius of a standard person as seen from above (the default is 0.3 m).
     height : float, optional
         [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
+
+    Parameters
+    ----------
+    buffer : float, optional
+        [m] Radius of a standard person as seen from above (the default is 0.3 m).
+    height : float, optional
+        [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
     """
 
     def __init__(self, buffer=0.3, height=1.8):
-        """Constructor
-        
-        Parameters
-        ----------          
-        buffer : float, optional
-            [m] Radius of a standard person as seen from above (the default is 0.3 m).
-        height : float, optional
-            [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
-        """
         self.buffer = buffer
         self.height = height
 
@@ -85,16 +83,16 @@ class CriticalAreaModels:
             the value 73.2 J is used.
 
             For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1),
-            the following is done (see Annex F Appendix A :cite:`JARUS_AnnexF` for details): `var1` is set to 290 J, except when the width
-            of the aircraft is <= 1 m, in which case `var1` is set to :math:`2 \cdot 290` J.
+            the following is done (see Annex F Appendix A :cite:`JARUS_AnnexF` for details): `var1` is set to 290 J,
+            except when the width of the aircraft is <= 1 m, in which case `var1` is set to :math:`2 \cdot 290` J.
         
         Returns
         -------       
         critical area : float
             [:math:`\mathrm{m}^2`] Size of the critical area for the selected model.
         estimated glide area : float
-            [:math:`\mathrm{m}^2`] The glide and slide areas are estimated as the relation between the glide and slide distances
-            multiplied by the glide+slide area.
+            [:math:`\mathrm{m}^2`] The glide and slide areas are estimated as the relation between the glide and slide
+            distances multiplied by the glide+slide area.
         estimated slide area : float
             [:math:`\mathrm{m}^2`] The estimated slide area.
         critical area inert : float
@@ -312,8 +310,8 @@ class CriticalAreaModels:
     def check_glide_angle(glide_angle):
         """Checks the glide angle.
         
-        Issues a warning if the glide angle is out of range, or close to zero (which produces unrealistic results in the CA model).
-        It also flips the glide angle if it is between 90 and 180 degrees.
+        Issues a warning if the glide angle is out of range, or close to zero (which produces unrealistic results in the
+        CA model). It also flips the glide angle if it is between 90 and 180 degrees.
 
         Parameters
         ----------
