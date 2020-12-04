@@ -24,23 +24,21 @@ class NormalDistributionParameters:
     sigma : float, optional
         Standard deviation of the normal distribution (the default is 1).
     wrapping_type : :class:`enums.Wrapping`, optional
-        The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to :math:`\pi`
-        (the default is `EWrapping.NONE`).
+        The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to
+        :math:`\pi` (the default is `EWrapping.NONE`).
+
+    Parameters
+    ----------
+    mu : float, optional
+        Mean of the normal distribution (the default is 0).
+    sigma : float, optional
+        Standard deviation of the normal distribution (the default is 1).
+    wrapping_type : :class:`enums.Wrapping`, optional
+        The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to
+        :math:`\pi` (the default is `EWrapping.NONE`).
     """
 
     def __init__(self, mu=0.0, sigma=1.0, wrapping_type=enums.Wrapping.NONE):
-        """Holds the parameters for a normal distribution, and can compute a sampled version of the distribution.
-        
-        Parameters
-        ----------
-        mu : float, optional
-            Mean of the normal distribution (the default is 0).
-        sigma : float, optional
-            Standard deviation of the normal distribution (the default is 1).
-        wrapping_type : :class:`enums.Wrapping`, optional
-            The wrapping type for mu. When set to `EWrapping.PI2PI`, mu is wrapped to the interval -:math:`\pi` to :math:`\pi`
-            (the default is `EWrapping.NONE`).
-        """
         self.input_set = None
         self.output_set = None
 
@@ -98,22 +96,20 @@ class InitialSpeeds:
         [m/s] The initial horizontal speed.
     initial_speed_y : float
         [m/s] The initial vertical speed.
+
+    Parameters
+    ----------
+    initial_speed_x_mu : float
+        [m/s] The mean value of the normal distribution for the initial horizontal speed.
+    initial_speed_x_sigma : float
+        The standard deviation of the normal distribution for the initial horizontal speed.
+    initial_speed_y_mu : float
+        [m/s] The mean value of the normal distribution for the initial vertical speed.
+    initial_speed_y_sigma : float
+        The standard deviation of the normal distribution for the initial vertical speed.
     """
 
     def __init__(self, initial_speed_x_mu, initial_speed_x_sigma, initial_speed_y_mu, initial_speed_y_sigma):
-        """Constructor
-
-        Parameters
-        ----------
-        initial_speed_x_mu : float
-            [m/s] The mean value of the normal distribution for the initial horizontal speed.
-        initial_speed_x_sigma : float
-            The standard deviation of the normal distribution for the initial horizontal speed.
-        initial_speed_y_mu : float
-            [m/s] The mean value of the normal distribution for the initial vertical speed.
-        initial_speed_y_sigma : float
-            The standard deviation of the normal distribution for the initial vertical speed.
-        """
         if initial_speed_x_mu < 0:
             warnings.warn("Initial horizontal speed (along x axis) cannot be negative. Subsequent results are invalid.")
         

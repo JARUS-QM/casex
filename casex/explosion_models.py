@@ -13,8 +13,8 @@ class ExplosionModels:
     This class implements a model for the lethal area for an explosion, the lethal thermal area for
     explosion as well as deflagration, and the size of a deflagration fireball (which is also considered lethal).
     
-    The main sources for the models are :cite:`DepartmentofDefense2012`, :cite:`Ball2012`, :cite:`Hardwicke2009`, and a brief review of explosion and deflagration is given
-    in Annex F :cite:`JARUS_AnnexF`.
+    The main sources for the models are :cite:`DepartmentofDefense2012`, :cite:`Ball2012`, :cite:`Hardwicke2009`, and a
+    brief review of explosion and deflagration is given in Annex F :cite:`JARUS_AnnexF`.
     
     The models are all based on TNT equivalent mass, since this is how the literature does it. This means that for any
     of the models it is necessary to convert the fuel amount to a given TNT mass which has the same energy density.

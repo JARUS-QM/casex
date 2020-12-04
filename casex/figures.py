@@ -32,14 +32,14 @@ class Figures:
         -------
         None
         """
-        # Wingspan and length of CA
+        # Wingspan and length of CA.
         CA_width = 3
-        CA_length = 200/CA_width
+        CA_length = 200 / CA_width
 
         # Obstacle density in obstacles per square meter.
         obstacle_density = 850 / 1e6
 
-        # Average width and lengft of house and variation in house width and length.
+        # Average width and length of house and variation in house width and length.
         obstacle_width_mu = 17
         obstacle_width_sigma = 3
         obstacle_length_mu = 8
@@ -50,14 +50,14 @@ class Figures:
         x = np.linspace(0, CA_length, 10)
 
         CA_of_interest = 120
-        
+
         # Compute the probability curve.
         p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
-                                            obstacle_length_mu, obstacle_length_sigma, 25)
+                                                    obstacle_length_mu, obstacle_length_sigma, 25)
 
         # Compute probability for specific CA size (for graphics).
         p_x2 = OS.cdf(CA_of_interest / CA_width, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
-              obstacle_length_mu, obstacle_length_sigma, 25)
+                      obstacle_length_mu, obstacle_length_sigma, 25)
 
         print('Probability of reduction to at most {:1.0f} m^2 is {:1.0f}%'.format(CA_of_interest, p_x2[0][0] * 100))
 
@@ -74,7 +74,7 @@ class Figures:
 
         ax.set_ylim([p_x[0], math.ceil(p_x[-1] * 10) / 10])
         ax.set_ylabel('Probability', fontsize=16)
-        
+
         ax.tick_params(axis='both', which='major', labelsize=14)
 
         plt.grid()
@@ -84,12 +84,12 @@ class Figures:
         if save_fig:
             fig.savefig('Obstacles_critical_area_reduction.png', format='png', dpi=300)
 
-
     @staticmethod
     def figure_angle_vs_speed(show_matrix=False, show_contours=False, save_fig=False):
         """Recreates the figure in Annex F relating impact angles and impact speed for the different size classes.
 
-        This method also outputs a variety of computations for the ballistic descent as listed in Annex F Appendix A :cite:`JARUS_AnnexF`.
+        This method also outputs a variety of computations for the ballistic descent as listed in Annex F Appendix A
+        :cite:`JARUS_AnnexF`.
 
         Parameters
         ----------
