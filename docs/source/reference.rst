@@ -7,10 +7,10 @@ Reference
     AircraftSpecs <reference/AircraftSpecs>
     AnnexFParms <reference/AnnexFParms>
     BallisticDescent2ndOrderDragApproximation <reference/BallisticDescent2ndOrderDragApproximation>
-    constants <reference/constants>
+    Constants <reference/constants>
     Conversion <reference/Conversion>
     CriticalAreaModels <reference/CriticalAreaModels>
-    enums <reference/enums>
+    Enums <reference/enums>
     Exceptions <reference/exceptions>
     ExplosionModels <reference/ExplosionModels>
     Figures <reference/figures>
