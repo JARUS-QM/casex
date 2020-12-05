@@ -76,8 +76,18 @@ overlap is set to zero.
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
     :lines: 58-59
     
-Finally, we populate the background matric for the plot, that is the iGRC values
-associated with the 
+Finally, we populate the background matrix for the plot, that is the iGRC values
+associated with the combination of population density and critical area.
 
+.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+    :lines: 62-63
+    
+This is followed by numerous lines for creating the plot. This includes showing
+the matrix along with contours, setting the tick locations and labels,
+and white lines and text for overlaying the iGRC. The result is as follows.
 
 .. image:: images/example_7.png
+
+The percent of area in Denmark which corresponds to the different population density
+bands is also shown. This information does not come from CasEx, and is just
+hardcoded into this example.

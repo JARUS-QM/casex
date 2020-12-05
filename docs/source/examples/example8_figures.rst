@@ -1,6 +1,6 @@
-==================
-Example 8: Figures
-==================
+=====================================
+Example 8: Recreating Annex F figures
+=====================================
 
 This example reproduces the figures in Annex F :cite:`JARUS_AnnexF`.
 

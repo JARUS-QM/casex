@@ -25,13 +25,13 @@ def obstacle_simulation():
     # CA properties.
     CA_width = 3
     CA_length = 67
-    trials_count = 20
+    trials_count = 100
     trial_area_sidelength = 1000
-    num_of_obstacles = 450
+    num_of_obstacles = 861
 
-    obstacle_width_mu = 14
+    obstacle_width_mu = 17
     obstacle_width_sigma = 3
-    obstacle_length_mu = 7
+    obstacle_length_mu = 8
     obstacle_length_sigma = 2
 
     # Booleans to control the computations and visualization
@@ -92,7 +92,7 @@ def obstacle_simulation():
 
     # Create figure for visual output.
     viz_time = time.time()
-    show_CA_as_size = False
+    show_CA_as_size = True
     fig = plt.figure(1, figsize=(12, 8), dpi=90)
     if do_viz:
         ax1 = fig.add_subplot(121)
@@ -118,7 +118,7 @@ def obstacle_simulation():
     print('---------------------------')
 
     print('Original CA:             {:1.0f} m^2'.format(OS.CA_length * OS.CA_width))
-    print('Reduced CA:              {:1.0f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
+    print('Average reduced CA:      {:1.0f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
         round(100 * np.mean(OS.CA_lengths) / OS.CA_length))))
 
     print('---------------------------')
@@ -147,11 +147,13 @@ def obstacle_simulation():
         if not show_CA_as_size:
             ax2.plot(x, p_x, '.', label='Model CDF')
         else:
-            ax2.plot(x * OS.CA_width, p_x, '.', label='Model CDF')
+            ax2.plot(x * OS.CA_width, p_x, '-', label='Model CDF')
         ax2.plot(0, beta_analytical, 'o', color='#00ff00', label='beta anlytical')
         ax2.plot(0, beta_numerical, 'o', color='#ff0000', label='beta numerical')
         ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color='#0000ff', label='Frac of empty CA')
         ax2.legend(loc="upper left", )
+        ax2.grid()
+        ax2.yaxis.set_ticks(np.arange(0, 1, 0.1))
 
     plt.show()
 
