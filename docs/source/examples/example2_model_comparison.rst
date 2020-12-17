@@ -75,5 +75,8 @@ The result of the computations are shown in the figure below.
 .. image:: images/example_2.png
 
 There is a noticable difference between the models. Please see Appendix B in
-Annex F :cite:`JARUS_AnexF` for more details
-on the varoius models.
+Annex F :cite:`k-JARUS_AnnexF` for more details
+on the various models.
+
+.. bibliography::
+   :keyprefix: k-

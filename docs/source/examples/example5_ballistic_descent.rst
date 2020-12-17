@@ -7,7 +7,7 @@ descent. The same approach is used in Annex F for computing the ballistic
 values found in Appendix A.
 
 The class :class:`BallisticDescent2ndOrderDragApproximation`
-is based on :cite:`lacourharbo2020a`, which also
+is based on :cite:`i-lacourharbo2020a`, which also
 describes the detail on how the ballistic descent model works.
 
 We first instantiate the class.
@@ -62,7 +62,7 @@ We can now compute the ballistic descent.
     
 Note that `p` is a list with various values about the descent. Note also that
  `BDM` has additional values (attributes) available, relating to the intermediate
-computations as decribed in :cite:`lacourharbo2020a`. All available values
+computations as decribed in :cite:`i-lacourharbo2020a`. All available values
 are printed to the screen here.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py

@@ -33,19 +33,19 @@ class ExplosionModels:
         .. math:: D = K  W^{1/3}
             
         where :math:`K` [m/kg :math:`^{1/3}`] is a scaling factor for the acceptable risk and W [kg] is the TNT equivalent mass
-        :cite:`DepartmentofDefense2012`, :cite:`Ball2012`, :cite:`Hardwicke2009`.
+        :cite:`d-DepartmentofDefense2012`, :cite:`d-Ball2012`, :cite:`d-Hardwicke2009`.
         
         A recommended value for the scaling factor for 3.5 psi overpressure is 18 ft/lb :math:`^{1/3}` (also called K18,
         for unprotected persons), which is equal to
         
         .. math:: K = 7.14~\mathrm{m/kg}^{1/3}
             
-        in SI units. For details on this value, see :cite:`DepartmentofDefense2012`.
+        in SI units. For details on this value, see :cite:`d-DepartmentofDefense2012`.
         
         .. note:: The area given by the used model assumes a near-perfect combustion of the fuel, which typically
                   requires a close to ideal mixing of fuel and oxidizer. As this normally do not happen during an
                   aircraft crash, the model tends to be rather conservative in the estimate of the lethal area.
-                  For more detail on this, please consult Annex F :cite:`JARUS_AnnexF`.
+                  For more detail on this, please consult Annex F :cite:`d-JARUS_AnnexF`.
                   
         .. warning:: The model for lethality caused by explosions has not been deeply investigated, and the model
                   is provided as is, with references to it origin. Ultimate responsibility for determining the lethal

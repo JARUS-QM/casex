@@ -1,5 +1,11 @@
 {
     "cited": {
+        "background": [
+            "JARUS_AnnexF"
+        ],
+        "examples/example2_model_comparison": [
+            "k-JARUS_AnnexF"
+        ],
         "examples/example5_ballistic_descent": [
             "i-lacourharbo2020a",
             "i-JARUS_AnnexF"
