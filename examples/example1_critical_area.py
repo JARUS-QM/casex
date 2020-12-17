@@ -23,7 +23,8 @@ aircraft_type = enums.AircraftType.GENERIC
 width = 1.5
 length = 1
 mass = 5
-friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.RUBBER, enums.GroundMaterial.CONCRETE)
+friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.RUBBER,
+                                          enums.GroundMaterial.CONCRETE)
 
 # Instantiate and add data to AircraftSpecs class.
 aircraft = AircraftSpecs(aircraft_type, width, length, mass)
@@ -46,8 +47,8 @@ critical_areas_overlap = 0.5
 KE_lethal = -1
 
 # The output from lethal_area is:
-p = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap,
-                     KE_lethal)
+p = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle,
+                     critical_areas_overlap, KE_lethal)
 
 # Compute the raw iGRC according to Annex F.
 raw_iGRC = AnnexFParms.iGRC(800, p[0])

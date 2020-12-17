@@ -14,7 +14,7 @@ from casex import CriticalAreaModels, AnnexFParms, enums
 person_width = 0.3
 person_height = 1.8
 impact_angle = 35
-speed_reduction_factor = 1
+
 
 # Instantiate necessary classes.
 CA = CriticalAreaModels(person_width, person_height)
@@ -49,7 +49,7 @@ for j in range(len(wingspan)):
         column = 4
 
     # Compute the impact speed.
-    impact_speed = AFP.CA_parms[column].cruise_speed * speed_reduction_factor
+    impact_speed = AFP.CA_parms[column].cruise_speed
 
     # Set the wingspan into the correct class in AFP.
     AFP.CA_parms[column].aircraft.width = wingspan[j]
@@ -60,7 +60,7 @@ for j in range(len(wingspan)):
 
     # Compute the corresponding GRC value for all population densities.
     for i in range(len(pop_density)):
-        GRC_matrix[i, j] = AnnexFParms.iGRC(pop_density[i], M)
+        GRC_matrix[i, j] = AnnexFParms.iGRC(pop_density[i], M)[0]
 
 # A number of lists used for plotting.
 x_ticks = [1, 3, 8, 20]
@@ -107,12 +107,12 @@ ax.text(wingspan[-1]*1.05, 3.2 * 0.0005, 'DK dens', horizontalalignment='center'
 
 # Show contours for the GRC matrix.
 CS = ax.contour(wingspan, pop_density, GRC_matrix, np.arange(1, 18), colors='black')
-ax.clabel(CS, inline=1, fontsize=14, fmt="GRC %u")
+ax.clabel(CS, inline=1, fontsize=14, fmt="iGRC %u")
 
 # Set axes labels and title.
 ax.set_ylabel('Population density [ppl/km$^2$]', fontsize=16)
 ax.set_xlabel('Wingspan [m]', fontsize=16)
-ax.set_title('GRC comparison (angle = {:d} deg, impact speed = 0.7 x max cruise, 1 m no slide)'.format(
+ax.set_title('GRC comparison (angle = {:d} deg, impact speed = max cruise)'.format(
     impact_angle), fontsize=20)
 
 # Set axes tick labels.

@@ -2,11 +2,12 @@
 Example 3: Vector input
 =======================
 
-This example shows how to use the models using vector input to generate a vector output.
+This example shows how to use the models with a vector input to generate a vector output.
 Using this feature it is possible to generate graphs for variations on
-one input parameter.
+one input parameter without resorting to a loop.
 
 This example shows this for the following parameters:
+
     * width
     * length
     * impact angle
@@ -22,29 +23,29 @@ for that parameter.
 We begin with the usual setup, which was also done in example 2.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 26-45
+    :lines: 26-46
 
 We start with impact speed and angle as this:
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 48-49
+    :lines: 49-50
 
 We setup a figure to show the output of the models for vector inputs.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 55-56
+    :lines: 56-57
 
 As in example 2, we use `p` for capturing the output of all the diffirent
 computations.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 59
+    :lines: 60
 
 First, we set the width to an array instead of a scalar. Here we choose the width
 to vary from 1 to 5 meters over 100 steps.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 62-63
+    :lines: 63-64
 
 And then we simply call the `critical_area` method like before (for all five models).
 It is important to
@@ -52,18 +53,18 @@ note that since one of the parameters in the computation is now an array rather
 than a scalar, the output is also an array with the same size as the "input".
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 64-65
+    :lines: 65-66
 
 Since only one parameters at a time can be a vector input, we reset the width to
 a scalar value. And now we set the length to an array.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 68-72
+    :lines: 69-73
 
 We reset the length and set the impact angle to an array.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 75-78
+    :lines: 76-79
 
 Since the impact angle is not set through the aircraft class, but directly
 as an input to `critical_area`, we do not need to reset the impact angle. We
@@ -71,22 +72,22 @@ simply use the original variable `impact_angle`. And we set the impact speed
 to be an array.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 81-83
+    :lines: 82-84
     
 We do the same with the critical area overlap.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 86-89
+    :lines: 87-90
     
 The fuel quantity is set as an array.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 91-94
+    :lines: 92-95
 
 And finally, we also set the friction coefficient as an array.
 
 .. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 97-101
+    :lines: 98-102
 
 We then plot all the outputs. Note that this plotting is a bit selective, since
 not all models produce a vector output, simply because some of the parameters are

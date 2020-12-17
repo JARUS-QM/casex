@@ -14,16 +14,12 @@ We start with setting standard person parameters.
 and then we need to decide the impact angle. This is not used in the
 simplified model, where the impact angle has been simplified away. However,
 for the JARUS model we need to set this, since the critical area depends on it.
-Here we choose 35 degrees, but any angle will do (but obviously produce a slightly
-different plot).
-
-We also need to set an impact speed for the JARUS mode, and here we choose to
-use the values from the :class:`AnnexFParms` class, possibly reduced, since this
-is what is assumed in Annex F for the 9 degree glide angle. Here we do not reduce
-the speed, since we have 35 degrees impact angle.
+Here we choose 35 degrees since this angle has a specific
+meaning in Annex F. But any angle will do, but obviously produce a slightly
+different plot.
 
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
-    :lines: 16-17
+    :lines: 16
     
 We instantiate the CA model class.    
 
@@ -61,16 +57,26 @@ associated with the wingspan, i.e. the appropriate column in the iGRC table.
 
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
     :lines: 40-49
-    
-We get the maximum impact speed for the column and set the aircraft width to match
-the current value from the for loop.
+
+Since we previously set the impact angle to 35 degrees, we will use the cruise speed
+as impact speed. 
 
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
-    :lines: 51-55
+    :lines: 52
+
+However, if we had chosen another angle, we would consider using another speed.
+Specificallty, in Annex F it is assumed that for an impact at 9 degrees, the speed is reduced
+equivalent to multiplying with a factor 0.7. This glide speed value can also be obtained from the
+AFP class as `AFP.CA_parms[column].glide_speed`.
+
+We also set the wingspan according to the maximum value from each class.
+
+.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+    :lines: 55
 
 We then compute the size of the critical area using the standard values
 from Annex F (including the assumptions on the kinetic energy, which we
-get by setting a -1 as the last input). Since there is not deflagration, the
+get by setting a -1 as the last input). Since there is no deflagration, the
 overlap is set to zero.
 
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
@@ -82,12 +88,19 @@ associated with the combination of population density and critical area.
 .. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
     :lines: 62-63
     
+Note that the `[0]` at the end selects the raw iGRC value, while a `[1]` would select
+the rounded up iGRC value.
+    
 This is followed by numerous lines for creating the plot. This includes showing
 the matrix along with contours, setting the tick locations and labels,
 and white lines and text for overlaying the iGRC. The result is as follows.
 
 .. image:: images/example_7.png
 
+The iso-parametric curves in black show where the iGRC value has exactly integer values in the background
+plot. So for instance the curve for iGRC 9 is the boundary between values below 9 and above 9.
+
 The percent of area in Denmark which corresponds to the different population density
-bands is also shown. This information does not come from CasEx, and is just
+bands is also shown. These values are based on locations of addresses and a grid size of 1 km by 1 km.
+This information does not come from CasEx, and is just
 hardcoded into this example.
