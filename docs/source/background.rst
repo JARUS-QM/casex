@@ -8,7 +8,7 @@ This group is called the Quantitative Methods subgroup. The developed concept ha
 be applicable to most types of UAS and it has to be relatively simple to allow for everyday use by
 operators and authorities.
 
-The result of this development is described in Annex F :cite:`JARUS_AnnexF`
+The result of this development is described in Annex F :cite:`g-JARUS_AnnexF`
 in the SORA set of document developed and published by 
 JARUS. This Annex provide a elaborate explanation of how to determine the ground risk
 for a given operation, where a number of aircraft parameters and the density of people on the ground is known.
@@ -28,3 +28,6 @@ and use of such values is in compliance with Annex F and any other requirements.
 
 Still, we hope that the toolbox can be useful. Comments and queries related to the
 implementation and use can be submitted to the main author Anders la Cour-Harbo at at alc(a)es.aau.dk.
+
+.. bibliography::
+   :keyprefix: g-
