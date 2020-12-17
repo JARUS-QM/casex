@@ -19,51 +19,51 @@ does not use this information) with a width of 4 meters and length of 3.2 meters
 The mass is 25 kg, and the friction coefficient is aluminum against concrete.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 27-31
+    :lines: 27-32
 
 We then instantiate the class for the aircraft, and set fuel type and quantity,
 friction coefficient, and coefficient of restitution.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 34-38
+    :lines: 35-39
 
 The impact speed is chosen such as to be equivalent to a kinetic energy of
 34 kJ.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 42
+    :lines: 43
     
 The impact angle is chose to be 25 degrees.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 45
+    :lines: 46
 
 The overlap betweeb inert and deflagration critical areas is set at 50%.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 48
+    :lines: 49
 
 We want to compare models, and we add the result from the same computation for
 each model to a list `p`.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 51-55
+    :lines: 52-56
     
 We do the computation one more time, except we change the impact angle to 65 degrees.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 58-60
+    :lines: 59-61
 
 We then redo the computations with a different size aircraft, again with an impact
 angle of 25 degrees.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 63-71
+    :lines: 64-72
 
 And finally, we redo the computations are 65 degree impact angle.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 74-77
+    :lines: 75-77
 
 Note that `p` now is a 2 dimensional list, with different computations
 along the first axis and the five different outputs from the critical area

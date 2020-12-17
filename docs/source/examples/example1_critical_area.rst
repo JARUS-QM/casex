@@ -37,23 +37,23 @@ between the aircraft and the terrain. The latter is in this case captured from t
 manually. Note that in Annex F this value is always 0.5.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 22-26
+    :lines: 22-27
 
 Then we instantiate the aircraft class, and set the friction value.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 29-30
+    :lines: 30-31
 
 The deflagration model can be included by setting the type of fuel and the amount of fuel. Here, we set the amount to 0, which
 effectively deactivates the deflagration model. It can be activated by setting a non-zero amount of fuel.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 33-34
+    :lines: 34-35
 
 The coefficient of restitution is set as a function of the impact angle.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 37
+    :lines: 38
 
 When the deflagration model is used there will be an overlap between the critical area from the glide and slide and the
 critical area from the deflagration (since the deflagration happens to some extend in the same area). We therefore need to
@@ -63,7 +63,7 @@ multiplied with the overlap factor.
 Note that this value is not used when there is no fuel onboard, and therefore no deflagration.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 41
+    :lines: 42
 
 During the slide, the aircraft dissipates kinetic energy, which ends at 0 when the aircraft comes to a halt. It is possible to
 reduce the size of the critical area by assuming that the aircraft is no longer lethal at a higher kinetic energy than 0. The
@@ -71,13 +71,13 @@ chosen value is set here. If the default value is to be used, the value is set t
 The documentation for :class:`critical_area_models` have more info on this.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 46
+    :lines: 47
 
 We are now ready to compute the size of the critical area. We do this by calling the `critical_area` method. Here we select to used
 the JARUS model, but other models are also available (see example 2).
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 49-50
+    :lines: 50-51
     
 The output from this method is a list with five values.
 These are total critical area, glide area, slide area, the inert critical area, and the critical
@@ -87,7 +87,7 @@ Finally, we can also compute the raw iGRC as described in Annex F. This is done 
 the population density, which is set to 800 here.
 
 .. literalinclude:: ../../../examples/example1_critical_area.py
-    :lines: 53
+    :lines: 54
 
 The output of the example is as follows. We see that the raw iGRC is 5.9, which must be rounded up to 6 for the actual iGRC value. This demonstrates
 how an aircraft, which belongs in the third column (due to the high impact speed above 35 m/s) can achieve a lower iGRC value that given in the

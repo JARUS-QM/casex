@@ -2,12 +2,12 @@
 Example 5: Ballistic descent
 ============================
 
-This example shows how to compute a series of values describing a ballistic
+This example shows how to compute a series of values for a ballistic
 descent. The same approach is used in Annex F for computing the ballistic
 values found in Appendix A.
 
 The class :class:`BallisticDescent2ndOrderDragApproximation`
-is based on :cite:`lacourharbo2020a`, which thus
+is based on :cite:`lacourharbo2020a`, which also
 describes the detail on how the ballistic descent model works.
 
 We first instantiate the class.
@@ -15,26 +15,36 @@ We first instantiate the class.
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 14
 
-We set the standard aircraft parameters.
+We set the standard aircraft parameters
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 17-20
 
-We instantiate the aircraft class.
+and instantiate the aircraft class.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 23
     
-We need to set the drag coefficient and the frontal area, since where are
-used in the computation of the ballistic descent. The frontal
-area is the are covered by the aircraft in the direction of travel during
+We need to set the drag coefficient and the frontal area, since they are
+used in the computation of the ballistic descent.
+The drag coefficient is
+typically in the range from 0.7 to around 1 for an aircraft which is
+not descending "nicely", i.e. in its usually direction of travel. Here we
+assume a normal helicopter-like rotorcraft, which may be tumbling during descent.
+We guestimate the coeffient to be 0.8. A lower coefficient would give a higher
+impact speed, and thus be more conservative. But 0.8 is not unreasonable for a tumbling
+rotorcraft. See for instance the wiki page on drag coefficient for more detail on
+drag for various shapes.
+
+The frontal
+area is the area covered by the aircraft in the direction of travel during
 descent. Here we guess that it will be 60 cm by 60 cm, which is reasonable
 for a 90 kg aircraft.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 24-25
     
-The ballistic descent class must "be aware" of the aircraft as well.
+The ballistic descent class must "be aware" of the aircraft.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 26
@@ -51,9 +61,9 @@ We can now compute the ballistic descent.
     :lines: 35
     
 Note that `p` is a list with various values about the descent. Note also that
-the `BDM` has additional values available, relating to the intermediate
+ `BDM` has additional values (attributes) available, relating to the intermediate
 computations as decribed in :cite:`lacourharbo2020a`. All available values
-are printed to the screen.
+are printed to the screen here.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 37-41
@@ -84,7 +94,7 @@ The drag coefficient can also be an array.
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 56-59
     
-Now `p` contains the about from each of the three calculations, and this
+Now `p` contains the output from each of the three calculations, and this
 can be plotted to show the variation of the output. Here are some of the
 possible combination of input and output parameters.
 
@@ -92,12 +102,14 @@ possible combination of input and output parameters.
 
 Finally, this example also shows how to get the ballistic computations found in Annex F Appendix A.
 This is done by instantiating the :class:`AnnexFParms` class (with a random impact angle since it is
-not used for ballistic computations)
+not used for ballistic computations), since all the ballistic values are computed internally in the
+class during instantiation.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 86
 
-and then simply accessing the associated attributes in the class.
+Then we can easily access the associated attributes in the class to get the various ballistic values
+for each category.
 
 .. literalinclude:: ../../../examples/example5_ballistic_descent.py
     :lines: 93-99

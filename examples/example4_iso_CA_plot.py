@@ -27,7 +27,8 @@ AFP = AnnexFParms(35)
 
 # Set aircraft values.
 aircraft_type = enums.AircraftType.FIXED_WING
-aircraft = AircraftSpecs(aircraft_type, AFP.CA_parms[0].wingspan, AFP.CA_parms[0].wingspan, AFP.CA_parms[0].mass)
+aircraft = AircraftSpecs(aircraft_type, AFP.CA_parms[0].wingspan, AFP.CA_parms[0].wingspan,
+                         AFP.CA_parms[0].mass)
 aircraft.set_fuel_type(enums.FuelType.LION)
 aircraft.set_fuel_quantity(0)
 aircraft.set_friction_coefficient(AFP.friction_coefficient)
@@ -39,14 +40,16 @@ X_angle, Y_speed = np.meshgrid(x_angle, y_speed)
 Z_CA = np.zeros((X_angle.shape[0], Y_speed.shape[0]))
 for i, y in enumerate(Y_speed):
     for j, x in enumerate(X_angle):
-        Z_CA[i, j] = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, y_speed[i], x_angle[j], 0)[0]
+        Z_CA[i, j] = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, y_speed[i],
+                                      x_angle[j], 0)[0]
 
 fig = plt.figure()
 ax = plt.axes()
 divider = make_axes_locatable(ax)
 cax = divider.append_axes('right', size='5%', pad=0.05)
 
-im = ax.imshow(Z_CA, extent=[x_angle[0], x_angle[-1], y_speed[0], y_speed[-1]], aspect='auto', origin='lower')
+im = ax.imshow(Z_CA, extent=[x_angle[0], x_angle[-1], y_speed[0], y_speed[-1]],
+               aspect='auto', origin='lower')
 
 CS = ax.contour(X_angle, Y_speed, Z_CA, [2, 4, 10, 20, 30, 40, 60, 80, 100], colors='white')
 ax.clabel(CS, inline=1, fontsize=10, fmt="%u m^2")

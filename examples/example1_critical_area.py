@@ -23,7 +23,8 @@ aircraft_type = enums.AircraftType.GENERIC
 width = 1.5
 length = 1
 mass = 5
-friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.RUBBER, enums.GroundMaterial.CONCRETE)
+friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.RUBBER,
+                                          enums.GroundMaterial.CONCRETE)
 
 # Instantiate and add data to AircraftSpecs class.
 aircraft = AircraftSpecs(aircraft_type, width, length, mass)
