@@ -12,7 +12,7 @@ class BallisticDescent2ndOrderDragApproximation:
     """    
     This class allows for computation of ballistic descent using a variation of the standard
     second order drag model. In this implementation it has been modified to support
-    fast calculations. Details on this can be found in :cite:`lacour2021`.
+    fast calculations. Details on this can be found in :cite:`b-lacour2021`.
 
     Attributes
     ----------

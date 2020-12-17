@@ -1,5 +1,5 @@
 """
-This class provides support for redoing some of the computations found in Annex F :cite:`JARUS_AnnexF`.
+This class provides support for redoing some of the computations found in Annex F :cite:`a-JARUS_AnnexF`.
 """
 import math
 from dataclasses import dataclass
@@ -20,7 +20,7 @@ class AnnexFParms:
     Attributes
     ----------
     wingspan : float
-        Characteristic dimension of the aircraft. See Annex F :cite:`JARUS_AnnexF`
+        Characteristic dimension of the aircraft. See Annex F :cite:`a-JARUS_AnnexF`
         for more detailed explanation on what that is.
     critical_area_target : float
         [m^2] Size of the largest critical area for each size class.
@@ -31,7 +31,7 @@ class AnnexFParms:
     KE_critical : float
         [J] Non-lethal energy during slide.
     friction_coefficient = 0.5 : float
-        [-] The friction coefficient is assumed constant at 0.5 throughout Annex F :cite:`JARUS_AnnexF`.
+        [-] The friction coefficient is assumed constant at 0.5 throughout Annex F :cite:`a-JARUS_AnnexF`.
     glide_reduce = 0.7 : float
         [-] Reduction in glide speed relative to cruise speed.
     glide_speed : float
@@ -154,11 +154,11 @@ class AnnexFParms:
 
     @staticmethod
     def iGRC(pop_dens, CA, TLOS=1E-6):
-        """Compute the finale integer iGRC as described in Annex F :cite:`JARUS_AnnexF`.
+        """Compute the finale integer iGRC as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
         size of critical area. The TLOS, target level of safety, can also be set, but the default value
-        is :math:`10^{-6}` as described in Annex F :cite:`JARUS_AnnexF`.
+        is :math:`10^{-6}` as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         .. note:: This method converts the population density to ppl/m^2 as needed for the equation.
                     This is because the unit for the input is ppl/km^2, since this is typically
@@ -172,7 +172,7 @@ class AnnexFParms:
             [m^2] Size of the critical area.
         TLOS : float, optional
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
-            This value is described in more detail in Annex F :cite:`JARUS_AnnexF`.
+            This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
             
         Returns
         -------

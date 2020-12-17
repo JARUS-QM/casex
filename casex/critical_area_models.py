@@ -14,7 +14,7 @@ class CriticalAreaModels:
     """
     This class is used for computing the critical area for a crash when the basic parameters for the
     aircraft is known. It support five different models, including the JARUS model, as described in
-    Appendix B in Annex F :cite:`JARUS_AnnexF`.
+    Appendix B in Annex F :cite:`c-JARUS_AnnexF`.
     
     The main method in this class is `critical_area`, which computes the size of the critical area given
     a number of input arguments relating to the aircraft.
@@ -44,7 +44,7 @@ class CriticalAreaModels:
     def critical_area(self, critical_area_model, aircraft, impact_speed, impact_angle, critical_areas_overlap, var1=-1):
         """Computes the lethal area as modeled by different models.
         
-        The models are described in more detail in Annex F :cite:`JARUS_AnnexF`. References for each model is given
+        The models are described in more detail in Annex F :cite:`c-JARUS_AnnexF`. References for each model is given
         in the code.
         
         This function supports one of the following input parameters to be a vector, which will give a vector of the
@@ -64,8 +64,8 @@ class CriticalAreaModels:
         Parameters
         ----------       
         critical_area_model : :class:`enums.CriticalAreaModel`
-            Choice of model (RCC :cite:`RangeCommandersCouncil1999`, RTI :cite:`Montgomery1995`, FAA :cite:`FAA2011`,
-            NAWCAD :cite:`Ball2012`, JARUS :cite:`JARUS_AnnexF`). See Annex F for details :cite:`JARUS_AnnexF`.
+            Choice of model (RCC :cite:`c-RangeCommandersCouncil1999`, RTI :cite:`c-Montgomery1995`, FAA :cite:`c-FAA2011`,
+            NAWCAD :cite:`c-Ball2012`, JARUS :cite:`c-JARUS_AnnexF`). See Annex F for details :cite:`c-JARUS_AnnexF`.
         aircraft : :class:`casex.AircraftSpecs`
             Class with information about the aircraft.
         impact_speed : float
@@ -77,13 +77,13 @@ class CriticalAreaModels:
         var1 : float, optional
             An additional variable that is used in FAA, NAWCAD, and JARUS models.
             For the FAA model, `var1` = :math:`F_A`, the ratio of secondary debris field to primary debris field. If not
-            specified, :math:`F_A` = 4.36 will be used. See :cite:`FAA2011` page 98.
+            specified, :math:`F_A` = 4.36 will be used. See :cite:`c-FAA2011` page 98.
 
             For the NAWCAD model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1)
             the value 73.2 J is used.
 
             For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1),
-            the following is done (see Annex F Appendix A :cite:`JARUS_AnnexF` for details): `var1` is set to 290 J,
+            the following is done (see Annex F Appendix A :cite:`c-JARUS_AnnexF` for details): `var1` is set to 290 J,
             except when the width of the aircraft is <= 1 m, in which case `var1` is set to :math:`2 \cdot 290` J.
         
         Returns
@@ -260,7 +260,7 @@ class CriticalAreaModels:
         The slide distance is the length of the slide between impact and the body coming to rest.
         
         This is a standard assumption found in most sources that includes friction.
-        See for instance :cite:`Ball2012`.
+        See for instance :cite:`c-Ball2012`.
         
         Parameters
         ----------

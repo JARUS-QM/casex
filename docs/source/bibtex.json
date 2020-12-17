@@ -1,39 +1,39 @@
 {
     "cited": {
         "examples/example5_ballistic_descent": [
-            "lacourharbo2020a",
-            "JARUS_AnnexF"
+            "i-lacourharbo2020a",
+            "i-JARUS_AnnexF"
         ],
         "examples/example8_figures": [
-            "JARUS_AnnexF"
+            "j-JARUS_AnnexF"
         ],
         "index": [
             "JARUS_AnnexF"
         ],
         "reference/AnnexFParms": [
-            "JARUS_AnnexF"
+            "a-JARUS_AnnexF"
         ],
         "reference/BallisticDescent2ndOrderDragApproximation": [
-            "lacour2021"
+            "b-lacour2021"
         ],
         "reference/CriticalAreaModels": [
-            "JARUS_AnnexF",
-            "RangeCommandersCouncil1999",
-            "Montgomery1995",
-            "FAA2011",
-            "Ball2012"
+            "c-JARUS_AnnexF",
+            "c-RangeCommandersCouncil1999",
+            "c-Montgomery1995",
+            "c-FAA2011",
+            "c-Ball2012"
         ],
         "reference/ExplosionModels": [
-            "DepartmentofDefense2012",
-            "Ball2012",
-            "Hardwicke2009",
-            "JARUS_AnnexF"
+            "d-DepartmentofDefense2012",
+            "d-Ball2012",
+            "d-Hardwicke2009",
+            "d-JARUS_AnnexF"
         ],
         "reference/Obstacles": [
-            "lacour2021"
+            "f-lacour2021"
         ],
         "reference/figures": [
-            "JARUS_AnnexF"
+            "e-JARUS_AnnexF"
         ]
     }
 }

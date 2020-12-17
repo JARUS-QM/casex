@@ -38,6 +38,6 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. bibliography:: bibtex.bib
+.. bibliography::
    :style: plain
    :all:

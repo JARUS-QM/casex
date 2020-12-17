@@ -1,5 +1,5 @@
 """
-Recreates some of the figures in Annex F :cite:`JARUS_AnnexF`.
+Recreates some of the figures in Annex F :cite:`e-JARUS_AnnexF`.
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,7 +14,7 @@ from casex import CriticalAreaModels, AnnexFParms, enums, Obstacles
 class Figures:
     """
     This class provides some static methods that will were used to make some of the
-    figures in Annex F :cite:`JARUS_AnnexF`. The methods take a number of boolean
+    figures in Annex F :cite:`e-JARUS_AnnexF`. The methods take a number of boolean
     variables to control the content of the figures. The specific choice of parameters
     for each figure is shown in example 8.
     """
@@ -89,7 +89,7 @@ class Figures:
         """Recreates the figure in Annex F relating impact angles and impact speed for the different size classes.
 
         This method also outputs a variety of computations for the ballistic descent as listed in Annex F Appendix A
-        :cite:`JARUS_AnnexF`.
+        :cite:`e-JARUS_AnnexF`.
 
         Parameters
         ----------
@@ -253,7 +253,7 @@ class Figures:
                                      show_model_CA=False,
                                      show_colorbar=False, show_x_wingspan=True, show_x_velocity=True, show_x_CA=False,
                                      show_x_CA_above=False, show_title=True, save_fig=False):
-        """Recreates the figures showing iGRC values and iGRC table in Annex F Section 1 :cite:`JARUS_AnnexF`.
+        """Recreates the figures showing iGRC values and iGRC table in Annex F Section 1 :cite:`e-JARUS_AnnexF`.
 
         Parameters
         ----------
