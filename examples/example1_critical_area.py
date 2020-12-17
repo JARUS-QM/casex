@@ -46,8 +46,8 @@ critical_areas_overlap = 0.5
 KE_lethal = -1
 
 # The output from lethal_area is:
-p = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, critical_areas_overlap,
-                     KE_lethal)
+p = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle,
+                     critical_areas_overlap, KE_lethal)
 
 # Compute the raw iGRC according to Annex F.
 raw_iGRC = AnnexFParms.iGRC(800, p[0])

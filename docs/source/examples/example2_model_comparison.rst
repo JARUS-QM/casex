@@ -2,9 +2,9 @@
 Example 2: Model comparison
 ===========================
 
-This example shows the basics of using the different models in casex.
+This example shows the basics of using the different models in CasEx.
 It shows how to set up the necessary parameters and variables, and how
-to call the lethal_model function to calculate lethal areas for the
+to call the `critical_area_model` function to calculate critical areas for the
 models. It also shows how to modify an existing setup to change from one aircraft
 to another.
 
@@ -58,20 +58,22 @@ We then redo the computations with a different size aircraft, again with an impa
 angle of 25 degrees.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 53-71
+    :lines: 63-71
 
 And finally, we redo the computations are 65 degree impact angle.
 
 .. literalinclude:: ../../../examples/example2_model_comparison.py
-    :lines: 74-76
+    :lines: 74-77
 
 Note that `p` now is a 2 dimensional list, with different computations
-along the first axis and the 5 different outputs from the critical area
-model along the second axis. Since in this example we are only interested in
+along the first axis and the five different outputs from the critical area
+model along the second dimension. Since in this example we are only interested in
 the total critical area, all use of `p` is on the form `p[x][0]`.
 
 The result of the computations are shown in the figure below.
 
-*Text explaining the output*
-
 .. image:: images/example_2.png
+
+There is a noticable difference between the models. Please see Appendix B in
+Annex F :cite:`JARUS_AnexF` for more details
+on the varoius models.
