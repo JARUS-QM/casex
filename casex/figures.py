@@ -261,7 +261,7 @@ class Figures:
                                      show_old_quantization=True, show_iGRC_prefix=True, show_additional_grid=False,
                                      show_model_CA=False,
                                      show_colorbar=False, show_x_wingspan=True, show_x_velocity=True, show_x_CA=False,
-                                     show_x_CA_above=False, show_title=True, save_fig=False):
+                                     show_x_CA_above=False, show_title=True, save_fig=False, return_fig=False):
         """Recreates the figures showing iGRC values and iGRC table in Annex F Section 1 :cite:`e-JARUS_AnnexF`.
 
         Parameters
@@ -295,6 +295,8 @@ class Figures:
             If True show the title (default is True).
         save_fig : bool, optional
             If True save the figure to a PNG with the given filename (default is False).
+        return_fig : bool, optional
+            If True return the created matplotlib figure instead of showing it (default is False).
 
         Returns
         -------
@@ -557,8 +559,11 @@ class Figures:
 
             ax.set_title(title, fontsize='20')
 
-        plt.show()
-
         # Use this to generate a PNG file of the plot.
         if save_fig:
             fig.savefig('iGRC_CA_vs_pop_density' + filename + '.png', format='png', dpi=300)
+
+        if return_fig:
+            return fig
+        else:
+            plt.show()
