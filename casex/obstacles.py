@@ -769,6 +769,8 @@ class Obstacles:
         -------
         p_x : float array
             The CDF value for the given x. This return parameter has the same type as input x.
+        EX : float
+            [m] The expected value of the length.
         beta : float
             The beta values as computed in :cite:`f-lacour2021`.
         acc_probability_check : float
@@ -791,19 +793,25 @@ class Obstacles:
         pdf_length_step = (length[-1] - length[0]) / (pdf_resolution - 1)
         pdf_CA_orientation_step = (CA_orientation[-1] - CA_orientation[0]) / (pdf_resolution - 1)
 
+        # Determine if the input is an array
+        x_array = isinstance(x, np.ndarray)
+
         # The assumption is that the input is a list, so if it is scalar, change it to a list.
-        if not isinstance(x, np.ndarray):
+        if not x_array:
             x = np.array([x])
 
         x_resolution = len(x)
+        x_step = 1
+        if x_array and len(x) > 1:
+            x_step = (x[-1] - x[0]) / (len(x) - 1)
 
         # Preset p_x.
         p_x = np.zeros(x_resolution)
 
-        acc_probability_check = 0
-
+        EX = 0
         beta_acc = 0
-
+        acc_probability_check = 0
+ 
         for idx_x, x_val in enumerate(x):
             # Reset acc for integral.
             accumulator = 0
@@ -828,13 +836,20 @@ class Obstacles:
                             beta_acc = beta_acc + w * l * p_width * p_length
 
             p_x[idx_x] = 1 - np.exp(-obstacle_density * accumulator)
+            
+            # Find expected value from the CDF
+            EX = EX + (1 - p_x[idx_x]) * x_step
 
         beta = 1 - np.exp(-obstacle_density * beta_acc)
-
+        
+        # If x is not an array, the EX does not make sense, so set to zero.
+        if not x_array:
+            EX = 0
+                
         # Divide to account for the accumulator is not reset in the above outer loop.
         acc_probability_check = acc_probability_check / x_resolution
 
-        return p_x, beta, acc_probability_check
+        return p_x, EX, beta, acc_probability_check
 
     def test_Minkowski_sum_diff(self):
         # Create to random convex polygons.

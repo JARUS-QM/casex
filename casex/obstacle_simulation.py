@@ -25,7 +25,7 @@ def obstacle_simulation():
     # CA properties.
     CA_width = 3
     CA_length = 67
-    trials_count = 100
+    trials_count = 1000
     trial_area_sidelength = 1000
     num_of_obstacles = 861
 
@@ -82,11 +82,12 @@ def obstacle_simulation():
     # Compute the probability based on theory.
     if do_theory:
         theory_time = time.time()
-        x_resolution = 10
+        x_resolution = 100
         x = np.linspace(0, CA_length, x_resolution)
         pdf_resolution = 25
-        p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
-                                                    obstacle_length_mu, obstacle_length_sigma, pdf_resolution)
+        p_x, EX, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu,
+                                                        obstacle_width_sigma, obstacle_length_mu,
+                                                        obstacle_length_sigma, pdf_resolution)
         print('Theory time:             {:1.3f} sec'.format(time.time() - theory_time))
         beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
 
@@ -120,6 +121,7 @@ def obstacle_simulation():
     print('Original CA:             {:1.0f} m^2'.format(OS.CA_length * OS.CA_width))
     print('Average reduced CA:      {:1.0f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
         round(100 * np.mean(OS.CA_lengths) / OS.CA_length))))
+    print('Analytical reduced CA    {:1.0f} m^2'.format(EX * OS.CA_width))
 
     print('---------------------------')
     if do_sanity_check:

@@ -47,35 +47,44 @@ class Figures:
 
         OS = Obstacles(CA_width, CA_length, 0)
 
-        x = np.linspace(0, CA_length, 10)
+        x = np.linspace(0, CA_length, 30)
 
         CA_of_interest = 120
 
         # Compute the probability curve.
-        p_x, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
+        p_x, EX, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
                                                     obstacle_length_mu, obstacle_length_sigma, 25)
+
+        # Insert a zero at the beginning to force the graph to drop to zero on the left side of the x axis.
+        p_x = np.insert(p_x, 0, 0)
+        x = np.insert(x, 0, 0)
 
         # Compute probability for specific CA size (for graphics).
         p_x2 = OS.cdf(CA_of_interest / CA_width, obstacle_density, obstacle_width_mu, obstacle_width_sigma,
                       obstacle_length_mu, obstacle_length_sigma, 25)
 
         print('Probability of reduction to at most {:1.0f} m^2 is {:1.0f}%'.format(CA_of_interest, p_x2[0][0] * 100))
+        print('Average size of CA is {:1.0f} m^2, which is a reduction by {:1.0f}%'.format(EX * CA_width, (CA_length - EX) / CA_length * 100))
 
         # Plot the curve and the target CA.
         fig = plt.figure(figsize=(12, 8))
         ax = plt.axes()
-        ax.plot(x * CA_width, p_x, linewidth=3)
+        ax.plot(x * CA_width, p_x, linewidth=3, label = 'Cumulative density function (histogram)')
 
         ax.set_xlabel('Critical area [m$^2$]', fontsize=16)
-        ax.set_xlim([0, x[-1] * CA_width])
+        ax.set_xlim([-1, x[-1] * CA_width])
 
-        ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange', linewidth=3)
+        ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange', linewidth=3, label='Reduction to 120 m$^2$')
         ax.plot([CA_of_interest, CA_of_interest], [p_x[0], p_x2[0][0]], '--', color='orange', linewidth=3)
+        
+        ax.plot([EX * CA_width, EX * CA_width], [p_x[0], 1], '--', linewidth=3, color='green', label='Average CA size ({:1.0f} m$^2$)'.format(EX * CA_width))
 
         ax.set_ylim([p_x[0], math.ceil(p_x[-1] * 10) / 10])
         ax.set_ylabel('Probability', fontsize=16)
 
         ax.tick_params(axis='both', which='major', labelsize=14)
+
+        ax.legend()
 
         plt.grid()
         plt.show()
@@ -328,7 +337,8 @@ class Figures:
             fig.colorbar(im, cax=cax, orientation='vertical')
 
         # CA axis tick values in log10.
-        CA_ticks = np.array([math.log10(CA[0]), 0.813, 2.3, 3.3, 4.3, 4.82])
+        #CA_ticks = np.array([math.log10(CA[0]), 0.813, 2.3, 3.3, 4.3, 4.82])
+        CA_ticks = np.log10(np.array([CA[0], 6.5, 200, 2000, 20000, 66000]))
         if show_additional_grid:
             CA_ticks_additional = np.log10(np.array([20, 50, 100, 500, 1000, 5E3, 10E3, 4E4, 10E4]))
         else:
@@ -416,7 +426,7 @@ class Figures:
         else:
             pop_density_ticks = np.array([-2, -1, 1, 2, 3.167, 4.167, 5, 5.7])
         if show_additional_grid:
-            pop_density_ticks_additional = np.log10(np.array([1, 5, 20, 50, 200, 400, 800, 3E3, 8E3, 30E3, 60E3]))
+            pop_density_ticks_additional = np.log10(np.array([0.01, 0.1, 1, 5, 20, 50, 200, 400, 800, 3E3, 8E3, 30E3, 60E3, 100E3]))
         else:
             pop_density_ticks_additional = []
         ax.set_yticks(np.sort(np.concatenate([pop_density_ticks, pop_density_ticks_additional])))
@@ -436,13 +446,13 @@ class Figures:
             if k < math.log10(7) or show_reduced_CA_axis:
                 end_pop_density = math.log10(pop_density[-1])
             else:
-                end_pop_density = math.log10(1E5)
+                end_pop_density = math.log10(5E5)
             ax.plot([k, k], [math.log10(pop_density[0]), end_pop_density], color='white')
         for k in CA_ticks_additional:
             if k < math.log10(7):
                 end_pop_density = math.log10(pop_density[-1])
             else:
-                end_pop_density = math.log10(1E5)
+                end_pop_density = math.log10(5E5)
             ax.plot([k, k], [math.log10(pop_density[0]), end_pop_density], color='black', linestyle='--')
 
         # Show horizontal lines.
