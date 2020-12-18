@@ -22,6 +22,16 @@ in Annex F (see example 8).
 The mathematical models implemented in the package are the results of the
 combined effort of the Quantitative Methods subgroup under Working Group 6.
 
+============
+Installation
+============
+To install CasEx, simply run the following command in your terminal.
+
+.. code-block:: console
+
+    python -m pip install casex
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Table of Contents
