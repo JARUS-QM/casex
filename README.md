@@ -1,4 +1,4 @@
-# Casex
+# CasEx
 Implementation of the mathematics behind JARUS WG-6 SORA Annex F.
 
 ## Overview
@@ -19,3 +19,6 @@ To install CasEx, simply run the following command in your terminal.
 ```
 pip install casex
 ```
+
+## Documentation
+The full documentation for CasEx is located at [https://casex.readthedocs.io/](https://casex.readthedocs.io/).
