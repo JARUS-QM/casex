@@ -1,11 +1,11 @@
-Casex
+CasEx
 =====
 Implementation of the mathematics behind JARUS WG-6 SORA Annex F.
 
 ========
 Overview
 ========
-This package was created to support the mathematical models used to derived
+This package was created to support the mathematical models used to derive
 the iGRC tables and supporting material found in JARUS WG-6 SORA Annex F :cite:`JARUS_AnnexF`.
 It implements the models for computing critical areas, effect of obstacles,
 ballistic descent, effect of explosions and deflagration that are being used
@@ -29,7 +29,7 @@ To install CasEx, simply run the following command in your terminal.
 
 .. code-block:: console
 
-    python -m pip install casex
+    pip install casex
 
 
 .. toctree::
