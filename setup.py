@@ -21,5 +21,12 @@ setuptools.setup(
     license='CC-BY-4.0',
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
-    zip_safe=False
+    zip_safe=False,
+    install_requires=[
+        'numpy',
+        'matplotlib',
+        'scipy',
+        'descartes',
+        'shapely'
+    ]
 )
