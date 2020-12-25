@@ -1,12 +1,12 @@
 import setuptools
 
-with open("README.txt", "r") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='casex_alc',
+    name='casex',
     version='1.1',
-    description='Casulty expection toolbox',
+    description='Casualty expectation toolbox',
     long_description=long_description,
     classifiers=[
         'Development Status :: 3 - Alpha',
