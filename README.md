@@ -17,8 +17,6 @@ Installation
 ------------
 To install CasEx, simply run the following command in your terminal.
 
-::
-
     pip install casex
 
 Documentation
@@ -35,13 +33,9 @@ Do note that according to this license you must give appropriate credit, provide
 
 We recommend the following reference to CasEx:
 
-::
-
     CasEx: Casual Expectation Toolbox in Python. JARUS WG6 Quantitative Methods subgroup, 2021. Available at https://casex.readthedocs.io.
 
 And as BibTeX:
-
-::
 
     @misc{JARUSWG6QuantitativeMethodssubgroup2021,
         author = {{JARUS WG6 Quantitative Methods subgroup}},
