@@ -557,7 +557,7 @@ class Obstacles:
         ax.set_ylabel('Size [m]')
         ax.grid()
 
-    def show_CDF(self, ax, show_CA_as_size):
+    def show_CDF(self, ax, show_CA_as_size, lbl = 0):
         """MISSING DOC
 
         Parameters
@@ -577,8 +577,11 @@ class Obstacles:
 
         num_bins = int(round(4 * np.sqrt(self.trials_count)))
 
-        ax.hist(np.array(self.CA_lengths) * F, num_bins, density=True, histtype='step', cumulative=True,
-                label="Simulated {:1.0f} trials".format(self.trials_count), edgecolor='black', linewidth=1.5)
+        if lbl == 0:
+            lbl = "Simulated {:1.0f} trials".format(self.trials_count)
+
+        n = ax.hist(np.array(self.CA_lengths) * F, num_bins, density=True, histtype='step', cumulative=True,
+                label=lbl, edgecolor='blue', linewidth=3)
 
         if not show_CA_as_size:
             ax.set_xlabel('Length of CA [m]')
@@ -586,6 +589,8 @@ class Obstacles:
             ax.set_xlabel('Size of CA [m^2]')
 
         ax.set_ylabel('Accumulated fraction of total')
+        
+        return n
 
     @staticmethod
     def set_limits(ax, x0, xN, y0, yN, step=1):

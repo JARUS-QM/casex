@@ -45,7 +45,9 @@ class Figures:
         obstacle_length_mu = 8
         obstacle_length_sigma = 2
 
-        OS = Obstacles(CA_width, CA_length, 0)
+        trial_area_sidelength = 1000
+
+        OS = Obstacles(CA_width, CA_length, trial_area_sidelength)
 
         x = np.linspace(0, CA_length, 30)
 
@@ -66,29 +68,54 @@ class Figures:
         print('Probability of reduction to at most {:1.0f} m^2 is {:1.0f}%'.format(CA_of_interest, p_x2[0][0] * 100))
         print('Average size of CA is {:1.0f} m^2, which is a reduction by {:1.0f}%'.format(EX * CA_width, (CA_length - EX) / CA_length * 100))
 
+        # Now we do a simulation for a more ordered layout of houses (since theory does not support this yet)
+        trials_count = 100000
+        houses_along_street = 30
+        rows_of_houses = 15
+        distance_between_two_houses = 20
+        OS.generate_rectangular_obstacles_along_curves(obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
+                                                       obstacle_length_sigma, houses_along_street, rows_of_houses,
+                                                       distance_between_two_houses)
+
+        # Make all the CAs for the simulation.
+        OS.generate_CAs(trials_count)
+        # Reduce all the CAs which intersects obstacles.
+        OS.compute_reduced_CAs()
+        # Compute the length of all CAs.
+        OS.compute_CA_lengths()
+
         # Plot the curve and the target CA.
         fig = plt.figure(figsize=(12, 8))
         ax = plt.axes()
-        ax.plot(x * CA_width, p_x, linewidth=3, label = 'Cumulative density function (histogram)')
+
+        n = OS.show_CDF(ax, True, 'Cumulative density function (rows, simulated)')
+        sim_propability_CA_of_interest = n[0][np.argmin(np.abs(n[1] - CA_of_interest))]
+        
+        # Find probability associated with CA_of_interest.
+        CA_sim_mean_area = np.mean(OS.CA_lengths) * CA_width
+
+        ax.plot(x * CA_width, p_x, linewidth=3, color='orange', label='Cumulative density function (random, theory)')
 
         ax.set_xlabel('Critical area [m$^2$]', fontsize=16)
         ax.set_xlim([-1, x[-1] * CA_width])
 
-        ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange', linewidth=3, label='Reduction to 120 m$^2$')
-        ax.plot([CA_of_interest, CA_of_interest], [p_x[0], p_x2[0][0]], '--', color='orange', linewidth=3)
+        ax.plot([0, CA_of_interest], [p_x2[0][0], p_x2[0][0]], '--', color='orange', linewidth=3, label='Reduction to 120 m$^2$ for random')
+        ax.plot([0, CA_of_interest], [sim_propability_CA_of_interest, sim_propability_CA_of_interest], '--', color='blue', linewidth=3, label='Reduction to 120 m$^2$ for rows')
+        ax.plot([CA_of_interest, CA_of_interest], [p_x[0], sim_propability_CA_of_interest], '--', color='black', linewidth=3, label='Target CA of 120 m$^2$')
         
-        ax.plot([EX * CA_width, EX * CA_width], [p_x[0], 1], '--', linewidth=3, color='green', label='Average CA size ({:1.0f} m$^2$)'.format(EX * CA_width))
+        ax.plot([EX * CA_width, EX * CA_width], [p_x[0], 0.15], linestyle='dotted', linewidth=3, color='orange', label='Average CA size random ({:1.0f} m$^2$)'.format(EX * CA_width))
+        ax.plot([CA_sim_mean_area, CA_sim_mean_area], [p_x[0], 0.15], linestyle='dotted', linewidth=3, color='blue', label='Average CA size rows ({:1.0f} m$^2$)'.format(CA_sim_mean_area))
 
-        ax.set_ylim([p_x[0], math.ceil(p_x[-1] * 10) / 10])
+        ax.set_ylim([p_x[0], 1])
         ax.set_ylabel('Probability', fontsize=16)
 
         ax.tick_params(axis='both', which='major', labelsize=14)
 
-        ax.legend()
+        ax.legend(loc=2)
 
         plt.grid()
         plt.show()
-
+        
         # Save the figure to file.
         if save_fig:
             fig.savefig('Obstacles_critical_area_reduction.png', format='png', dpi=300)
@@ -261,7 +288,8 @@ class Figures:
                                      show_old_quantization=True, show_iGRC_prefix=True, show_additional_grid=False,
                                      show_model_CA=False,
                                      show_colorbar=False, show_x_wingspan=True, show_x_velocity=True, show_x_CA=False,
-                                     show_x_CA_above=False, show_title=True, save_fig=False, return_fig=False):
+                                     show_x_CA_above=False, show_title=True, save_fig=False, return_fig=False,
+                                     show_descriptors=False):
         """Recreates the figures showing iGRC values and iGRC table in Annex F Section 1 :cite:`e-JARUS_AnnexF`.
 
         Parameters
@@ -274,8 +302,11 @@ class Figures:
         show_reduced_CA_axis : bool, optional
             If True use a reduced granularity on the CA axis (default is True).
         show_old_quantization : bool, optional
-            If True uses the SORA V2.0 quantization (only applicable if show_reduced_CA_axis is True)
+            If True uses the SORA V2.0 quantization (only applicable if ?show_reduced_CA_axis? is True)
             (default is True).
+        show_descriptors : bool, optional
+            If True and if ?show_old_quantization? is True, then the descriptors of population density
+            from SORA V2.0 is added to the second axis.
         show_iGRC_prefix : bool, optional
             If True show the iGRC numbers as iGRC-X instead of just X (default is True).
         show_additional_grid : bool, optional
@@ -519,7 +550,13 @@ class Figures:
 
             ax.text(2.9, 5.4, "Not in SORA", ha='center', va='center', color='white', weight='bold',
                     fontsize=iGRC_fontsize)
-
+        
+        if show_descriptors and show_reduced_CA_axis and show_old_quantization:
+            ax.text(-0.1, -1.8, "Controlled", ha='center', va='center', rotation='vertical', fontsize=15, color='red')
+            ax.text(-0.1, 0.7, "Sparsely", ha='center', va='center', rotation='vertical', fontsize=15, color='red')
+            ax.text(-0.1, 3.3, "Populated", ha='center', va='center', rotation='vertical', fontsize=15, color='red')
+            ax.text(-0.1, 4.9, "Gathering", ha='center', va='center', rotation='vertical', fontsize=15, color='red')
+        
         if not show_colorbar:
             # Locations for the band value numbers.
             bands_x = [0.4, 1.4, 2.5, 3.5, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4]
@@ -543,11 +580,11 @@ class Figures:
 
         if show_additional_grid:
             ax.tick_params(axis='both', which='major', labelsize=9)
-            if show_x_CA_above:
+            if show_x_CA and show_x_CA_above:
                 ax2.tick_params(axis='both', which='major', labelsize=9)
         else:
             ax.tick_params(axis='both', which='major', labelsize=16)
-            if show_x_CA_above:
+            if show_x_CA and show_x_CA_above:
                 ax2.tick_params(axis='both', which='major', labelsize=16)
 
         if show_title:
