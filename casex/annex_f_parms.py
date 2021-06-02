@@ -183,5 +183,8 @@ class AnnexFParms:
         """
         # Note that the 1E-6 here is the conversion from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
+        
+        # The raw iGRC value may be rounded to one decimal.
+        raw_iGRC_value = round(raw_iGRC_value * 10) / 10
 
         return math.ceil(raw_iGRC_value), raw_iGRC_value
