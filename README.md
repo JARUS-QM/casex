@@ -33,17 +33,18 @@ Do note that according to this license you must give appropriate credit, provide
 
 We recommend the following reference to CasEx:
 
-::
     CasEx: Casual Expectation Toolbox in Python. JARUS WG-6 SORA Annex F Quantitative Methods subgroup, 2021. Available at https://casex.readthedocs.io.
 
 And as BibTeX:
 
+
     @misc{JARUSWG6QuantitativeMethodssubgroup2021,
-        author = {{JARUS WG-6 SORA Annex F Quantitative Methods subgroup}},
-        title = {{CasEx: Casual Expectation Toolbox in Python}},
-        url = {casex.readthedocs.io},
-        year = {2021}
+    author = {{JARUS WG-6 SORA Annex F Quantitative Methods subgroup}},
+    title = {{CasEx: Casual Expectation Toolbox in Python}},
+    url = {casex.readthedocs.io},
+    year = {2021}
     }
+
 
 
 

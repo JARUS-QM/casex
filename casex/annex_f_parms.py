@@ -104,7 +104,7 @@ class AnnexFParms:
         # Setup the parameters used in the plotting.
         self.CA_parms = []
         #                                      Width   CA       Speed    Drag area   Mass     lethal KE   Altitude
-        self.CA_parms.append(self.CAParameters(1,      6.5,     25,      0.1,        4,       290/0.5,    75))
+        self.CA_parms.append(self.CAParameters(1,      6.5,     25,      0.1,        3,       290/0.5,    75))
         self.CA_parms.append(self.CAParameters(3,      200,     35,      0.5,        50,      290,        100))
         self.CA_parms.append(self.CAParameters(8,      2000,    75,      2.5,        400,     290,        200))
         self.CA_parms.append(self.CAParameters(20,     20000,   150,     12.5,       5000,    290,        500))

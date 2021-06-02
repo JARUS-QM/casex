@@ -234,3 +234,4 @@ pip-selfcheck.json
 casex/__pycache__/
 examples/__pycache__/
 *.png
+examples/temporary_testing_figures.py
