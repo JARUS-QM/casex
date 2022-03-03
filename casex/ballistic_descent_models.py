@@ -112,7 +112,7 @@ class BallisticDescent2ndOrderDragApproximation:
         velocity_impact: float
             [m/s] The impact velocity.
         angle_impact : float
-            [deg] The impact angle (relative to horizontal).
+            [rad] The impact angle (relative to horizontal).
         time_impact: float
             [s] Time from event to impact.
 
