@@ -77,6 +77,7 @@ class AnnexFParms:
         wingspan: float
         critical_area_target: float
         cruise_speed: float
+        iGRC_impact_angle : float
         ballistic_frontal_area: float
         mass: float
         KE_critical: float
@@ -103,17 +104,20 @@ class AnnexFParms:
 
         # Setup the parameters used in the plotting.
         self.CA_parms = []
-        #                                      Width   CA       Speed    Drag area   Mass     lethal KE   Altitude
-        self.CA_parms.append(self.CAParameters(1,      6.5,     25,      0.1,        3,       290/0.5,    75))
-        self.CA_parms.append(self.CAParameters(3,      200,     35,      0.5,        50,      290,        100))
-        self.CA_parms.append(self.CAParameters(8,      2000,    75,      2.5,        400,     290,        200))
-        self.CA_parms.append(self.CAParameters(20,     20000,   150,     12.5,       5000,    290,        500))
-        self.CA_parms.append(self.CAParameters(40,     66000,   200,     20,         10000,   290,        1000))
+        #                                      Width   CA       Speed    iGRC angle  Drag area   Mass     lethal KE   Altitude
+        self.CA_parms.append(self.CAParameters(1,      6.5,     25,      35,         0.1,        3,       290/0.5,    50))
+        self.CA_parms.append(self.CAParameters(3,      200,     35,      35,         0.5,        50,      290,        100))
+        self.CA_parms.append(self.CAParameters(8,      2000,    75,      35,         2.0,        400,     290,        200))
+        self.CA_parms.append(self.CAParameters(20,     20000,   150,     35,         8.0,        5000,    290,        500))
+        self.CA_parms.append(self.CAParameters(40,     66000,   200,     35,         14,         10000,   290,        1000))
     
         # Upper and low value for coefficient of restitution (over 9 to 90 degree impact angles).
         self.horizontal_COR = 0.9
         self.vertical_COR = 0.6
 
+        self.recompute_parameters()
+
+    def recompute_parameters(self):
         BDM = BallisticDescent2ndOrderDragApproximation()
 
         # Compute the parameters for each of the 5 size classes.
@@ -150,7 +154,7 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_impact_angle = p[2] * 180 / np.pi
             self.CA_parms[k].ballistic_distance = p[0]
             self.CA_parms[k].ballistic_descent_time = p[3]
-            self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)
+            self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)        
 
     @staticmethod
     def iGRC(pop_dens, CA, TLOS=1E-6):

@@ -206,13 +206,13 @@ class CriticalAreaModels:
                 # Set default value for a scalar width.
                 if not isinstance(aircraft.width, np.ndarray):
                     if aircraft.width <= 1:
-                        KE_lethal = 290
-                    else:
                         KE_lethal = 290 * 2
+                    else:
+                        KE_lethal = 290
                 # Set default value for array width.
                 else:
                     KE_lethal = np.full(len(aircraft.width), 290)
-                    KE_lethal = np.where(aircraft.width <= 1, KE_lethal, 2 * KE_lethal)
+                    KE_lethal = np.where(aircraft.width <= 1, 2 * KE_lethal, KE_lethal)
             else:
                 KE_lethal = var1
 
@@ -225,12 +225,12 @@ class CriticalAreaModels:
             slide_distance_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (
                     0.5 * acceleration * t_safe * t_safe)
 
-            if aircraft.width < 1:
+            if aircraft.width <= 1:
                 slide_distance_lethal = 0
 
             circular_end = math.pi * np.power(self.buffer + aircraft.width / 2, 2)
             glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + circular_end
-            slide_area = slide_distance_lethal * (2 * self.buffer + aircraft.width)
+            slide_area = slide_distance_lethal * (2 * self.buffer + aircraft.width) + circular_end
 
         # Add glide and slide from model.
         LA_inert = glide_area + slide_area
