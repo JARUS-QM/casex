@@ -157,7 +157,7 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)        
 
     @staticmethod
-    def iGRC(pop_dens, CA, TLOS=1E-6):
+    def iGRC(pop_dens, CA, TLOS=1E-6, use_obstacle_reduction = False, use_convervative_reduction = False):
         """Compute the finale integer iGRC as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
@@ -177,18 +177,53 @@ class AnnexFParms:
         TLOS : float, optional
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
+        use_obstacle_reduction : bool, optional
+            If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value.
+        use_convervative_reduction: bool, optional
+            if True, the 0.3 reduction in iGRC value is applied.
             
         Returns
         -------
         iGRC : integer
-            The intrinsic ground risk class (as an integer).
+            The intrinsic ground risk class (as an integer). This is the raw value rounded up to nearest integer.
         raw iGRC : float
             The raw iGRC before rounding up.
         """
+        if use_obstacle_reduction:
+            pop_dens = pop_dens * AnnexFParms.obstacle_reduction_factor(pop_dens, CA)
+        
         # Note that the 1E-6 here is the conversion from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
         
+        if use_convervative_reduction:
+            raw_iGRC_value = raw_iGRC_value - 0.3
+            
         # The raw iGRC value may be rounded to one decimal.
         raw_iGRC_value = round(raw_iGRC_value * 10) / 10
 
         return math.ceil(raw_iGRC_value), raw_iGRC_value
+
+    @staticmethod
+    def obstacle_reduction_factor(pop_dens, CA):
+        """Compute the obstacle reduction factor used in the iGRC in Annex F :cite:`a-JARUS_AnnexF`.
+        
+        The obstacle reduction factor is 120/200 when the popuplation density is between 1,500 and 100,000
+        and the critical area is between 6.5 and 20,000. Otherwise it is 1.
+        
+        Parameters
+        ----------
+        pop_dens : float
+            [ppl/km^2] Population density
+        CA : float
+            [m^2] Size of the critical area.
+            
+        Returns
+        -------
+        obstacle_reduction_factor : float
+            The reduction factor for use in iGRC.
+        """
+
+        if 1499 < pop_dens < 100000 and 6.5 < CA < 20000:
+            return 120 / 200
+        else:
+            return 1

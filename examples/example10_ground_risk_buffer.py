@@ -2,6 +2,7 @@
 Example 10
 ---------
 This examples shows the use of the ground risk buffer calculator.
+This is still work in progress.
 """
 from casex import enums, AircraftSpecs, GroundRiskBuffer
 import matplotlib.pyplot as plt
@@ -43,10 +44,10 @@ corridor_fraction = 0.8
 # this fraction of cases will crash.
 fraction_for_dist = [0.9, 0.99]
 
-#resolutions = [2, 2, 2, 2]
+resolutions = [2, 2, 2, 2]
 #resolutions = [8, 2, 8, 8]
 #resolutions = [15, 3, 12, 13]
-resolutions = [41, 5, 15, 18]
+#resolutions = [41, 5, 15, 18]
 #resolutions = [90, 7, 80, 40]
 
 if True:

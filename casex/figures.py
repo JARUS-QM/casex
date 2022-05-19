@@ -351,10 +351,8 @@ class Figures:
 
         for pop_density_i in range(len(pop_density)):
             for CA_i in range(len(CA)):
-                ReducedCA = 1
-                if 500 < pop_density[pop_density_i] < 100000 and 6.5 < CA[CA_i] < 20000 and show_with_obstacles:
-                    ReducedCA = 120 / 200
-                M[pop_density_i][CA_i] = AFP.iGRC(pop_density[pop_density_i], CA[CA_i] * ReducedCA)[0] - 0.3
+                ORF = AFP.obstacle_reduction_factor(pop_density[pop_density_i], CA[CA_i]) if show_with_obstacles else 1
+                M[pop_density_i][CA_i] = AFP.iGRC(pop_density[pop_density_i], CA[CA_i] * ORF)[0] - 0.3
 
         fig = plt.figure(figsize=(16, 9))
         ax = plt.axes()
@@ -372,10 +370,7 @@ class Figures:
         # CA axis tick values in log10.
         #CA_ticks = np.array([math.log10(CA[0]), 0.813, 2.3, 3.3, 4.3, 4.82])
         CA_ticks = np.log10(np.array([CA[0], 6.5, 200, 2000, 20000, 66000]))
-        if show_additional_grid:
-            CA_ticks_additional = np.log10(np.array([20, 50, 100, 500, 1000, 5E3, 10E3, 4E4, 10E4]))
-        else:
-            CA_ticks_additional = []
+        CA_ticks_additional = np.log10(np.array([20, 50, 100, 500, 1000, 5E3, 10E3, 4E4, 10E4])) if show_additional_grid else []
 
         xtick_actual_values = np.sort(np.concatenate([CA_ticks, CA_ticks_additional]))
 
@@ -458,10 +453,12 @@ class Figures:
             pop_density_ticks = np.array([-2, -1, np.log10(300), np.log10(15000), 5.7])
         else:
             pop_density_ticks = np.array([-2, -1, 1, 2, 3.167, 4.167, 5, 5.7])
+            
         if show_additional_grid:
             pop_density_ticks_additional = np.log10(np.array([0.01, 0.1, 1, 5, 20, 50, 200, 400, 800, 3E3, 8E3, 30E3, 60E3, 100E3]))
         else:
             pop_density_ticks_additional = []
+            
         ax.set_yticks(np.sort(np.concatenate([pop_density_ticks, pop_density_ticks_additional])))
 
         # pop_density axis actual names at the ticks.
@@ -481,6 +478,7 @@ class Figures:
             else:
                 end_pop_density = math.log10(5E5)
             ax.plot([k, k], [math.log10(pop_density[0]), end_pop_density], color='white')
+            
         for k in CA_ticks_additional:
             if k < math.log10(7):
                 end_pop_density = math.log10(pop_density[-1])
@@ -491,13 +489,12 @@ class Figures:
         # Show horizontal lines.
         for k in pop_density_ticks:
             ax.plot([math.log10(CA[0]), math.log10(CA[-1])], [k, k], color='white')
+            
         for k in pop_density_ticks_additional:
             ax.plot([math.log10(CA[0]), math.log10(CA[-1])], [k, k], color='black', linestyle='--')
 
         # Insert the iGRC table numbers in the middle between the white lines.
-        iGRX_prefix = ''
-        if show_iGRC_prefix:
-            iGRX_prefix = 'iGRC-'
+        iGRX_prefix = 'iGRC-' if show_iGRC_prefix else ''
 
         # Compute placement of iGRC numbers (half way between lines).
         x = np.diff(CA_ticks) / 2 + CA_ticks[0:len(CA_ticks) - 1:1]
@@ -535,17 +532,19 @@ class Figures:
                                 weight='bold', fontsize=iGRC_fontsize)
         else:
             for k, xv in enumerate(x, start=2):
+                
                 for j, yv in enumerate(y):
+                    
                     a = k + j
+                    
                     if j == 0:
                         a = a - 1
+                        
                     if j < 6:
                         txt = iGRX_prefix + '{}'.format(a)
                     else:
-                        if k == 2:
-                            txt = iGRX_prefix + '7*'
-                        else:
-                            txt = ''
+                        txt = iGRX_prefix + '7*' if k == 2 else ''
+                        
                     ax.text(xv, yv, txt, ha='center', va='center', color='white', weight='bold', fontsize=iGRC_fontsize)
 
             ax.text(2.9, 5.4, "Not in SORA", ha='center', va='center', color='white', weight='bold',
@@ -564,10 +563,7 @@ class Figures:
 
             # Add values to the bands in the ISO plot.
             for k in range(len(bands_x)):
-                if k < 8:
-                    clr = 'yellow'
-                else:
-                    clr = 'mediumblue'
+                clr = 'yellow' if k < 8 else 'mediumblue'
                 ax.text(bands_x[k], bands_y[k], '{}'.format(k), color=clr, weight='bold', fontsize=12)
 
         # Set axes labels.
