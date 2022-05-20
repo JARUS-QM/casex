@@ -9,9 +9,9 @@ import numpy as np
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
 show_with_obstacles = False
-show_ballistic = True
-show_convervative_reduction = True
-show_CFIT_angle = True
+show_ballistic = False
+show_convervative_reduction = False
+show_CFIT_angle = False
 
 # Data on person size.
 person_width = 0.3
@@ -78,73 +78,66 @@ for i in range(len(pop_density)):
                                     p[j][0],
                                     use_obstacle_reduction = show_with_obstacles,
                                     use_convervative_reduction = show_convervative_reduction)[1]
+console_output = []
 
-print("Final iGRC", end = "")
-
-if show_ballistic:
-    print(" (ballistic)")
-else:
-    print(" ({:d} deg)".format(impact_angle))
+s = "Final iGRC"
+s = s + " (ballistic)" if show_ballistic else s + " ({:d} deg)".format(impact_angle)
+console_output.append(s)
     
-print("                          1 m       3 m       8 m      20 m      40 m")
-print("--------------------+-------------------------------------------------")
+console_output.append("                          1 m       3 m       8 m      20 m      40 m")
+console_output.append("--------------------+-------------------------------------------------")
 
 for i in range(len(pop_density)):
     
     if (pop_density[i] > 1):
-        print("{:7.0f} [ppl/km^2]  | ".format(pop_density[i]), end = "")
+        s = "{:7.0f} [ppl/km^2]  | ".format(pop_density[i])
     else:
-        print("Controlled (< 0.1)  | ", end = "")
+        s = "Controlled (< 0.1)  | "
  
     for j in range(0, 5):
-        print("{:7.1f}   ".format(iGRC_table[i][j]), end = "")
+        s = s + "{:7.1f}   ".format(iGRC_table[i][j])
     
-    print("")
+    console_output.append(s)
     
-print("--------------------+-------------------------------------------------")
-print("     CA size [m^2]  |", end = "")
+console_output.append("--------------------+-------------------------------------------------")
 
+s = "     CA size [m^2]  |"
 for j in range(0, 5):
-    print("{:8.0f}  ".format(p[j][0]), end = "")
-    
-print("")
-print("Slide distance [m]  |", end = "")
+    s = s + "{:8.0f}  ".format(p[j][0])
+console_output.append(s)
 
+s = "Slide distance [m]  |"
 for j in range(0, 5):
-    print("{:8.0f}  ".format(p[j][2] / AFP.CA_parms[j].wingspan), end = "")
-    
+    s = s + "{:8.0f}  ".format(p[j][2] / AFP.CA_parms[j].wingspan)
+console_output.append(s)
+
 if show_ballistic:
-    print("")
-    print("Impact angle [deg]  |", end = "")
-    
+    s = "Impact angle [deg]  |"
     for j in range(0, 5):
-        print("{:8.0f}  ".format(impact_angles[j]), end = "")
-        
-    print("")
-    print("Altitude [m]        |    ", end = "")
+        s = s + "{:8.0f}  ".format(impact_angles[j])
+    console_output.append(s)
     
+    s = "Altitude [m]        |    "
     for k in range(5):
-        print("{:4.0f}      ".format(AFP.CA_parms[k].ballistic_descent_altitude), end = "")
-        
-    print("")
-    print("Impact angle [deg]  |    ", end = "")
+        s = s + "{:4.0f}      ".format(AFP.CA_parms[k].ballistic_descent_altitude)
+    console_output.append(s)
     
+    s = "Impact angle [deg]  |    "
     for k in range(5):
-        print("{:4.1f}      ".format(AFP.CA_parms[k].ballistic_impact_angle), end = "")
-        
-    print("")
-    print("Impact vel [m/s]    |   ", end = "")
-    
-    for k in range(5):
-        print("{:5.1f}     ".format(AFP.CA_parms[k].ballistic_impact_velocity), end = "")
-        
-    print("")
-    print("Drag area [m^2]     |    ", end = "")
-    
-    for k in range(5):
-        print("{:4.1f}      ".format(AFP.CA_parms[k].ballistic_frontal_area), end = "")
-        
-        
-print("")
-print("--------------------+-------------------------------------------------")
+        s = s + "{:4.1f}      ".format(AFP.CA_parms[k].ballistic_impact_angle)
+    console_output.append(s)
 
+    s = "Impact vel [m/s]    |   "    
+    for k in range(5):
+        s = s + "{:5.1f}     ".format(AFP.CA_parms[k].ballistic_impact_velocity)
+    console_output.append(s)
+
+    s = "Drag area [m^2]     |    "
+    for k in range(5):
+        s = s + "{:4.1f}      ".format(AFP.CA_parms[k].ballistic_frontal_area)
+    console_output.append(s)
+        
+console_output.append("--------------------+-------------------------------------------------")
+
+for s in console_output:
+    print(s)
