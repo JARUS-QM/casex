@@ -9,7 +9,7 @@ import numpy as np
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
 show_with_obstacles = False
-show_ballistic = False
+show_ballistic = True
 show_convervative_reduction = True
 show_CFIT_angle = True
 
@@ -24,12 +24,6 @@ impact_angle = 9 if show_CFIT_angle else 35
 FC = FrictionCoefficients()
 CA = CriticalAreaModels(person_width, person_height)
 AFP = AnnexFParms(impact_angle)
-
-# Set aircraft values.
-aircraft_type = enums.AircraftType.GENERIC
-width = 1.5 # This will be changed later for each column.
-length = 1  # This is not used in JARUS model.
-mass = 5    # This will be changed later for each column.
 
 # Instantiate and add data to AircraftSpecs class.
 # Values are not relevant here, since they will be changed below.

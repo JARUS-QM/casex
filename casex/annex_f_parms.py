@@ -223,7 +223,12 @@ class AnnexFParms:
             The reduction factor for use in iGRC.
         """
 
-        if 1499 < pop_dens < 100000 and 6.5 < CA < 20000:
-            return 120 / 200
-        else:
-            return 1
+        obstacle_reduction_factor = 1
+
+        if 1500 <= pop_dens < 100000:
+            if 7 < CA <= 200:
+                obstacle_reduction_factor = 120 / 200
+            elif 200 < CA < 20000:
+                obstacle_reduction_factor = 2000 / 700
+            
+        return obstacle_reduction_factor
