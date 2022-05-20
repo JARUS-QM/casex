@@ -226,9 +226,9 @@ class AnnexFParms:
         obstacle_reduction_factor = 1
 
         if 1500 <= pop_dens < 100000:
-            if 7 < CA <= 200:
+            if 7 < CA <= 2000:
                 obstacle_reduction_factor = 120 / 200
-            elif 200 < CA < 20000:
-                obstacle_reduction_factor = 2000 / 700
+            elif 2000 < CA < 20000:
+                obstacle_reduction_factor = 700 / 2000
             
         return obstacle_reduction_factor

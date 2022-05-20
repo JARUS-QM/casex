@@ -8,7 +8,7 @@ It can show iGRC for varying popuplation densities, for a specific impact angle 
 import numpy as np
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
-show_with_obstacles = False
+show_with_obstacles = True
 show_ballistic = False
 show_convervative_reduction = False
 show_CFIT_angle = False
