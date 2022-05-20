@@ -157,7 +157,7 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)        
 
     @staticmethod
-    def iGRC(pop_dens, CA, TLOS=1E-6, use_obstacle_reduction = False, use_convervative_reduction = False):
+    def iGRC(pop_dens, CA, TLOS=1E-6, use_obstacle_reduction = False, use_integer_reduction = False):
         """Compute the finale integer iGRC as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
@@ -179,7 +179,7 @@ class AnnexFParms:
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
         use_obstacle_reduction : bool, optional
             If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value.
-        use_convervative_reduction: bool, optional
+        use_integer_reduction: bool, optional
             if True, the 0.3 reduction in iGRC value is applied.
             
         Returns
@@ -195,7 +195,7 @@ class AnnexFParms:
         # Note that the 1E-6 here is the conversion from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
         
-        if use_convervative_reduction:
+        if use_integer_reduction:
             raw_iGRC_value = raw_iGRC_value - 0.3
             
         # The raw iGRC value may be rounded to one decimal.
@@ -228,7 +228,7 @@ class AnnexFParms:
         if 1500 <= pop_dens < 100000:
             if 7 < CA <= 2000:
                 obstacle_reduction_factor = 120 / 200
-            elif 2000 < CA < 20000:
+            elif 2000 < CA < 30000:
                 obstacle_reduction_factor = 700 / 2000
             
         return obstacle_reduction_factor

@@ -13,5 +13,6 @@ from .ballistic_descent_models import *
 from .ground_risk_buffer import *
 from .obstacles import *
 from .annex_f_parms import *
+from .annex_f_tables import *
 from .exceptions import *
 from .figures import *
