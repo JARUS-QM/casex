@@ -2,6 +2,7 @@
 This class provides support for redoing some of the computations found in Annex F :cite:`a-JARUS_AnnexF`.
 """
 import math
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
@@ -157,7 +158,7 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)        
 
     @staticmethod
-    def iGRC(pop_dens, CA, TLOS=1E-6, use_obstacle_reduction = False, use_integer_reduction = False):
+    def iGRC(pop_dens, CA, TLOS=1E-6, width = 0, use_obstacle_reduction = False, use_integer_reduction = False):
         """Compute the finale integer iGRC as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
@@ -178,7 +179,11 @@ class AnnexFParms:
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
         use_obstacle_reduction : bool, optional
-            If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value.
+            If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value. This requires width to be set.
+            Default value is False.
+        width : float, optional
+            Width of the aircraft. This is needed if use_obstacle_reduction is set to True. Otherwise, it is ignored.
+            Default value is 0.
         use_integer_reduction: bool, optional
             if True, the 0.3 reduction in iGRC value is applied.
             
@@ -190,7 +195,10 @@ class AnnexFParms:
             The raw iGRC before rounding up.
         """
         if use_obstacle_reduction:
-            pop_dens = pop_dens * AnnexFParms.obstacle_reduction_factor(pop_dens, CA)
+            if width == 0:
+                warnings.warn("width is not set. Using value of 1 m.")
+                width = 1
+            pop_dens = pop_dens * AnnexFParms.obstacle_reduction_factor(pop_dens, width)
         
         # Note that the 1E-6 here is the conversion from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
@@ -204,18 +212,25 @@ class AnnexFParms:
         return math.ceil(raw_iGRC_value), raw_iGRC_value
 
     @staticmethod
-    def obstacle_reduction_factor(pop_dens, CA):
+    def obstacle_reduction_factor(pop_dens, width):
         """Compute the obstacle reduction factor used in the iGRC in Annex F :cite:`a-JARUS_AnnexF`.
         
-        The obstacle reduction factor is 120/200 when the popuplation density is between 1,500 and 100,000
-        and the critical area is between 6.5 and 20,000. Otherwise it is 1.
+        The obstacle reduction factor as shown in the table below:
+
+        +---------------------------------+--------------------+---------------------+
+        |                                 | 1 m < width <= 3 m | 3 m < width <= 20 m |
+        +---------------------------------+--------------------+---------------------+
+        | 1,500 <= pop density < 100,000  |    120/200         |     700/2000        |
+        +---------------------------------+--------------------+---------------------+
+
+        and 1 if either pop density or width is outside ranges in the table.
         
         Parameters
         ----------
         pop_dens : float
             [ppl/km^2] Population density
-        CA : float
-            [m^2] Size of the critical area.
+        width : float
+            [m] Width of aircraft.
             
         Returns
         -------
@@ -226,9 +241,9 @@ class AnnexFParms:
         obstacle_reduction_factor = 1
 
         if 1500 <= pop_dens < 100000:
-            if 7 < CA <= 2000:
+            if 1 < width <= 3:
                 obstacle_reduction_factor = 120 / 200
-            elif 2000 < CA < 30000:
+            elif 3 < width <= 20:
                 obstacle_reduction_factor = 700 / 2000
             
         return obstacle_reduction_factor

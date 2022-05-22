@@ -8,10 +8,10 @@ It can show iGRC for varying population densities, for a specific impact angle o
 from casex import AnnexFTables
 
 console_output = AnnexFTables.iGRC_tables(show_with_obstacles = True,
-                    show_ballistic = False,
-                    show_integer_reduction = False,
-                    show_CFIT_angle = True,
-                    show_additional_pop_density = True)
+                                          show_ballistic = False,
+                                          show_integer_reduction = False,
+                                          show_CFIT_angle = True,
+                                          show_additional_pop_density = True)
 
 for s in console_output:
     print(s)

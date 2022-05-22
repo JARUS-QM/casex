@@ -284,11 +284,20 @@ class Figures:
             fig.savefig('Descent scenarios - critical area.png', format='png', dpi=300)
 
     @staticmethod
-    def figure_iGRC_CA_vs_PopDensity(filename, show_with_obstacles=False, show_reduced_CA_axis=True,
-                                     show_old_quantization=True, show_iGRC_prefix=True, show_additional_grid=False,
-                                     show_model_CA=False,
-                                     show_colorbar=False, show_x_wingspan=True, show_x_velocity=True, show_x_CA=False,
-                                     show_x_CA_above=False, show_title=True, save_fig=False, return_fig=False,
+    def figure_iGRC_CA_vs_PopDensity(filename,
+                                     show_with_obstacles=False,
+                                     show_reduced_CA_axis=True,
+                                     show_old_quantization=True,
+                                     show_iGRC_prefix=True,
+                                     show_additional_grid=False,
+                                     show_colorbar=False,
+                                     show_x_wingspan=True,
+                                     show_x_velocity=True,
+                                     show_x_CA=False,
+                                     show_x_CA_above=False,
+                                     show_title=True,
+                                     save_fig=False,
+                                     return_fig=False,
                                      show_descriptors=False):
         """Recreates the figures showing iGRC values and iGRC table in Annex F Section 1 :cite:`e-JARUS_AnnexF`.
 
@@ -304,14 +313,14 @@ class Figures:
         show_old_quantization : bool, optional
             If True uses the SORA V2.0 quantization (only applicable if ?show_reduced_CA_axis? is True)
             (default is True).
-        show_descriptors : bool, optional
-            If True and if ?show_old_quantization? is True, then the descriptors of population density
-            from SORA V2.0 is added to the second axis.
         show_iGRC_prefix : bool, optional
             If True show the iGRC numbers as iGRC-X instead of just X (default is True).
         show_additional_grid : bool, optional
             If True show additional grid lines. Makes it a bit cluttered, but assists in reading the table
             (default is False).
+        show_descriptors : bool, optional
+            If True and if ?show_old_quantization? is True, then the descriptors of population density
+            from SORA V2.0 is added to the second axis.
         show_colorbar : bool, optional
             If True show colorbar instead of numbers for the background ISO plot (default is False).
         show_x_wingspan : bool, optional
