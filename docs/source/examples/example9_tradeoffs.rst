@@ -32,6 +32,7 @@ and run
 to show the result
 
 .. code-block:: console
+
     Modified raw iGRC table for trade-off scenario T2
                  Max dim   |   2.0 m     6.0 m    16.0 m    40.0 m    80.0 m    
     Dpop         Max speed |  25 m/s    35 m/s    75 m/s   150 m/s   200 m/s  

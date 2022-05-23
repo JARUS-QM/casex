@@ -16,6 +16,7 @@ The returned value is a list of strings to print to the console, which we then d
     :lines: 16-17
 
 .. code-block:: console
+
     Final iGRC (9 deg)
                               1 m       3 m       8 m      20 m      40 m
     --------------------+-------------------------------------------------
