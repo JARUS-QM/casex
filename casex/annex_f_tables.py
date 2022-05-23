@@ -1,9 +1,22 @@
+"""
+This class allows for recreating some of the tables in Annex F :cite:`a-JARUS_AnnexF`.
+"""
 import numpy as np
 import math
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
 class AnnexFTables:
-    
+   """This class contains methods for generating tradeoff tables and variations over the nominal iGRC table.
+
+    Parameters
+    ----------
+    none.
+
+    Attributes
+    ----------
+    none.
+    """
+ 
     @staticmethod
     def iGRC_tables(show_with_obstacles = True,
                     show_ballistic = False,
