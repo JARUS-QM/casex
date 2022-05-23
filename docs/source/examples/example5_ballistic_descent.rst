@@ -41,23 +41,23 @@ area is the area covered by the aircraft in the direction of travel during
 descent. Here we guess that it will be 60 cm by 60 cm, which is reasonable
 for a 90 kg aircraft.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 24-25
     
 The ballistic descent class must "be aware" of the aircraft.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 26
 
 We also set the initial values for the descent, namely the altitude above the ground
 and the velocity of the aircraft at the beginning of the descent.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 29-31
 
 We can now compute the ballistic descent.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 35
     
 Note that `p` is a list with various values about the descent. Note also that
@@ -65,7 +65,7 @@ Note that `p` is a list with various values about the descent. Note also that
 computations as decribed in :cite:`i-lacourharbo2020a`. All available values
 are printed to the screen here.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 37-41
     
 which gives
@@ -80,18 +80,18 @@ which gives
 It is possible to do ballistic descent computations with vector input.
 We do this by setting the initial velocity to an array. 
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 45-47
     
 However, we cannot have both horizontal and vertical velocities be arrays
 at the same time, so we use them individually.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 49-53
     
 The drag coefficient can also be an array.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 56-59
     
 Now `p` contains the output from each of the three calculations, and this
@@ -105,13 +105,13 @@ This is done by instantiating the :class:`AnnexFParms` class (with a random impa
 not used for ballistic computations), since all the ballistic values are computed internally in the
 class during instantiation.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 86
 
 Then we can easily access the associated attributes in the class to get the various ballistic values
 for each category.
 
-.. literalinclude:: ../../../examples/example5_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example5_ballistic_descent.py
     :lines: 93-99
 
 The printed values

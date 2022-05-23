@@ -17,7 +17,7 @@ The JARUS model is used throughout this example.
 
 We start by setting up the critical area class.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 18-23
 
 We instantiate the :class:`AnnexFParms` class, since we want to use the parameters
@@ -26,7 +26,7 @@ It requires an impact
 angle as input, but since we will not use any impact angle related values from the
 class, we just choose 35 here at random.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 26
 
 We then setup the aircraft based on the parmaters for the first column
@@ -34,17 +34,17 @@ in the iGRC table (thus the index `[0]` on `AFP.CA_Parms`). Note that this is no
 for fixed-wing, since this information is not currently being used by
 the critical area computation.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 29-31
 
 We do not use any fuel.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 32-33
 
 And we use the friction coefficient from Annex F.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 34
 
 We want to plot over the full range of impact speed and impact angles. However,
@@ -52,7 +52,7 @@ since very shallow impact angles are not handled well by the model, we start at
 5 degrees. For speed, we cap it at 40 m/s. Each axis will be 100 steps, which is
 fine for a relatively smooth plot.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 36-38
 
 We then compute the critical area for all combinations of speed and angle. Note that we
@@ -60,33 +60,33 @@ could have replaced one of the loops with an array input, but since we cannot re
 (since the `critical_area` method does not support 2D array input), we have chosen to run both
 dimensions as loops for code clarity.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 40-44
 
 The plot is setup with room for a colorbar on the right.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 46-49
 
 The matrix is added to the plot.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 51-52
 
 Conturs are added to the plot.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 54-55
 
 A yellow contour is added for the target critical area for the first column
 in the iGRC table.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 57-58
 
 And the colorbar is added along with axes labels and title.
 
-.. literalinclude:: ../../../examples/example4_iso_CA_plot.py
+.. literalinclude:: ../../../casex/examples/example4_iso_CA_plot.py
     :lines: 60-65
 
 The contours in the output image show where there is a constant critical area for varying

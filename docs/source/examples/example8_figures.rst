@@ -10,7 +10,7 @@ in this example. However, other variations of the figures can also be generated.
 The documentation for each figure is
 provided in :class:`Figures`.
 
-.. literalinclude:: ../../../examples/example8_figures.py
+.. literalinclude:: ../../../casex/examples/example8_figures.py
     :lines: 10-26
 
 The four different figures produced are shown below.

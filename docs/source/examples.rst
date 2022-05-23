@@ -11,3 +11,5 @@ Examples
     Example 6: Obstacles <examples/example6_obstacles>
     Example 7: JARUS model vs the iGRC values <examples/example7_JARUS_model_vs_iGRC>
     Example 8: Recreating Annex F figures <examples/example8_figures>
+    Example 9: Tradeoff iGRC tables <examples/example9_tradeoffs>
+    Example 11: Variations of iGRC table <examples/example11_iGRC_tables>

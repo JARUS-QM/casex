@@ -8,7 +8,7 @@ computed with the :class:`Figures` class, which do the same thing, but for the s
 
 We start with setting standard person parameters.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 14-15
     
 and then we need to decide the impact angle. This is not used in the
@@ -18,50 +18,50 @@ Here we choose 35 degrees since this angle has a specific
 meaning in Annex F. But any angle will do, but obviously produce a slightly
 different plot.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 16
     
 We instantiate the CA model class.    
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 20
     
 We set the sampling density for the two axes.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 23-24
     
 We set the arrays for the sampling on the two axes. Note that the wingspan
 axis is linear, while the population density axis is logarithmic.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 27-28
     
 We instantiate the Annex F parmeters class :class:`AnnexFParms`.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 31
     
 Initialize the background matrix with zeros.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 34
 
 We run a for loop over the range of the wingspan.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 37
 
 Now, for every value of the wingspan, we want to use the aircraft values
 associated with the wingspan, i.e. the appropriate column in the iGRC table.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 40-49
 
 Since we previously set the impact angle to 35 degrees, we will use the cruise speed
 as impact speed. 
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 52
 
 However, if we had chosen another angle, we would consider using another speed.
@@ -71,7 +71,7 @@ AFP class as `AFP.CA_parms[column].glide_speed`.
 
 We also set the wingspan according to the maximum value from each class.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 55
 
 We then compute the size of the critical area using the standard values
@@ -79,13 +79,13 @@ from Annex F (including the assumptions on the kinetic energy, which we
 get by setting a -1 as the last input). Since there is no deflagration, the
 overlap is set to zero.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 58-59
     
 Finally, we populate the background matrix for the plot, that is the iGRC values
 associated with the combination of population density and critical area.
 
-.. literalinclude:: ../../../examples/example7_JARUS_model_vs_iGRC.py
+.. literalinclude:: ../../../casex/examples/example7_JARUS_model_vs_iGRC.py
     :lines: 62-63
     
 Note that the `[0]` at the end selects the raw iGRC value, while a `[1]` would select

@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'CasEx'
-copyright = 'JARUS 2021'
+copyright = 'JARUS 2022'
 author = 'Anders la Cour-Harbo et al'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.4'
+release = '1.1.9'
 
 # -- General configuration ---------------------------------------------------
 
