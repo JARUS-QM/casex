@@ -11,7 +11,7 @@ The documentation for each figure is
 provided in :class:`Figures`.
 
 .. literalinclude:: ../../../casex/examples/example8_figures.py
-    :lines: 10-26
+    :lines: 10-37
 
 The four different figures produced are shown below.
 

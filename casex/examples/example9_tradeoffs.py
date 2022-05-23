@@ -11,13 +11,13 @@ Note that this example accounts for both the 0.3 reduction in iGRC and reduction
 from casex import AnnexFTables
 
 # Set the tradeoff table to T2
-tradeoff_type = 1
+tradeoff_type = 2
 
 # Do not show the results a ceil'ed integers.
-show_integer_iGRC = False
+show_integer_iGRC = True
 
 # Show values relative to nominal iGRC table.
-show_relative = True
+show_relative = False
 
 console_output = AnnexFTables.iGRC_tradeoff_tables(tradeoff_type, show_integer_iGRC, show_relative)
 
