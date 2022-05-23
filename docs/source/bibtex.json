@@ -3,6 +3,9 @@
         "background": [
             "g-JARUS_AnnexF"
         ],
+        "examples/example11_iGRC_tables": [
+            "j-JARUS_AnnexF"
+        ],
         "examples/example2_model_comparison": [
             "k-JARUS_AnnexF"
         ],
@@ -11,6 +14,9 @@
             "i-JARUS_AnnexF"
         ],
         "examples/example8_figures": [
+            "j-JARUS_AnnexF"
+        ],
+        "examples/example9_tradeoffs": [
             "j-JARUS_AnnexF"
         ],
         "index": [

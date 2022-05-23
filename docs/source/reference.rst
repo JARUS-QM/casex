@@ -5,6 +5,7 @@ Reference
 
     AircraftSpecs <reference/AircraftSpecs>
     AnnexFParms <reference/AnnexFParms>
+    AnnexFTables <reference/AnnexFTables>
     BallisticDescent2ndOrderDragApproximation <reference/BallisticDescent2ndOrderDragApproximation>
     Constants <reference/constants>
     Conversion <reference/Conversion>
