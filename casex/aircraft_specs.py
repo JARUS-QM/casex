@@ -6,7 +6,6 @@ import numpy as np
 
 from casex import enums, constants
 
-
 class AircraftSpecs:
     """    
     This class is designed to hold all the parameters on a specific aircraft for which a critical area is to be
