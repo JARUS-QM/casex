@@ -7,12 +7,12 @@ from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs
 
 
 # Data on person size.
-person_width = 0.3
+person_radius = 0.3
 person_height = 1.8
 
 # Instantiate necessary classes.
 FC = FrictionCoefficients()
-CA = CriticalAreaModels(person_width, person_height)
+CA = CriticalAreaModels(person_radius, person_height)
 
 # Choose impact speed and impact angle.
 impact_speed = 45

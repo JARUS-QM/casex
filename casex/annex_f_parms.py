@@ -96,7 +96,7 @@ class AnnexFParms:
         self.glide_reduce = 0.7
         self.friction_coefficient = 0.5
         self.ballistic_drag_coefficient = 0.7
-        self.scenario_angles = np.array([9, 35, 80])
+        self.scenario_angles = np.array([10, 35, 80])
 
         self.impact_angle = impact_angle
 
@@ -112,9 +112,9 @@ class AnnexFParms:
         self.CA_parms.append(self.CAParameters(20,     20000,   150,     35,         8.0,        5000,    290,        500))
         self.CA_parms.append(self.CAParameters(40,     66000,   200,     35,         14,         10000,   290,        1000))
     
-        # Upper and low value for coefficient of restitution (over 9 to 90 degree impact angles).
-        self.horizontal_COR = 0.9
-        self.vertical_COR = 0.6
+        # Upper and low value for coefficient of restitution (over 10 to 90 degree impact angles).
+        self.Deg10_COR = 0.8
+        self.Deg90_COR = 0.6
 
         self.recompute_parameters()
 
@@ -136,13 +136,13 @@ class AnnexFParms:
             self.CA_parms[k].aircraft.set_friction_coefficient(self.friction_coefficient)
 
             if k == 0:
-                # The 1 m column uses 0.9 as CoR in all cases.
-                self.CA_parms[k].aircraft.set_coefficient_of_restitution(0.9)
+                # The 1 m column uses 0.8 as CoR in all cases.
+                self.CA_parms[k].aircraft.set_coefficient_of_restitution(0.8)
             else:
                 # The other columns uses a CoR depending on angle.
                 self.CA_parms[k].aircraft.set_coefficient_of_restitution(
                     self.CA_parms[k].aircraft.COR_from_impact_angle(self.impact_angle, [self.scenario_angles[0], 90],
-                                                                    [self.horizontal_COR, self.vertical_COR]))
+                                                                    [self.Deg10_COR, self.Deg90_COR]))
 
             # Compute terminal velocity.
             self.CA_parms[k].terminal_velocity = self.CA_parms[k].aircraft.terminal_velocity()

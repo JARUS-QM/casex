@@ -225,7 +225,9 @@ class CriticalAreaModels:
             slide_distance_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (
                     0.5 * acceleration * t_safe * t_safe)
 
-            circular_end = math.pi * np.power(self.buffer + aircraft.width / 2, 2)
+            # Compute a half disc to attach to one end of glide and slide.
+            circular_end = math.pi * np.power(self.buffer + aircraft.width / 2, 2) / 2
+            
             glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + circular_end
             slide_area = slide_distance_lethal * (2 * self.buffer + aircraft.width) + circular_end
 

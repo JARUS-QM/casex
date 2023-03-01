@@ -6,7 +6,7 @@ import math
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
 class AnnexFTables:
-   """This class contains methods for generating tradeoff tables and variations over the nominal iGRC table.
+    """This class contains methods for generating tradeoff tables and variations over the nominal iGRC table.
 
     Parameters
     ----------
@@ -40,7 +40,7 @@ class AnnexFTables:
         show_CFIT_angle : bool, optional
             If true, show for 9 degree impact angle instead of 35 degree. Default False.
         show_additional_pop_density : bool, optional
-            If true, show additional population density rows. Default False.s
+            If true, show additional population density rows. Default False.
             
         Returns
         -------
@@ -49,14 +49,14 @@ class AnnexFTables:
         """
         
         # Data on person size.
-        person_width = 0.3
+        person_radius = 0.3
         person_height = 1.8
         
         # Set impact angle.
-        impact_angle = 9 if show_CFIT_angle else 35
+        impact_angle = 10 if show_CFIT_angle else 35
         
         # Instantiate necessary classes.
-        CA = CriticalAreaModels(person_width, person_height)
+        CA = CriticalAreaModels(person_radius, person_height)
         AFP = AnnexFParms(impact_angle)
         
         # Instantiate and add data to AircraftSpecs class.
@@ -216,11 +216,11 @@ class AnnexFTables:
         console_output = []
         
         # Data on person size.
-        person_width = 0.3
+        person_radius = 0.3
         person_height = 1.8
         
         # Instantiate necessary classes.
-        CA = CriticalAreaModels(person_width, person_height)
+        CA = CriticalAreaModels(person_radius, person_height)
         
         # The trade-off tables are only valid for impact angle 35 degrees.
         impact_angle = 35

@@ -39,6 +39,7 @@ To install CasEx, simply run the following command in your terminal.
     Background <background>
     Contributors <contributors>
     Examples <examples>
+    Bug fixes <bugfixes>
     Reference <reference>
 
 Indices and tables

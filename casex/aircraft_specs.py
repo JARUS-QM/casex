@@ -428,7 +428,7 @@ class AircraftSpecs:
         """Compute a coefficient of restitution for a given impact angle.
         
         This method assumes an affine relation between impact angle and CoR. Therefore, two angles and two CoR values
-        are used to determine this relation. The default is as described in Annex F that the CoR is 0.9 at a 9 degree
+        are used to determine this relation. The default is as described in Annex F that the CoR is 0.8 at a 10 degree
         impact and 0.6 at a 90 degree (vertical) impact. This values are used as defaults, but others can be specified.
         
         Parameters
@@ -436,9 +436,9 @@ class AircraftSpecs:
         impact_angle : float
             [deg] The impact angle between 0 and 90.
         angles : float array, optional
-            [deg] Array with two different angle of impact values (the default is [9, 90]).
+            [deg] Array with two different angle of impact values (the default is [10, 90]).
         CoRs : float array, optional
-            [-] Array with two COR values corresponding to the two angles (the default is [0.9, 0.6]).
+            [-] Array with two COR values corresponding to the two angles (the default is [0.8, 0.6]).
 
         Returns
         -------
@@ -446,9 +446,9 @@ class AircraftSpecs:
             [-] The coefficient of restitution for the given impact angle.
         """
         if angles is None:
-            angles = [9, 90]
+            angles = [10, 90]
         if CoRs is None:
-            CoRs = [0.9, 0.6]
+            CoRs = [0.8, 0.6]
 
         if np.any(impact_angle < 0):
             warnings.warn("Impact angle must be positive. Output is not valid.")

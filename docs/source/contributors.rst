@@ -23,7 +23,7 @@ and it can be installed as any other Python package.
 
 The development of CasEx as a Python package was done by:
 
-Lead programmer and modelling
+Lead programmer and math modelling
    Anders la Cour-Harbo
 Math modelling and Matlab implementations
    Terrence Martin
