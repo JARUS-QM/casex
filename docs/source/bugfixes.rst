@@ -1,4 +1,4 @@
-Background
+Bug fixes
 ==========
 
 Version 1.1.11
