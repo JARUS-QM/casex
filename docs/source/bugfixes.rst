@@ -1,7 +1,7 @@
-Bug fixes
-==========
+Bug fixes and updates
+=====================
 Version 1.2.0
-* Updated Casex to correspond to SORA 2.5. Most the following "bug fixes" are adjustments of the package.
+* Updated Casex to correspond to SORA 2.5. Most the following updates are adjustments to SORA 2.5, while most of the bug fixes are resulting from a general update of CasEx.
 * Changed numerous values in annex_f_tables.py to correspond to the coming public version of SORA 2.5.
 * Added ballistic_descent_table() to annex_f_tables.py (originally in figures.py) and expanded to show the full table.
 
@@ -17,6 +17,7 @@ Smaller changes
 * Updated example 7 to match new population bands.
 * Updated JARUS model equations in critical_area() to accommodate concession of 35 degree impact angle.
 * Added population bands to AnnexFParms.
+* Development status change from beta to production/stable.
 
 Version 1.1.11
 --------------
