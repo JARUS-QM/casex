@@ -59,7 +59,7 @@ plt.style.use('fivethirtyeight')
 # Compute the lethal area for the vector input parameters.
 p = []
 
-# This is how to very the width.
+# This is how to vary the width.
 v_width = np.linspace(1, 5, 100)
 aircraft.set_width(v_width)
 for model in enums.CriticalAreaModel:

@@ -10,8 +10,8 @@ from casex import AnnexFTables
 console_output = AnnexFTables.iGRC_tables(show_with_obstacles = True,
                                           show_ballistic = False,
                                           show_integer_reduction = False,
-                                          show_CFIT_angle = True,
-                                          show_additional_pop_density = True)
+                                          show_glide_angle = True,
+                                          show_additional_pop_density = False)
 
 for s in console_output:
     print(s)

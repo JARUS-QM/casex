@@ -71,7 +71,9 @@ class CriticalAreaModels:
         impact_speed : float
             [m/s] Impact speed of aircraft (this is speed along the velocity vector).
         impact_angle : float
-            [deg] Impact angle relative to ground (90 is vertical, straight down).
+            [deg] Impact angle relative to ground (90 is vertical, straight down). Note that when using the JARUS model
+            and the width of the aircraft is <= 1 m, the impact angle used is minimum 35 degrees, regardless of input.
+            See Appendix A.5 in Annex F :cite:`c-JARUS_AnnexF` for details.
         critical_areas_overlap : float
             [0 to 1] Fraction of overlap between lethal area from glide/slide and from explosion/deflagration.
         var1 : float, optional
@@ -98,12 +100,22 @@ class CriticalAreaModels:
         critical area inert : float
             [:math:`\mathrm{m}^2`] The inert part of the critical area.
         deflagration area : float
-            [:math:`\mathrm{m}^2`] The deflagration area as given by the deflagration model.
+            [:math:`\mathrm{m}^2`] The deflagration area as given by the deflagration model. Always 0 for non-JARUS models.
+        glide distance : float
+            [:math:`\mathrm{m}`] The glide distance.
+        slide distance non lethal: float
+            [:math:`\mathrm{m}`] The slide distance until non-lethal. Always 0 for non-JARUS models.
+        velocity min kill : float
+            [:math:`\mathrm{m/s}`] The speed at which the slide is no longer lethal. Always 0 for non-JARUS and NAWCAD models.
+        t safe : float
+            [:math:`\mathrm{s}`] The time between impact and when slide speed is non-lethal. Always 0 for non-JARUS and NAWCAD models.
 
         Raises
         ------
         InvalidAircraftError
             If the aircraft is not of type AircraftSpecs.
+        OnlyOneVetorInputError
+            There is more than one vector input, which is not supported.
         """
         # Check on input argument validity
         if not isinstance(critical_area_model, enums.CriticalAreaModel):
@@ -119,6 +131,11 @@ class CriticalAreaModels:
         # Compute additional parameters.
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
         glide_distance = self.glide_distance(impact_angle)
+        
+        # Default to zero.
+        slide_distance_non_lethal = 0
+        velocity_min_kill = 0
+        t_safe = 0
 
         # Compute the inert LA.
         if critical_area_model == enums.CriticalAreaModel.RCC:
@@ -216,40 +233,63 @@ class CriticalAreaModels:
             else:
                 KE_lethal = var1
 
+            # Special concession for JARUS model below 1 m.
+            if not isinstance(aircraft.width, np.ndarray):
+                if aircraft.width <= 1:
+                    if not isinstance(impact_angle, np.ndarray):
+                        impact_angle = max(35, impact_angle)
+                    else:
+                        impact_angle = np.where(impact_angle < 35, 35, impact_angle)
+                        
+            else:
+                if isinstance(impact_angle, np.ndarray):
+                    raise Exception("impact_angle and aircraft.width cannot both be vectors.")
+                impact_angle = np.where(aircraft.width <= 1, max(35, impact_angle), impact_angle)
+
             velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
             acceleration = aircraft.friction_coefficient * constants.GRAVITY
-
+            
             t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
             t_safe = np.maximum(0, t_safe)
 
-            slide_distance_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (
+            slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (
                     0.5 * acceleration * t_safe * t_safe)
 
             # Compute a half disc to attach to one end of glide and slide.
             circular_end = math.pi * np.power(self.buffer + aircraft.width / 2, 2) / 2
             
             glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + circular_end
-            slide_area = slide_distance_lethal * (2 * self.buffer + aircraft.width) + circular_end
+            slide_area = slide_distance_non_lethal * (2 * self.buffer + aircraft.width) + circular_end
 
             # Concession for aircraft below 1 m.
-            if aircraft.width <= 1:
-                slide_distance_lethal = 0
-                slide_area = 0
+            if not isinstance(aircraft.width, np.ndarray):
+                if aircraft.width <= 1:
+                    if not isinstance(slide_distance_non_lethal, np.ndarray):
+                        slide_distance_non_lethal = 0
+                    else:
+                        slide_distance_non_lethal = np.full(len(slide_distance_non_lethal), 0)
+                    if not isinstance(slide_area, np.ndarray):
+                        slide_area = 0
+                    else:
+                        slide_area = np.full(len(slide_area), 0)
+            else:
+                slide_distance_non_lethal[aircraft.width <= 1] = 0
+                slide_area[aircraft.width <= 1] = 0
 
         # Add glide and slide from model.
-        LA_inert = glide_area + slide_area
+        CA_inert = glide_area + slide_area
 
         # Compute deflagration area based on both fireball and thermal lethal area.
         TNT = exp.TNT_equivalent_mass(aircraft.fuel_type, aircraft.fuel_quantity)
         FB = exp.fireball_area(TNT)
         p_lethal = 0.1
         TLA = exp.lethal_area_thermal(TNT, p_lethal)
-        LA_deflagration = np.maximum(FB, TLA)
+        CA_deflagration = np.maximum(FB, TLA)
 
         # Compute the overlapping area between inert and deflagration.
-        overlapping_area = np.minimum(LA_inert, LA_deflagration) * np.maximum(0, np.minimum(critical_areas_overlap, 1))
+        overlapping_area = np.minimum(CA_inert, CA_deflagration) * np.maximum(0, np.minimum(critical_areas_overlap, 1))
 
-        return LA_inert + LA_deflagration - overlapping_area, glide_area, slide_area, LA_inert, LA_deflagration
+        return CA_inert + CA_deflagration - overlapping_area, glide_area, slide_area, CA_inert, CA_deflagration, glide_distance, slide_distance_non_lethal, velocity_min_kill, t_safe
 
     @staticmethod
     def slide_distance_friction(velocity, friction_coefficient):

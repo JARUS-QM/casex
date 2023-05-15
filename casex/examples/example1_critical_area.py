@@ -35,7 +35,7 @@ aircraft.set_fuel_type(enums.FuelType.GASOLINE)
 aircraft.set_fuel_quantity(0)
 
 # Get CoR using the aircraft class.
-aircraft.set_coefficient_of_restitution(aircraft.COR_from_impact_angle(impact_angle))
+aircraft.set_coefficient_of_restitution(AnnexFParms.CoR_from_impact_angle(impact_angle))
 
 # Fraction of overlap between lethal area from aircraft and from deflagration.
 # Note that this value is not relevant when there is not fuel onboard, and therefore no deflagration.

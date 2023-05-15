@@ -20,56 +20,52 @@ class AnnexFParms:
 
     Attributes
     ----------
-    wingspan : float
-        Characteristic dimension of the aircraft. See Annex F :cite:`a-JARUS_AnnexF`
-        for more detailed explanation on what that is.
+    aircraft : :class:`AircraftSpecs`
+        The class containing information about the aircraft.
+    aircraft_type : :class:`enums.AircraftType`
+        The type of aircraft. This parameters is not currently used.
     critical_area_target : float
         [m^2] Size of the largest critical area for each size class.
+    ballistic_descent_altitude : float
+        [m] Assumed altitude for beginning of ballistic descent.
+    ballistic_descent_time : float
+        [s] Computed descent time for ballistic descent.
+    ballistic_distance : float
+        [m] Computed horizontal distance traveled during ballistic descent.
+    ballistic_drag_coefficient = 0.8 : float
+        [-] Drag coefficient used for ballistic descent.
+    ballistic_frontal_area : float
+        [m^2] Assumed frontal area used in ballistic computations.
+    ballistic_impact_angle : float
+        [deg] Computed impact angle with 0 being horizontal.
+    ballistic_impact_KE : float
+        [J] Computed kinetic energy of aircraft just prior to impact.
+    ballistic_impact_velocity : float
+        [m/s] Assumed horizontal velocity for beginning of ballistic descent.
     cruise_speed : float
         [m/s]Maximum cruise speed for each size class.
-    mass : float
-        [kg] Assumed biggest mass for each size class.
-    KE_critical : float
-        [J] Non-lethal energy during slide.
-    friction_coefficient = 0.5 : float
-        [-] The friction coefficient is assumed constant at 0.5 throughout Annex F :cite:`a-JARUS_AnnexF`.
-    glide_reduce = 0.7 : float
+    friction_coefficient = 0.65 : float
+        [-] The friction coefficient is assumed constant at 0.65 throughout Annex F :cite:`a-JARUS_AnnexF`.
+    glide_reduce = 0.65 : float
         [-] Reduction in glide speed relative to cruise speed.
     glide_speed : float
         [m/s] The glide speed resulting from multiplying the cruise speed by glide_reduce.
-    aircraft : :class:`AircraftSpecs`
-        The class containing information about the aircraft.
-    scenario_angles = [9, 35, 80] : float array
-        [deg] The three impact angles for the three descent scenarios. The 80 degrees is not actually used but
+    impact_angle : float
+        [deg] The impact angle of the aircraft when crashing, measure relative to horizontal.
+    KE_critical : float
+        [J] Non-lethal energy during slide.
+    mass : float
+        [kg] Assumed biggest mass for each size class.
+    population_bands = [0.25 25 250 2500 25000 250000] : float array
+        [ppl/km2] The population density bands used for the iGRC.
+    scenario_angles = [10, 35, 62] : float array
+        [deg] The three impact angles for the three descent scenarios. The 62 degrees is not actually used but
         recomputed for each ballistic descent.
     terminal_velocity : float
         [m/s] Terminal velocity for aircraft.
-    ballistic_frontal_area : float
-        [m^2] Assumed frontal area used in ballistic computations.
-    ballistic_drag_coefficient = 0.7 : float
-        [-] Drag coefficient used for ballistic descent.
-    ballistic_descent_altitude : float
-        [m] Assumed altitude for beginning of ballistic descent.
-    ballistic_impact_velocity :float
-        [m/s] Assumed horizontal velocity for beginning of ballistic descent.
-    ballistic_impact_angle : float
-        [deg] Computed impact angle with 0 being horizontal.
-    ballistic_distance : float
-        [m] Computed horizontal distance traveled during ballistic descent.
-    ballistic_impact_KE : float
-        [J] Computed kinetic energy of aircraft just prior to impact.
-    ballistic_descent_time : float
-        [s] Computed descent time for ballistic descent.
-    impact_angle : float
-        [deg] The impact angle of the aircraft when crashing, measure relative to horizontal.
-    aircraft_type : :class:`enums.AircraftType`
-        The type of aircraft. This parameters is not currently used.
-    horizontal_COR : float
-        [-] The coefficient of restitution for a near horizontal impact.
-    vertical_COR : float
-        [-] The coefficient of restitution for a vertical impact. The actual COR is determined
-        as a first order interpolation between `horizontal_COR` for 0 degrees and `vertical_COR`
-        for 90 degrees.
+    wingspan : float
+        Characteristic dimension of the aircraft. See Annex F :cite:`a-JARUS_AnnexF`
+        for more detailed explanation on what that is.
     """
 
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
@@ -93,10 +89,14 @@ class AnnexFParms:
         aircraft: AircraftSpecs = None
 
     def __init__(self, impact_angle):
-        self.glide_reduce = 0.7
-        self.friction_coefficient = 0.5
-        self.ballistic_drag_coefficient = 0.7
-        self.scenario_angles = np.array([10, 35, 80])
+        self.person_radius = 0.3
+        self.person_height= 1.8
+        self.glide_reduce = 0.65
+        self.friction_coefficient = 0.65
+        self.ballistic_drag_coefficient = 0.8
+        self.scenario_angles = np.array([10, 35, 62])
+        self.obstacle_reduction = 0.6
+        self.population_bands = [0.25, 25, 250, 2500, 25000, 250000]
 
         self.impact_angle = impact_angle
 
@@ -106,15 +106,11 @@ class AnnexFParms:
         # Setup the parameters used in the plotting.
         self.CA_parms = []
         #                                      Width   CA       Speed    iGRC angle  Drag area   Mass     lethal KE   Altitude
-        self.CA_parms.append(self.CAParameters(1,      6.5,     25,      35,         0.1,        3,       290/0.5,    50))
-        self.CA_parms.append(self.CAParameters(3,      200,     35,      35,         0.5,        50,      290,        100))
-        self.CA_parms.append(self.CAParameters(8,      2000,    75,      35,         2.0,        400,     290,        200))
-        self.CA_parms.append(self.CAParameters(20,     20000,   150,     35,         8.0,        5000,    290,        500))
-        self.CA_parms.append(self.CAParameters(40,     66000,   200,     35,         14,         10000,   290,        1000))
-    
-        # Upper and low value for coefficient of restitution (over 10 to 90 degree impact angles).
-        self.Deg10_COR = 0.8
-        self.Deg90_COR = 0.6
+        self.CA_parms.append(self.CAParameters(1,      8,        25,      35,         0.1,        3,       290/0.5,    75))
+        self.CA_parms.append(self.CAParameters(3,      80,       35,      35,         0.5,        50,      290,        100))
+        self.CA_parms.append(self.CAParameters(8,      800,      75,      35,         2.0,        400,     290,        200))
+        self.CA_parms.append(self.CAParameters(20,     8000,     150,     35,         8.0,        5000,    290,        500))
+        self.CA_parms.append(self.CAParameters(40,     43000,    200,     35,         14,         10000,   290,        1000))
 
         self.recompute_parameters()
 
@@ -137,12 +133,13 @@ class AnnexFParms:
 
             if k == 0:
                 # The 1 m column uses 0.8 as CoR in all cases.
-                self.CA_parms[k].aircraft.set_coefficient_of_restitution(0.8)
+                if isinstance(self.impact_angle, np.ndarray):
+                    self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(np.full(len(self.impact_angle), 10)))
+                else:
+                    self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(10))
             else:
                 # The other columns uses a CoR depending on angle.
-                self.CA_parms[k].aircraft.set_coefficient_of_restitution(
-                    self.CA_parms[k].aircraft.COR_from_impact_angle(self.impact_angle, [self.scenario_angles[0], 90],
-                                                                    [self.Deg10_COR, self.Deg90_COR]))
+                self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(self.impact_angle))
 
             # Compute terminal velocity.
             self.CA_parms[k].terminal_velocity = self.CA_parms[k].aircraft.terminal_velocity()
@@ -179,7 +176,8 @@ class AnnexFParms:
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
         use_obstacle_reduction : bool, optional
-            If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value. This requires width to be set.
+            If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value.
+            This requires width to be set.
             Default value is False.
         width : float, optional
             Width of the aircraft. This is needed if use_obstacle_reduction is set to True. Otherwise, it is ignored.
@@ -247,3 +245,39 @@ class AnnexFParms:
                 obstacle_reduction_factor = 700 / 2000
             
         return obstacle_reduction_factor
+
+    @staticmethod
+    def CoR_from_impact_angle(impact_angle, angles = None, CoRs = None):
+        """Compute a coefficient of restitution for a given impact angle.
+        
+        This method assumes an affine relation between impact angle and CoR. Therefore, two angles and two CoR values
+        are used to determine this relation. The default is as described in Annex F that the CoR is 0.8 at a 10 degree
+        impact and 0.6 at a 90 degree (vertical) impact. This values are used as defaults, but others can be specified.
+        
+        Parameters
+        ----------        
+        impact_angle : float
+            [deg] The impact angle between 0 and 90.
+        angles : float array, optional
+            [deg] Array with two different angle of impact values (the default is [10, 90]).
+        CoRs : float array, optional
+            [-] Array with two COR values corresponding to the two angles (the default is [0.8, 0.6]).
+
+        Returns
+        -------
+        coefficient of restitution : float
+            [-] The coefficient of restitution for the given impact angle.
+        """
+        if angles is None:
+            angles = [10, 90]
+        if CoRs is None:
+            CoRs = [0.8, 0.6]
+
+        if np.any(impact_angle < 0):
+            warnings.warn("Impact angle must be positive. Output is not valid.")
+        if np.any(impact_angle > 90):
+            warnings.warn("Impact angle must be less than 90 degrees. Output is not valid.")
+
+        param = np.polyfit(angles, CoRs, 1)
+
+        return param[0] * impact_angle + param[1]

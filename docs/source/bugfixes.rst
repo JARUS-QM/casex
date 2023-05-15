@@ -1,5 +1,22 @@
 Bug fixes
 ==========
+Version 1.2.0
+* Updated Casex to correspond to SORA 2.5. Most the following "bug fixes" are adjustments of the package.
+* Changed numerous values in annex_f_tables.py to correspond to the coming public version of SORA 2.5.
+* Added ballistic_descent_table() to annex_f_tables.py (originally in figures.py) and expanded to show the full table.
+
+Smaller changes
+* Change upper proper CoF value in aircraft_specs.py from 1.5 to 1.0.
+* Moved COR_from_impact_angle() from aircraft_specs.py to annex_f_parms.py and made it static.
+* Added default values for person_radius (0.3) and person_height (1.8) to AnnexFParms.
+* Change LA_inert to CA_inert and LA_deflagration to CA_deflagration in critical_area() method to reflect critial area instead of lethal area.
+* Change slide_distance_lethal to slide_distance_non_lethal in critical_area() method, since it is in fact the non-lethal distance.
+* Updated example 1 to comply with changes.
+* Updated example 3 to comply with changes.
+* Updated example 4 to include obstacle reduction.
+* Updated example 7 to match new population bands.
+* Updated JARUS model equations in critical_area() to accommodate concession of 35 degree impact angle.
+* Added population bands to AnnexFParms.
 
 Version 1.1.11
 --------------

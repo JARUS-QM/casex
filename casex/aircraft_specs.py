@@ -261,7 +261,7 @@ class AircraftSpecs:
         Parameters
         ----------
         coefficient_of_restitution : float
-            [-] Coefficient of restitution for the ground impact (the default is 0.7).
+            [-] Coefficient of restitution for the ground impact.
  
         Returns
         -------
@@ -270,7 +270,7 @@ class AircraftSpecs:
         if np.any(coefficient_of_restitution <= 0):
             warnings.warn(
                 "Non-positive coefficient of restitution does not make sense. Subsequent results are invalid.")
-        if np.any(coefficient_of_restitution > 1.5):
+        if np.any(coefficient_of_restitution > 1.0):
             warnings.warn("Coefficient of restitution seems very large. Subsequent results may be invalid.")
 
         self.coefficient_of_restitution = coefficient_of_restitution
@@ -423,41 +423,6 @@ class AircraftSpecs:
         """
         return np.sqrt(2 * self.mass * constants.GRAVITY / constants.AIR_DENSITY / self.ballistic_frontal_area /
                        self.ballistic_drag_coefficient)
-
-    def COR_from_impact_angle(self, impact_angle, angles=None, CoRs=None):
-        """Compute a coefficient of restitution for a given impact angle.
-        
-        This method assumes an affine relation between impact angle and CoR. Therefore, two angles and two CoR values
-        are used to determine this relation. The default is as described in Annex F that the CoR is 0.8 at a 10 degree
-        impact and 0.6 at a 90 degree (vertical) impact. This values are used as defaults, but others can be specified.
-        
-        Parameters
-        ----------        
-        impact_angle : float
-            [deg] The impact angle between 0 and 90.
-        angles : float array, optional
-            [deg] Array with two different angle of impact values (the default is [10, 90]).
-        CoRs : float array, optional
-            [-] Array with two COR values corresponding to the two angles (the default is [0.8, 0.6]).
-
-        Returns
-        -------
-        coefficient of restitution : float
-            [-] The coefficient of restitution for the given impact angle.
-        """
-        if angles is None:
-            angles = [10, 90]
-        if CoRs is None:
-            CoRs = [0.8, 0.6]
-
-        if np.any(impact_angle < 0):
-            warnings.warn("Impact angle must be positive. Output is not valid.")
-        if np.any(impact_angle > 90):
-            warnings.warn("Impact angle must be less than 90 degrees. Output is not valid.")
-
-        param = np.polyfit(angles, CoRs, 1)
-
-        return param[0] * impact_angle + param[1]
 
     def reset_values(self):
         """Reset all aircraft parameters.

@@ -13,25 +13,25 @@ figures = Figures()
 
 figures.figure_angle_vs_speed()
 
-figures.figure_iGRC_CA_vs_PopDensity(filename="_img1",
-                                     show_reduced_CA_axis=False,
-                                     show_old_quantization=False,
-                                     show_x_wingspan=True,
-                                     show_x_velocity=True,
-                                     show_x_CA=True,
+figures.figure_iGRC_CA_vs_PopDensity(filename = "_img1",
+                                     show_reduced_CA_axis = False,
+                                     show_old_quantization = False,
+                                     show_x_wingspan = True,
+                                     show_x_velocity = True,
+                                     show_x_CA = True,
                                      show_with_obstacles = True,
-                                     show_x_CA_above=True,
-                                     show_additional_grid=False)
+                                     show_x_CA_above = True,
+                                     show_additional_grid = False)
 
-figures.figure_iGRC_CA_vs_PopDensity(filename="_img2",
-                                     show_reduced_CA_axis=True,
-                                     show_old_quantization=True,
-                                     show_x_wingspan=True,
-                                     show_x_velocity=False,
-                                     show_x_CA=False,
+figures.figure_iGRC_CA_vs_PopDensity(filename = "_img2",
+                                     show_reduced_CA_axis = True,
+                                     show_old_quantization = True,
+                                     show_x_wingspan = True,
+                                     show_x_velocity = False,
+                                     show_x_CA = False,
                                      show_with_obstacles = False,
-                                     show_x_CA_above=True,
-                                     show_descriptors=True,
+                                     show_x_CA_above = True,
+                                     show_descriptors = True,
                                      save_fig = False)
 
 figures.figure_obstacle_critical_area_reduction(save_fig=False)

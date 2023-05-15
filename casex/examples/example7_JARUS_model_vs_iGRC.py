@@ -25,7 +25,7 @@ wingspan_samples = 200
 
 # Plotting range for the impact angle and speed.
 wingspan = np.linspace(0, 21, wingspan_samples)
-pop_density = np.logspace(-3 + np.log10(5), 5 + np.log10(5), pop_density_samples)
+pop_density = np.logspace(-3 + np.log10(5), 6, pop_density_samples)
 
 # Instantiate the class to access parameters for the five scenarios.
 AFP = AnnexFParms(impact_angle)
@@ -65,7 +65,8 @@ for j in range(len(wingspan)):
 # A number of lists used for plotting.
 x_ticks = [1, 3, 8, 20]
 pop_dens_tick = [0.1, 10, 100, 1500, 15000, 100000, 500000]
-y_text_pos = [0.02, 1, 33, 400, 5000, 40000, 220000]
+pop_dens_tick = AFP.population_bands
+y_text_pos = [0.04, 3, 80, 800, 8000, 80000, 550000]
 x_text_pos = [0.5, 2, 5.5, 14, 20.5]
 pop_dens_percentage = [3.15, 24.6, 52.8, 16.6, 2.84, 0.07, 0.0, 0.0]
 

@@ -154,7 +154,7 @@ class Figures:
         # Plotting range for the impact angle.
         impact_angle = np.linspace(1, 80, angle_samples)
 
-        # Plotting range for the speed for each of the four scenarios.
+        # Plotting range for the speed for each of the five graphs.
         speed_plot_range = np.array([50, 70, 120, 250, 300])
 
         # Get the four scenario.
@@ -164,9 +164,9 @@ class Figures:
         # Note that the CA target is not included, since it is already listed above (and is plotted in different color).
         contour_levels = []
         contour_levels.append(np.array([5, 10, 30, 50, 100]))
-        contour_levels.append(np.array([100, 300, 400, 600]))
-        contour_levels.append(np.array([500, 1000, 3000, 5000]))
-        contour_levels.append(np.array([5000, 10000, 30000, 50000]))
+        contour_levels.append(np.array([30, 50, 100, 200, 300]))
+        contour_levels.append(np.array([300, 500, 1000, 2000]))
+        contour_levels.append(np.array([1000, 4000, 10000, 20000]))
         contour_levels.append(np.array([5000, 10000, 30000, 50000]))
 
         # Set to true to plot the COR.
@@ -187,15 +187,13 @@ class Figures:
             main_color = 'black'
             side_color = 'grey'
 
-        print("Ballistic descent computations")
-        print("------------------------------")
-        print("Class   Init horiz     From     Terminal   Impact   Impact   Distance   Descent      KE")
-        print("          speed      altitude   velocity   speed    angle    traveled    time      impact")
+        overlap = 0
 
         c = 0
         for j in range(2):
             for k in range(3):
 
+                # There is not sixth graph.
                 if c > 4:
                     break
 
@@ -205,16 +203,16 @@ class Figures:
                 # Initialize CA matrix.
                 CA_matrix = np.zeros((speed_samples, angle_samples))
 
+                obstacle_reduction_factor = AFP.obstacle_reduction if AFP.CA_parms[c].aircraft.width < 40 else 1
+
                 # Compute the CA matrix.
                 for i in range(speed_samples):
                     impact_speed_i = impact_speed[i]
 
-                    overlap = 0
-
                     CA_matrix[i, :] = CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft,
                                                        impact_speed_i, impact_angle, overlap,
-                                                       AFP.CA_parms[c].KE_critical)[0]
-
+                                                       -1)[0] * obstacle_reduction_factor
+                    
                 # Show the CA matrix.
                 if show_matrix:
                     im = ax[j, k].imshow(np.log(CA_matrix),
@@ -255,14 +253,7 @@ class Figures:
                 ax[j, k].set_xlim(0, 80)
                 ax[j, k].grid()
 
-                ax[j, k].legend(['9 deg scenario', '35 deg scenario', 'Ballistic scenario'])
-
-                print("{:2d} m      {:3d} m/s     {:4d} m    {:3.0f} m/s   {:3.0f} m/s   {:1.0f} deg    {:4.0f} m     "
-                      "{:4.1f} s   {:6.0f} kJ".format(
-                    AFP.CA_parms[c].wingspan, AFP.CA_parms[c].cruise_speed, AFP.CA_parms[c].ballistic_descent_altitude,
-                    AFP.CA_parms[c].terminal_velocity, AFP.CA_parms[c].ballistic_impact_velocity,
-                    AFP.CA_parms[c].ballistic_impact_angle, AFP.CA_parms[c].ballistic_distance,
-                    AFP.CA_parms[c].ballistic_descent_time, AFP.CA_parms[c].ballistic_impact_KE / 1000))
+                ax[j, k].legend(['10 deg scenario', '35 deg scenario', 'Ballistic scenario'])
 
                 c = c + 1
 

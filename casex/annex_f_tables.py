@@ -3,10 +3,11 @@ This class allows for recreating some of the tables in Annex F :cite:`a-JARUS_An
 """
 import numpy as np
 import math
+import warnings
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
 class AnnexFTables:
-    """This class contains methods for generating tradeoff tables and variations over the nominal iGRC table.
+    """This class contains methods for generating a variety of tables in Annex F :cite:`a-JARUS_AnnexF`.
 
     Parameters
     ----------
@@ -21,24 +22,24 @@ class AnnexFTables:
     def iGRC_tables(show_with_obstacles = True,
                     show_ballistic = False,
                     show_integer_reduction = True,
-                    show_CFIT_angle = False,
+                    show_glide_angle = False,
                     show_additional_pop_density = False):
         """Compute the iGRC tables Annex F :cite:`a-JARUS_AnnexF`.
         
         Produces console output to show the iGRC tables in a variety of forms.
-        The default setup (none of the input booleans are set), will produce the
-        nominal iGRC table.
+        The default setup will produce the nominal iGRC table.
         
         Parameters
         ----------
         show_with_obstacles : bool, optional
             If true, show iGRC values when obstacles are present. Default True.
         show_ballistic : bool, optional
-            If true, show iGRC values for ballistic descent (typically rotorcraft). This superseeds show_CFIT_angle. Default False.
+            If true, show iGRC values for ballistic descent (typically rotorcraft). This superseeds show_glide_angle.
+            Default False.
         show_integer_reduction : bool, optional
             If true, subtract 0.3 from all values. Default True.
-        show_CFIT_angle : bool, optional
-            If true, show for 9 degree impact angle instead of 35 degree. Default False.
+        show_glide_angle : bool, optional
+            If true, show for 10 degree impact angle instead of 35 degree. Default False.
         show_additional_pop_density : bool, optional
             If true, show additional population density rows. Default False.
             
@@ -53,7 +54,7 @@ class AnnexFTables:
         person_height = 1.8
         
         # Set impact angle.
-        impact_angle = 10 if show_CFIT_angle else 35
+        impact_angle = 10 if show_glide_angle else 35
         
         # Instantiate necessary classes.
         CA = CriticalAreaModels(person_radius, person_height)
@@ -71,7 +72,7 @@ class AnnexFTables:
         aircraft.set_fuel_quantity(0)
         
         # Set list of population density bands in the table.
-        pop_density = np.array([0.1, 10, 100, 1500, 15000, 100000])
+        pop_density = np.array([0.25, 25, 250, 2500, 25000, 250000, 2500000])
         
         if show_additional_pop_density:
             pop_density = np.append(pop_density, [30, 300, 2000, 2500, 3000, 10000, 20000, 50000])
@@ -81,7 +82,7 @@ class AnnexFTables:
         # Initialize variables.,
         iGRC_table = np.zeros((len(pop_density), 5))
         impact_angles = np.zeros((5))
-        p = np.zeros((5, 5))
+        p = np.zeros((5, 9))
         
         # Loop over columns in the iGRC table.
         for j in range(0, 5):
@@ -96,13 +97,9 @@ class AnnexFTables:
                 impact_speed = AFP.CA_parms[j].ballistic_impact_velocity
                 impact_angle = AFP.CA_parms[j].ballistic_impact_angle
             else:
-                impact_speed = AFP.CA_parms[j].glide_speed if show_CFIT_angle else AFP.CA_parms[j].cruise_speed
+                impact_speed = AFP.CA_parms[j].glide_speed if show_glide_angle else AFP.CA_parms[j].cruise_speed
         
-            # Get CoR using the aircraft class.
-            if j > 1:
-                aircraft.set_coefficient_of_restitution(aircraft.COR_from_impact_angle(impact_angle))
-            else:
-                aircraft.set_coefficient_of_restitution(0.9)
+            aircraft.set_coefficient_of_restitution(AnnexFParms.CoR_from_impact_angle(impact_angle))
         
             # Compute the CA.
             p[j] = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)
@@ -240,7 +237,7 @@ class AnnexFTables:
         aircraft.set_fuel_quantity(0)
         
         # Get CoR using the aircraft class.
-        aircraft.set_coefficient_of_restitution(aircraft.COR_from_impact_angle(impact_angle))
+        aircraft.set_coefficient_of_restitution(AnnexFParms.CoR_from_impact_angle(impact_angle))
         
         # Set the appropriate changes for each type of trade-off.
         if tradeoff_type == 0:
@@ -294,7 +291,7 @@ class AnnexFTables:
         
         console_output.append("-----------------------+--------------------------------------------------")
         
-        for Dpop in [0.1, 10, 100, 1500, 15000, 100000, 1000000]:
+        for Dpop in [0.25, 25, 250, 2500, 25000, 250000, 1000000]:
             
             if (Dpop > 1):
                 s = "{:7} ppl/km^2       |   ".format(int(Dpop * Dpop_factor))
@@ -312,23 +309,27 @@ class AnnexFTables:
                 impact_speed = AFP.CA_parms[j].cruise_speed
         
                 # Compute the AC.
-                p_original = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)
+                p_original = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)[0]
+                
+                # Reduction for obstacles.
+                if 0 < j < 5:
+                    p_original = p_original * AFP.obstacle_reduction
                 
                 # Then set to modified values.
                 aircraft.set_width(AFP.CA_parms[j].wingspan * width_factor)
                 impact_speed = AFP.CA_parms[j].cruise_speed * impact_speed_factor
             
                 # And again, compute AC.
-                p_trade_off = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)
+                p_trade_off = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)[0]
         
                 # Compute the raw iGRC according to Annex F.
                 raw_iGRC_original = AnnexFParms.iGRC(Dpop,
-                                                     p_original[0],
+                                                     p_original,
                                                      use_integer_reduction=True,
                                                      width=AFP.CA_parms[j].wingspan, 
                                                      use_obstacle_reduction=True) 
                 raw_iGRC_trade_off = AnnexFParms.iGRC(Dpop * Dpop_factor,
-                                                      p_trade_off[0],
+                                                      p_trade_off,
                                                       use_integer_reduction=True,
                                                       width=AFP.CA_parms[j].wingspan, 
                                                       use_obstacle_reduction=True) 
@@ -347,3 +348,229 @@ class AnnexFTables:
             console_output.append("Negative number means lower iGRC relative to nominal and positive means higher.")
             
         return console_output
+    
+    
+    @staticmethod
+    def ballistic_descent_table():
+        """Compute the ballistic descent table in Annex F :cite:`a-JARUS_AnnexF`.
+        
+        Produces console output to show the ballistic descent table.
+        
+        Parameters
+        ----------
+        none.
+            
+        Returns
+        -------
+        console_output : list of strings
+            The output to show.
+        """
+        
+        console_output = []
+
+        # Impact angle is not used, so just set to 0.
+        AFP = AnnexFParms(0)
+
+        console_output.append("Ballistic descent computations")
+        console_output.append("---------------------------------------------------------------")
+
+        s = "Class                  "
+        for c in range(5):
+            s = s + "{:2d} m     ".format(AFP.CA_parms[c].wingspan)
+        console_output.append(s)
+
+        s = "Frontal area [m2]      "
+        for c in range(5):
+            s = s + "{:4.1f}     ".format(AFP.CA_parms[c].ballistic_frontal_area)
+        console_output.append(s)
+
+        s = "Mass [kg]             "
+        for c in range(5):
+            s = s + "{:5d}    ".format(AFP.CA_parms[c].mass)
+        console_output.append(s)
+
+        s = "Init alt [m]           "
+        for c in range(5):
+            s = s + "{:4.0f}     ".format(AFP.CA_parms[c].ballistic_descent_altitude)
+        console_output.append(s)
+
+        s = "Velocity [m/s]         "
+        for c in range(5):
+            s = s + "{:4.0f}     ".format(AFP.CA_parms[c].cruise_speed)
+        console_output.append(s)
+
+        console_output.append("---------------------------------------------------------------")
+
+        s = "Terminal vel [m/s]     "
+        for c in range(5):
+            s = s + "{:4.0f}     ".format(AFP.CA_parms[c].terminal_velocity)
+        console_output.append(s)
+
+        s = "Cruise KE [kJ]       "
+        for c in range(5):
+            s = s + "{:6.0f}   ".format(0.5*AFP.CA_parms[c].mass*AFP.CA_parms[c].cruise_speed*AFP.CA_parms[c].cruise_speed / 1000)
+        console_output.append(s)
+
+        s = "Impact velocity [m/s]  "
+        for c in range(5):
+            s = s + "{:4.0f}     ".format(AFP.CA_parms[c].ballistic_impact_velocity)
+        console_output.append(s)
+
+        s = "Impact angle [deg]     "
+        for c in range(5):
+            s = s + "{:4.0f}     ".format(AFP.CA_parms[c].ballistic_impact_angle)
+        console_output.append(s)
+
+        s = "Cof of restitution [-] "
+        for c in range(5):
+            s = s + "{:4.2f}     ".format(AnnexFParms.CoR_from_impact_angle(AFP.CA_parms[c].ballistic_impact_angle))
+        console_output.append(s)
+
+        s = "Hor distance [m]       "
+        for c in range(5):
+            s = s + "{:4.0f}     ".format(AFP.CA_parms[c].ballistic_distance)
+        console_output.append(s)
+
+        s = "Descent time [s]       "
+        for c in range(5):
+            s = s + "{:4.1f}     ".format(AFP.CA_parms[c].ballistic_descent_time)
+        console_output.append(s)
+
+        s = "Impact KE [kJ]        "
+        for c in range(5):
+            s = s + "{:5.0f}    ".format(AFP.CA_parms[c].ballistic_impact_KE / 1000)
+        console_output.append(s)
+
+        return console_output
+    
+    @staticmethod
+    def scenario_computation_table(scenario):
+        """Compute table of intermediate values for the three descent scenarios in Annex F :cite:`a-JARUS_AnnexF`.
+        
+        Produces console output.
+        
+        Parameters
+        ----------
+        scenario : integer
+            Number of scenario, must be either 1, 2, or 3.
+            
+        Returns
+        -------
+        console_output : list of strings
+            The output to show.
+        """
+        
+        console_output = []
+        
+        if scenario != 1 and scenario != 2 and scenario != 3:
+            warnings.warn("Scenario must be either 1,  2, or 3.")
+            return
+        
+        # This setup cannot use a single impact angle, so it will be adjusted below.
+        AFP = AnnexFParms(0)
+        
+        impact_speed = [0, 0, 0, 0, 0]
+        impact_angle = [0, 0, 0, 0, 0]
+        for c in range(5):
+            if scenario == 1:
+                impact_angle[c] = 10 if c > 0 else 35
+                impact_speed[c] = AFP.CA_parms[c].glide_speed
+            elif scenario == 2:
+                impact_angle[c] = 35
+                impact_speed[c] = AFP.CA_parms[c].cruise_speed
+            elif scenario == 3:
+                impact_angle[c] = AFP.CA_parms[c].ballistic_impact_angle
+                impact_speed[c] = AFP.CA_parms[c].ballistic_impact_velocity
+
+        CA = CriticalAreaModels(AFP.person_radius, AFP.person_height)
+        p = []
+        for c in range(5):
+            # Set CoR since it needs to be set manually in this setup.
+            AFP.CA_parms[c].aircraft.set_coefficient_of_restitution(AnnexFParms.CoR_from_impact_angle(impact_angle[c]))
+            p.append(CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft, impact_speed[c], impact_angle[c], 0))
+
+
+        console_output.append("Scenario " + str(scenario) + " critical area calculations")
+        console_output.append("Row  Variable                                            Values")
+        console_output.append("--------------------------------------------------------------------------------")
+        
+        s = " 1    Class                         "
+        for c in range(5):
+            s = s + "{:2d} m      ".format(AFP.CA_parms[c].wingspan)
+        console_output.append(s)
+
+        s = " 2    Mass [kg]                    "
+        for c in range(5):
+            s = s + "{:5d}     ".format(AFP.CA_parms[c].mass)
+        console_output.append(s)
+
+        s = " 3    Cruise speed [m/s]            "
+        for c in range(5):
+            s = s + "{:4.0f}      ".format(AFP.CA_parms[c].cruise_speed)
+        console_output.append(s)
+
+        s = " 4    Impact angle [deg]           "
+        for c in range(5):
+            s = s + "{:5.0f}     ".format(impact_angle[c])
+        console_output.append(s)
+
+        s = " 5    Impact velocity [m/s]        "
+        for c in range(5):
+            s = s + "{:5.0f}     ".format(impact_speed[c])
+        console_output.append(s)
+
+        s = " 6    Aircraft width + buffer [m]   "
+        rD2 = []
+        for c in range(5):
+            rD2.append(AFP.CA_parms[c].wingspan + 0.6)
+            s = s + "{:4.1f}      ".format(rD2[c])
+        console_output.append(s)
+
+        s = " 7    Glide distance [m]            "
+        for c in range(5):
+            s = s + "{:4.0f}      ".format(p[c][5])
+        console_output.append(s)
+
+        s = " 8    Non-lethal speed [m/s]        "
+        for c in range(5):
+            s = s + "{:4.1f}      ".format(p[c][7])
+        console_output.append(s)
+
+        s = " 9    Horz speed at impact [m/s]    "
+        for c in range(5):
+            s = s + "{:4.0f}      ".format(CA.horizontal_speed_from_angle(impact_angle[c], impact_speed[c])) 
+        console_output.append(s)
+
+        s = "10    Coef of resitution [-]        "
+        for c in range(5):
+            s = s + "{:4.2f}      ".format(AnnexFParms.CoR_from_impact_angle(impact_angle[c])) 
+        console_output.append(s)
+
+        s = "11    Horz speed after impact [m/s] "
+        for c in range(5):
+            s = s + "{:4.0f}      ".format(CA.horizontal_speed_from_angle(impact_angle[c], impact_speed[c]) * AnnexFParms.CoR_from_impact_angle(impact_angle[c]))
+        console_output.append(s)
+
+        s = "12    Reduced slide distance [m]    "
+        for c in range(5):
+            s = s + "{:4.0f}      ".format(p[c][6])
+        console_output.append(s)
+
+        s = "13    Time to safe speed [s]        "
+        for c in range(5):
+            s = s + "{:4.1f}      ".format(p[c][8])
+        console_output.append(s)
+
+        s = "14    Raw critical area [m2]       "
+        for c in range(5):
+            s = s + "{:5.0f}     ".format(p[c][0])
+        console_output.append(s)
+        
+        s = "15    CA reduced by 40%  [m2]      "
+        for c in range(5):
+            s = s + "{:5.0f}     ".format(p[c][0] * 0.6)
+        console_output.append(s)
+        
+        return console_output
+
+
