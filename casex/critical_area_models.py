@@ -234,17 +234,16 @@ class CriticalAreaModels:
                 KE_lethal = var1
 
             # Special concession for JARUS model below 1 m.
-            if not isinstance(aircraft.width, np.ndarray):
-                if aircraft.width <= 1:
-                    if not isinstance(impact_angle, np.ndarray):
-                        impact_angle = max(35, impact_angle)
-                    else:
-                        impact_angle = np.where(impact_angle < 35, 35, impact_angle)
-                        
-            else:
-                if isinstance(impact_angle, np.ndarray):
-                    raise Exception("impact_angle and aircraft.width cannot both be vectors.")
-                impact_angle = np.where(aircraft.width <= 1, max(35, impact_angle), impact_angle)
+            #if not isinstance(aircraft.width, np.ndarray):
+            #    if aircraft.width <= 1:
+            #        if not isinstance(impact_angle, np.ndarray):
+            #            impact_angle = max(35, impact_angle)
+            #        else:
+            #            impact_angle = np.where(impact_angle < 35, 35, impact_angle)               
+            #else:
+            #    if isinstance(impact_angle, np.ndarray):
+            #        raise Exception("impact_angle and aircraft.width cannot both be vectors.")
+            #   impact_angle = np.where(aircraft.width <= 1, max(35, impact_angle), impact_angle)
 
             velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
             acceleration = aircraft.friction_coefficient * constants.GRAVITY
@@ -262,19 +261,19 @@ class CriticalAreaModels:
             slide_area = slide_distance_non_lethal * (2 * self.buffer + aircraft.width) + circular_end
 
             # Concession for aircraft below 1 m.
-            if not isinstance(aircraft.width, np.ndarray):
-                if aircraft.width <= 1:
-                    if not isinstance(slide_distance_non_lethal, np.ndarray):
-                        slide_distance_non_lethal = 0
-                    else:
-                        slide_distance_non_lethal = np.full(len(slide_distance_non_lethal), 0)
-                    if not isinstance(slide_area, np.ndarray):
-                        slide_area = 0
-                    else:
-                        slide_area = np.full(len(slide_area), 0)
-            else:
-                slide_distance_non_lethal[aircraft.width <= 1] = 0
-                slide_area[aircraft.width <= 1] = 0
+            #if not isinstance(aircraft.width, np.ndarray):
+            #    if aircraft.width <= 1:
+            #        if not isinstance(slide_distance_non_lethal, np.ndarray):
+            #            slide_distance_non_lethal = 0
+            #        else:
+            #            slide_distance_non_lethal = np.full(len(slide_distance_non_lethal), 0)
+            #        if not isinstance(slide_area, np.ndarray):
+            #            slide_area = 0
+            #        else:
+            #            slide_area = np.full(len(slide_area), 0)
+            #else:
+            #    slide_distance_non_lethal[aircraft.width <= 1] = 0
+            #    slide_area[aircraft.width <= 1] = 0
 
         # Add glide and slide from model.
         CA_inert = glide_area + slide_area

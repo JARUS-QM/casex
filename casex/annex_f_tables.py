@@ -473,7 +473,7 @@ class AnnexFTables:
         impact_angle = [0, 0, 0, 0, 0]
         for c in range(5):
             if scenario == 1:
-                impact_angle[c] = 10 if c > 0 else 35
+                impact_angle[c] = 10# if c > 0 else 35
                 impact_speed[c] = AFP.CA_parms[c].glide_speed
             elif scenario == 2:
                 impact_angle[c] = 35
