@@ -16,7 +16,7 @@ class AnnexFParms:
     Parameters
     ----------
     impact_angle : float
-        [deg] The impact angle of the descending aircraft, measured relative to the ground.
+        [deg] The impact angle of the descending aircraft, relative to horizontal.
 
     Attributes
     ----------
@@ -68,6 +68,15 @@ class AnnexFParms:
         for more detailed explanation on what that is.
     """
 
+    person_radius = 0.3
+    person_height= 1.8
+    lethal_kinetic_energy = 290
+    obstacle_reduction_factor = 0.6
+    scenario_angles = np.array([10, 35, 62])
+    glide_reduce = 0.65
+    friction_coefficient = 0.65
+    ballistic_drag_coefficient = 0.8
+
     # This dataclass make the programming and plotting more smooth in allowing for looping for virtually all values.
     @dataclass
     class CAParameters:
@@ -88,33 +97,24 @@ class AnnexFParms:
         glide_speed: float = 0
         aircraft: AircraftSpecs = None
 
-    def __init__(self, impact_angle):
-        self.person_radius = 0.3
-        self.person_height= 1.8
-        self.glide_reduce = 0.65
-        self.friction_coefficient = 0.65
-        self.ballistic_drag_coefficient = 0.8
-        self.scenario_angles = np.array([10, 35, 62])
-        self.obstacle_reduction = 0.6
+    def __init__(self):
         self.population_bands = [0.25, 25, 250, 2500, 25000, 250000]
-
-        self.impact_angle = impact_angle
 
         # Set aircraft type, the type has no effect in this example, but must be given a value.
         self.aircraft_type = enums.AircraftType.GENERIC
 
         # Setup the parameters used in the plotting.
         self.CA_parms = []
-        #                                      Width   CA       Speed    iGRC angle  Drag area   Mass     lethal KE   Altitude
-        self.CA_parms.append(self.CAParameters(1,      8,        25,      35,         0.1,        3,       290/0.5,    75))
-        self.CA_parms.append(self.CAParameters(3,      80,       35,      35,         0.5,        50,      290,        100))
-        self.CA_parms.append(self.CAParameters(8,      800,      75,      35,         2.0,        400,     290,        200))
-        self.CA_parms.append(self.CAParameters(20,     8000,     150,     35,         8.0,        5000,    290,        500))
-        self.CA_parms.append(self.CAParameters(40,     43000,    200,     35,         14,         10000,   290,        1000))
+        #                                      Width   CA       Speed    iGRC angle                  Drag area      Mass        lethal KE                     Altitude
+        self.CA_parms.append(self.CAParameters(1,      8,        25,      self.scenario_angles[1],         0.1,        3,       self.lethal_kinetic_energy/0.5,    75))
+        self.CA_parms.append(self.CAParameters(3,      80,       35,      self.scenario_angles[1],         0.5,        50,      self.lethal_kinetic_energy,        100))
+        self.CA_parms.append(self.CAParameters(8,      800,      75,      self.scenario_angles[1],         2.0,        400,     self.lethal_kinetic_energy,        200))
+        self.CA_parms.append(self.CAParameters(20,     8000,     150,     self.scenario_angles[1],         8.0,        5000,    self.lethal_kinetic_energy,        500))
+        self.CA_parms.append(self.CAParameters(40,     43000,    200,     self.scenario_angles[1],         14,         10000,   self.lethal_kinetic_energy,        1000))
 
-        self.recompute_parameters()
+        self.recompute_parameters(self.scenario_angles[1])
 
-    def recompute_parameters(self):
+    def recompute_parameters(self, impact_angle):
         BDM = BallisticDescent2ndOrderDragApproximation()
 
         # Compute the parameters for each of the 5 size classes.
@@ -123,8 +123,7 @@ class AnnexFParms:
             self.CA_parms[k].glide_speed = self.glide_reduce * self.CA_parms[k].cruise_speed
 
             # Define the aircraft.
-            self.CA_parms[k].aircraft = AircraftSpecs(self.aircraft_type, self.CA_parms[k].wingspan, 1,
-                                                      self.CA_parms[k].mass)
+            self.CA_parms[k].aircraft = AircraftSpecs(self.aircraft_type, self.CA_parms[k].wingspan, self.CA_parms[k].mass)
 
             # Set parameters into aircraft.
             self.CA_parms[k].aircraft.set_ballistic_frontal_area(self.CA_parms[k].ballistic_frontal_area)
@@ -133,13 +132,13 @@ class AnnexFParms:
 
             if k == 0:
                 # The 1 m column uses 0.8 as CoR in all cases.
-                if isinstance(self.impact_angle, np.ndarray):
-                    self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(np.full(len(self.impact_angle), 10)))
+                if isinstance(impact_angle, np.ndarray):
+                    self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(np.full(len(impact_angle), 10)))
                 else:
                     self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(10))
             else:
                 # The other columns uses a CoR depending on angle.
-                self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(self.impact_angle))
+                self.CA_parms[k].aircraft.set_coefficient_of_restitution(self.CoR_from_impact_angle(impact_angle))
 
             # Compute terminal velocity.
             self.CA_parms[k].terminal_velocity = self.CA_parms[k].aircraft.terminal_velocity()
@@ -155,7 +154,7 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)        
 
     @staticmethod
-    def iGRC(pop_dens, CA, TLOS=1E-6, width = 0, use_obstacle_reduction = False, use_integer_reduction = False):
+    def iGRC(pop_dens, CA, TLOS=1E-6, width = 0, use_conservative_compensation = False):
         """Compute the finale integer iGRC as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
@@ -175,14 +174,10 @@ class AnnexFParms:
         TLOS : float, optional
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
-        use_obstacle_reduction : bool, optional
-            If True, the obstacle reduction (see obstacle_reduction_factor()) is applied to the iGRC value.
-            This requires width to be set.
-            Default value is False.
         width : float, optional
             Width of the aircraft. This is needed if use_obstacle_reduction is set to True. Otherwise, it is ignored.
             Default value is 0.
-        use_integer_reduction: bool, optional
+        use_conservative_compensation: bool, optional
             if True, the 0.3 reduction in iGRC value is applied.
             
         Returns
@@ -192,16 +187,10 @@ class AnnexFParms:
         raw iGRC : float
             The raw iGRC before rounding up.
         """
-        if use_obstacle_reduction:
-            if width == 0:
-                warnings.warn("width is not set. Using value of 1 m.")
-                width = 1
-            pop_dens = pop_dens * AnnexFParms.obstacle_reduction_factor(pop_dens, width)
-        
         # Note that the 1E-6 here is the conversion from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
         
-        if use_integer_reduction:
+        if use_conservative_compensation:
             raw_iGRC_value = raw_iGRC_value - 0.3
             
         # The raw iGRC value may be rounded to one decimal.
@@ -210,25 +199,13 @@ class AnnexFParms:
         return math.ceil(raw_iGRC_value), raw_iGRC_value
 
     @staticmethod
-    def obstacle_reduction_factor(pop_dens, width):
+    def applied_obstacle_reduction_factor(width):
         """Compute the obstacle reduction factor used in the iGRC in Annex F :cite:`a-JARUS_AnnexF`.
-        
-        The obstacle reduction factor as shown in the table below:
-
-        +---------------------------------+--------------------+---------------------+
-        |                                 | 1 m < width <= 3 m | 3 m < width <= 20 m |
-        +---------------------------------+--------------------+---------------------+
-        | 1,500 <= pop density < 100,000  |    120/200         |     700/2000        |
-        +---------------------------------+--------------------+---------------------+
-
-        and 1 if either pop density or width is outside ranges in the table.
         
         Parameters
         ----------
         pop_dens : float
             [ppl/km^2] Population density
-        width : float
-            [m] Width of aircraft.
             
         Returns
         -------
@@ -236,15 +213,12 @@ class AnnexFParms:
             The reduction factor for use in iGRC.
         """
 
-        obstacle_reduction_factor = 1
-
-        if 1500 <= pop_dens < 100000:
-            if 1 < width <= 3:
-                obstacle_reduction_factor = 120 / 200
-            elif 3 < width <= 20:
-                obstacle_reduction_factor = 700 / 2000
-            
-        return obstacle_reduction_factor
+        if isinstance(width, np.ndarray):
+            resulting_factor = np.where(np.logical_and(width > 1, width < 40), AnnexFParms.obstacle_reduction_factor, 1)
+        else:
+            resulting_factor = AnnexFParms.obstacle_reduction_factor if 1 < width < 40 else 1
+           
+        return resulting_factor
 
     @staticmethod
     def CoR_from_impact_angle(impact_angle, angles = None, CoRs = None):

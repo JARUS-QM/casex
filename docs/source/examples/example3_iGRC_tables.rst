@@ -1,6 +1,8 @@
 =====================================
-Example 11: iGRC table
+Example 3: iGRC table
 =====================================
+
+NOT YET UPDATED TO SORA 2.5
 
 This example reproduces the nominal iGRC table in Annex F :cite:`j-JARUS_AnnexF`. It also allows for seeing the table with different impact angles,
 and with and without both obstacles and integer concession.

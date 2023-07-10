@@ -1,5 +1,5 @@
 """
-Example 6
+Example 8
 ---------
 The use of obstacles for reducing the critical area is demonstrated in this example.
 This is similar to the figure that can be created wiht the :class:`Figures` class.
@@ -14,10 +14,10 @@ from casex import Obstacles
 CA_width = 3
 
 # Nominal length (length of CA without obstacles).
-CA_length = 200/CA_width
+CA_length = 140/CA_width
 
 # Obstacle density in obstacles per square meter.
-houses_per_square_km = 850
+houses_per_square_km = 858
 obstacle_density = houses_per_square_km / 1e6
 
 # Average width of house and variation in house width.

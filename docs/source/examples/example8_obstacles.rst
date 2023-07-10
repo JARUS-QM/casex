@@ -1,5 +1,5 @@
 ====================
-Example 6: Obstacles
+Example 8: Obstacles
 ====================
 
 The use of obstacles for reducing the critical area is demonstrated in this example.

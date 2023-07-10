@@ -5,7 +5,6 @@ This examples provide the basic functionality for computing a critical area.
 """
 from casex import enums, FrictionCoefficients, CriticalAreaModels, AircraftSpecs, AnnexFParms
 
-
 # Data on person size.
 person_radius = 0.3
 person_height = 1.8
@@ -21,13 +20,12 @@ impact_angle = 35
 # Set aircraft values.
 aircraft_type = enums.AircraftType.GENERIC
 width = 1.5
-length = 1
 mass = 5
 friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.RUBBER,
                                           enums.GroundMaterial.CONCRETE)
 
 # Instantiate and add data to AircraftSpecs class.
-aircraft = AircraftSpecs(aircraft_type, width, length, mass)
+aircraft = AircraftSpecs(aircraft_type, width, mass)
 aircraft.set_friction_coefficient(friction_coefficient)
 
 # Set parameters for fuel
@@ -44,11 +42,11 @@ critical_areas_overlap = 0.5
 # A limit for the non-lethal kinetic energy during slide.
 # Set this value to -1 to use the default value from Annex F Appendix A.
 # See the documentation for the critical_area function for details.
-KE_lethal = -1
+lethal_kinetic_energy = -1
 
 # The output from lethal_area is:
-p = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle,
-                     critical_areas_overlap, KE_lethal)
+p = CA.critical_area(aircraft, impact_speed, impact_angle,
+                     critical_areas_overlap, lethal_kinetic_energy)
 
 # Compute the raw iGRC according to Annex F.
 raw_iGRC = AnnexFParms.iGRC(800, p[0])

@@ -21,7 +21,7 @@ class AnnexFTables:
     @staticmethod
     def iGRC_tables(show_with_obstacles = True,
                     show_ballistic = False,
-                    show_integer_reduction = True,
+                    show_with_conservative_compensation = True,
                     show_glide_angle = False,
                     show_additional_pop_density = False):
         """Compute the iGRC tables Annex F :cite:`a-JARUS_AnnexF`.
@@ -36,8 +36,8 @@ class AnnexFTables:
         show_ballistic : bool, optional
             If true, show iGRC values for ballistic descent (typically rotorcraft). This superseeds show_glide_angle.
             Default False.
-        show_integer_reduction : bool, optional
-            If true, subtract 0.3 from all values. Default True.
+        show_with_conservative_compensation : bool, optional
+            If true, subtract 0.3 from all values. The concept is explained in Annex F. Default True.
         show_glide_angle : bool, optional
             If true, show for 10 degree impact angle instead of 35 degree. Default False.
         show_additional_pop_density : bool, optional
@@ -49,20 +49,17 @@ class AnnexFTables:
             The output to show.
         """
         
-        # Data on person size.
-        person_radius = 0.3
-        person_height = 1.8
         
         # Set impact angle.
-        impact_angle = 10 if show_glide_angle else 35
+        impact_angle = AnnexFParms.scenario_angles[0] if show_glide_angle else AnnexFParms.scenario_angles[1]
         
         # Instantiate necessary classes.
-        CA = CriticalAreaModels(person_radius, person_height)
-        AFP = AnnexFParms(impact_angle)
+        CA = CriticalAreaModels()
+        AFP = AnnexFParms()
         
         # Instantiate and add data to AircraftSpecs class.
         # Values are not relevant here, since they will be changed below.
-        aircraft = AircraftSpecs(enums.AircraftType.GENERIC, 1, 1, 1)
+        aircraft = AircraftSpecs(enums.AircraftType.GENERIC, 1, 1)
         
         # Friction coefficient from Annex F.
         aircraft.set_friction_coefficient(AFP.friction_coefficient)
@@ -75,7 +72,7 @@ class AnnexFTables:
         pop_density = np.array([0.25, 25, 250, 2500, 25000, 250000, 2500000])
         
         if show_additional_pop_density:
-            pop_density = np.append(pop_density, [30, 300, 2000, 2500, 3000, 10000, 20000, 50000])
+            pop_density = np.append(pop_density, [7.5, 75, 750, 7500, 750000, 750000])
         
         pop_density = np.sort(pop_density)
         
@@ -102,7 +99,7 @@ class AnnexFTables:
             aircraft.set_coefficient_of_restitution(AnnexFParms.CoR_from_impact_angle(impact_angle))
         
             # Compute the CA.
-            p[j] = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)
+            p[j] = CA.critical_area(aircraft, impact_speed, impact_angle, use_obstacle_reduction = show_with_obstacles)
             
             # Store the impact angle (only relevant for ballistic).
             impact_angles[j] = impact_angle
@@ -112,12 +109,11 @@ class AnnexFTables:
             for j in range(0, 5):
                 iGRC_table[i][j] = AFP.iGRC(pop_density[i],
                                             p[j][0],
-                                            use_obstacle_reduction = show_with_obstacles,
                                             width = AFP.CA_parms[j].wingspan,
-                                            use_integer_reduction = show_integer_reduction)[1]
+                                            use_conservative_compensation = show_with_conservative_compensation)[1]
         console_output = []
         
-        s = "Final iGRC"
+        s = "iGRC table"
         s = s + " (ballistic)" if show_ballistic else s + " ({:d} deg)".format(impact_angle)
         console_output.append(s)
             
@@ -219,11 +215,11 @@ class AnnexFTables:
         # Instantiate necessary classes.
         CA = CriticalAreaModels(person_radius, person_height)
         
-        # The trade-off tables are only valid for impact angle 35 degrees.
-        impact_angle = 35
-        
         # Instantiate the Annex F parameter class.
-        AFP = AnnexFParms(impact_angle)
+        AFP = AnnexFParms()
+        
+        # The impact angle is from scenario 2, glide impact
+        impact_angle = AnnexFParms.scenario_angles[1]
         
         # Instantiate and add data to AircraftSpecs class.
         # Note that the values here are not important, since they will be changed below.
@@ -291,12 +287,12 @@ class AnnexFTables:
         
         console_output.append("-----------------------+--------------------------------------------------")
         
-        for Dpop in [0.25, 25, 250, 2500, 25000, 250000, 1000000]:
+        for Dpop in [0.25, 25, 250, 2500, 25000, 250000, 250001]:
             
             if (Dpop > 1):
-                s = "{:7} ppl/km^2       |   ".format(int(Dpop * Dpop_factor))
+                s = "    {:6} ppl/km^2    |   ".format(int(Dpop * Dpop_factor))
             else:
-                s = "      Controlled       |   "
+                s = "         Controlled    |   "
         
             # Loop over columns in the iGRC table.
             for j in range(0, 5):
@@ -308,39 +304,36 @@ class AnnexFTables:
                 aircraft.set_width(AFP.CA_parms[j].wingspan)
                 impact_speed = AFP.CA_parms[j].cruise_speed
         
-                # Compute the AC.
-                p_original = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)[0]
-                
-                # Reduction for obstacles.
-                if 0 < j < 5:
-                    p_original = p_original * AFP.obstacle_reduction
+                # Compute the AC using the angle for scenario 2 (glide impact angle)
+                p_original = CA.critical_area(aircraft, impact_speed, impact_angle, use_obstacle_reduction = True)[0]
                 
                 # Then set to modified values.
                 aircraft.set_width(AFP.CA_parms[j].wingspan * width_factor)
                 impact_speed = AFP.CA_parms[j].cruise_speed * impact_speed_factor
             
                 # And again, compute AC.
-                p_trade_off = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, impact_speed, impact_angle, 0, -1)[0]
+                p_trade_off = CA.critical_area(aircraft, impact_speed, impact_angle, use_obstacle_reduction = True)[0]
         
                 # Compute the raw iGRC according to Annex F.
                 raw_iGRC_original = AnnexFParms.iGRC(Dpop,
                                                      p_original,
-                                                     use_integer_reduction=True,
-                                                     width=AFP.CA_parms[j].wingspan, 
-                                                     use_obstacle_reduction=True) 
+                                                     use_conservative_compensation=True,
+                                                     width=AFP.CA_parms[j].wingspan) 
                 raw_iGRC_trade_off = AnnexFParms.iGRC(Dpop * Dpop_factor,
                                                       p_trade_off,
-                                                      use_integer_reduction=True,
-                                                      width=AFP.CA_parms[j].wingspan, 
-                                                      use_obstacle_reduction=True) 
+                                                      use_conservative_compensation=True,
+                                                      width=AFP.CA_parms[j].wingspan) 
         
-                if show_relative:
-                    s = s + "{:4.1f}      ".format(raw_iGRC_trade_off[1] - raw_iGRC_original[1])
-                else:
-                    if show_integer_iGRC:
-                        s = s + "{:4.0f}      ".format(raw_iGRC_trade_off[0])
+                if Dpop == 250001 and j > 0:
+                    s = s + "  n/a     "
+                else:                
+                    if show_relative:
+                        s = s + "{:4.1f}      ".format(raw_iGRC_trade_off[1] - raw_iGRC_original[1])
                     else:
-                        s = s + "{:4.1f}      ".format(raw_iGRC_trade_off[1])
+                        if show_integer_iGRC:
+                            s = s + "{:4.0f}      ".format(raw_iGRC_trade_off[1] - 0.1) # Subtracting 0.1 to reduce 2.1, 3.1, etc to 2, 3.
+                        else:
+                            s = s + "{:4.1f}      ".format(raw_iGRC_trade_off[1])
                 
             console_output.append(s)
             
@@ -467,7 +460,7 @@ class AnnexFTables:
             return
         
         # This setup cannot use a single impact angle, so it will be adjusted below.
-        AFP = AnnexFParms(0)
+        AFP = AnnexFParms()
         
         impact_speed = [0, 0, 0, 0, 0]
         impact_angle = [0, 0, 0, 0, 0]
@@ -487,7 +480,7 @@ class AnnexFTables:
         for c in range(5):
             # Set CoR since it needs to be set manually in this setup.
             AFP.CA_parms[c].aircraft.set_coefficient_of_restitution(AnnexFParms.CoR_from_impact_angle(impact_angle[c]))
-            p.append(CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft, impact_speed[c], impact_angle[c], 0))
+            p.append(CA.critical_area(AFP.CA_parms[c].aircraft, impact_speed[c], impact_angle[c]))
 
 
         console_output.append("Scenario " + str(scenario) + " critical area calculations")
@@ -568,7 +561,7 @@ class AnnexFTables:
         
         s = "15    CA reduced by 40%  [m2]      "
         for c in range(5):
-            s = s + "{:5.0f}     ".format(p[c][0] * 0.6)
+            s = s + "{:5.0f}     ".format(p[c][0] * AnnexFParms.obstacle_reduction_factor)
         console_output.append(s)
         
         return console_output

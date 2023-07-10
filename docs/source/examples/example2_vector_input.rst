@@ -1,6 +1,8 @@
 =======================
-Example 3: Vector input
+Example 2: Vector input
 =======================
+
+NOT YET UPDATED TO SORA 2.5
 
 This example shows how to use the models with a vector input to generate a vector output.
 Using this feature it is possible to generate graphs for variations on

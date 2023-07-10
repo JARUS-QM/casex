@@ -30,15 +30,6 @@ class AircraftType(Enum):
     LIGHTER_THAN_AIR = 5
 
 
-class CriticalAreaModel(Enum):
-    """Enum for critical area models."""
-    RCC = 1
-    RTI = 2
-    FAA = 3
-    NAWCAD = 4
-    JARUS = 5
-
-
 class AircraftMaterial(Enum):
     """Enum of the aircraft materials."""
     GLASSFIBER = 1

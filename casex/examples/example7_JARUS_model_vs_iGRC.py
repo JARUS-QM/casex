@@ -10,14 +10,10 @@ import matplotlib.pyplot as plt
 from casex import CriticalAreaModels, AnnexFParms, enums
 
 
-# Data on person size.
-person_width = 0.3
-person_height = 1.8
-impact_angle = 35
-
+impact_angle = AnnexFParms.scenario_angles[1]
 
 # Instantiate necessary classes.
-CA = CriticalAreaModels(person_width, person_height)
+CA = CriticalAreaModels()
 
 # Sampling density.
 pop_density_samples = 400
@@ -28,7 +24,7 @@ wingspan = np.linspace(0, 21, wingspan_samples)
 pop_density = np.logspace(-3 + np.log10(5), 6, pop_density_samples)
 
 # Instantiate the class to access parameters for the five scenarios.
-AFP = AnnexFParms(impact_angle)
+AFP = AnnexFParms()
 
 # Initialize GRC matrix.
 GRC_matrix = np.zeros((pop_density_samples, wingspan_samples))
@@ -55,8 +51,7 @@ for j in range(len(wingspan)):
     AFP.CA_parms[column].aircraft.width = wingspan[j]
 
     # Compute the critical area value for the given wingspan.
-    M = CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[column].aircraft, impact_speed,
-                                impact_angle, 0, -1)[0]
+    M = CA.critical_area(AFP.CA_parms[column].aircraft, impact_speed, impact_angle)[0]
 
     # Compute the corresponding GRC value for all population densities.
     for i in range(len(pop_density)):
@@ -68,7 +63,7 @@ pop_dens_tick = [0.1, 10, 100, 1500, 15000, 100000, 500000]
 pop_dens_tick = AFP.population_bands
 y_text_pos = [0.04, 3, 80, 800, 8000, 80000, 550000]
 x_text_pos = [0.5, 2, 5.5, 14, 20.5]
-pop_dens_percentage = [3.15, 24.6, 52.8, 16.6, 2.84, 0.07, 0.0, 0.0]
+pop_dens_percentage = [0.0, 53.4, 31.2, 10.7, 1.5, 0.02, 0.0,]
 
 # Font size and color for the iGRC values.
 GRC_fontsize = 18

@@ -1,14 +1,15 @@
 Background
 ==========
 
-From the summer 2019 and until early 2021, a small group of people have been working under
+Since the summer 2019, a small group of people have been working under
 the auspice of `JARUS <http://jarus-rpas.org>`_ on developing guidance material for use
 to determine the ground risk associated with operations of unmanned aircraft.
 This group is called the Quantitative Methods subgroup. The developed concept had to
 be applicable to most types of UAS and it has to be relatively simple to allow for everyday use by
 operators and authorities.
 
-The result of this development is described in Annex F :cite:`g-JARUS_AnnexF`
+While the work of this group is still onging, the results so far of this development is described
+in Annex F :cite:`g-JARUS_AnnexF`
 in the SORA set of document developed and published by 
 JARUS. This Annex provide a elaborate explanation of how to determine the ground risk
 for a given operation, where a number of aircraft parameters and the density of people on the ground is known.

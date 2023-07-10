@@ -1,5 +1,5 @@
 """
-Example 9
+Example 4
 ---------
 This example demonstrates the validity of the trade offs between population density, speed and max dimensions.
 
@@ -11,10 +11,10 @@ Note that this example accounts for both the 0.3 reduction in iGRC and reduction
 from casex import AnnexFTables
 
 # Set the tradeoff table to T2
-tradeoff_type = 0
+tradeoff_type = 2
 
 # Do not show the results as ceil'ed integers.
-show_integer_iGRC = False
+show_integer_iGRC = True
 
 # Show values relative to nominal iGRC table.
 show_relative = False

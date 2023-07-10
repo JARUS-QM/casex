@@ -2,6 +2,8 @@
 Example 1: Critical area
 ========================
 
+NOT YET UPDATED TO SORA 2.5
+
 This first example demonstrates how to use the CasEx package for computing a critical area for a specific aircraft.
 This computation can be used for determining a more accurate iGRC value than what is possible for the iGRC table.
 

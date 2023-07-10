@@ -1,6 +1,8 @@
 =====================================
-Example 9: iGRC tradeoff tables
+Example 4: iGRC tradeoff tables
 =====================================
+
+NOT YET UPDATED TO SORA 2.5
 
 This example produces the tradeoff tables in Annex F :cite:`j-JARUS_AnnexF`.
 

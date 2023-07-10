@@ -1,5 +1,5 @@
 """
-Example 4
+Example 5
 ---------
 This example makes a colored plot of the lethal area for varying impact angle and impact speed. The size of the aircraft
 as well as the other parameters are fixed. The target is the second column in the iGRC table, where the lethal area
@@ -23,12 +23,11 @@ person_height = 1.8
 CA = CriticalAreaModels(person_width, person_height)
 
 # Get the Annex F parameters class, since we will be using values from it.
-AFP = AnnexFParms(35)
+AFP = AnnexFParms()
 
 # Set aircraft values.
 aircraft_type = enums.AircraftType.FIXED_WING
-aircraft = AircraftSpecs(aircraft_type, AFP.CA_parms[1].wingspan, AFP.CA_parms[1].wingspan,
-                         AFP.CA_parms[1].mass)
+aircraft = AircraftSpecs(aircraft_type, AFP.CA_parms[1].wingspan, AFP.CA_parms[1].mass)
 aircraft.set_fuel_type(enums.FuelType.LION)
 aircraft.set_fuel_quantity(0)
 aircraft.set_friction_coefficient(AFP.friction_coefficient)
@@ -40,8 +39,8 @@ X_angle, Y_speed = np.meshgrid(x_angle, y_speed)
 Z_CA = np.zeros((X_angle.shape[0], Y_speed.shape[0]))
 for i, y in enumerate(Y_speed):
     for j, x in enumerate(X_angle):
-        Z_CA[i, j] = CA.critical_area(enums.CriticalAreaModel.JARUS, aircraft, y_speed[i],
-                                      x_angle[j], 0)[0] * AFP.obstacle_reduction
+        Z_CA[i, j] = CA.critical_area(aircraft, y_speed[i],
+                                      x_angle[j], use_obstacle_reduction = True)[0]
 
 fig = plt.figure()
 ax = plt.axes()

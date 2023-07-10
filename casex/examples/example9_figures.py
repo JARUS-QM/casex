@@ -1,5 +1,5 @@
 """
-Example 8
+Example 9
 ---------
 This example reproduces the figures in Annex F :cite:`JARUS_AnnexF`.
 
@@ -34,4 +34,4 @@ figures.figure_iGRC_CA_vs_PopDensity(filename = "_img2",
                                      show_descriptors = True,
                                      save_fig = False)
 
-figures.figure_obstacle_critical_area_reduction(save_fig=False)
+#figures.figure_obstacle_critical_area_reduction(save_fig=False)

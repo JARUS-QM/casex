@@ -7,13 +7,12 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from casex import enums, aircraft_specs, explosion_models, Conversion, constants, exceptions
-
+from casex import AnnexFParms, enums, aircraft_specs, explosion_models, Conversion, constants, exceptions
 
 class CriticalAreaModels:
     """
-    This class is used for computing the critical area for a crash when the basic parameters for the
-    aircraft is known. It support five different models, including the JARUS model, as described in
+    This class is used for computing the critical area using the JARUS model for a crash when the basic parameters for the
+    aircraft is known. The math behind the model is described in
     Appendix B in Annex F :cite:`c-JARUS_AnnexF`.
     
     The main method in this class is `critical_area`, which computes the size of the critical area given
@@ -37,15 +36,12 @@ class CriticalAreaModels:
         [m] The altitude above the ground at which the aircraft can first impact a person (the default is 1.8 m).
     """
 
-    def __init__(self, buffer=0.3, height=1.8):
+    def __init__(self, buffer = AnnexFParms.person_radius, height = AnnexFParms.person_height):
         self.buffer = buffer
         self.height = height
 
-    def critical_area(self, critical_area_model, aircraft, impact_speed, impact_angle, critical_areas_overlap, var1=-1):
+    def critical_area(self, aircraft, impact_speed, impact_angle, critical_areas_overlap = 0, lethal_kinetic_energy = -1, use_obstacle_reduction = True):
         """Computes the lethal area as modeled by different models.
-        
-        The models are described in more detail in Annex F :cite:`c-JARUS_AnnexF`. References for each model is given
-        in the code.
         
         This function supports one of the following input parameters to be a vector, which will give a vector of the
         same size as output:
@@ -54,7 +50,6 @@ class CriticalAreaModels:
         * `impact_angle`
         * `critical_area_overlap`
         * `aircraft.width`
-        * `aircraft.length`
         * `aircraft.fuel_quantity`
         
         This vector is given as ``numpy.array``, and only one of the parameters can be a vector for each call.
@@ -63,9 +58,6 @@ class CriticalAreaModels:
 
         Parameters
         ----------       
-        critical_area_model : :class:`enums.CriticalAreaModel`
-            Choice of model (RCC :cite:`c-RangeCommandersCouncil1999`, RTI :cite:`c-Montgomery1995`, FAA :cite:`c-FAA2011`,
-            NAWCAD :cite:`c-Ball2012`, JARUS :cite:`c-JARUS_AnnexF`). See Annex F for details :cite:`c-JARUS_AnnexF`.
         aircraft : :class:`casex.AircraftSpecs`
             Class with information about the aircraft.
         impact_speed : float
@@ -74,19 +66,17 @@ class CriticalAreaModels:
             [deg] Impact angle relative to ground (90 is vertical, straight down). Note that when using the JARUS model
             and the width of the aircraft is <= 1 m, the impact angle used is minimum 35 degrees, regardless of input.
             See Appendix A.5 in Annex F :cite:`c-JARUS_AnnexF` for details.
-        critical_areas_overlap : float
-            [0 to 1] Fraction of overlap between lethal area from glide/slide and from explosion/deflagration.
-        var1 : float, optional
-            An additional variable that is used in FAA, NAWCAD, and JARUS models.
-            For the FAA model, `var1` = :math:`F_A`, the ratio of secondary debris field to primary debris field. If not
-            specified, :math:`F_A` = 4.36 will be used. See :cite:`c-FAA2011` page 98.
-
-            For the NAWCAD model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1)
-            the value 73.2 J is used.
-
-            For the JARUS model, `var1` is the lethal kinetic energy threshold in J. If not specified (or set to -1),
-            the following is done (see Annex F Appendix A :cite:`c-JARUS_AnnexF` for details): `var1` is set to 290 J,
-            except when the width of the aircraft is <= 1 m, in which case `var1` is set to :math:`2 \cdot 290` J.
+        critical_areas_overlap : float, optional
+            [0 to 1] Fraction of overlap between lethal area from glide/slide and from explosion/deflagration. Default is 0.
+        lethal_kinetic_energy : float, optional
+            The lethal kinetic energy threshold in J. If not specified (or set to -1),
+            the standard approach as described in Annex F Appendix A :cite:`c-JARUS_AnnexF` is used.
+            If set to a positive value, this value is used independently of all other parameters. If set to a negative value other than -1,
+            this value is used following the Annex F standard approach, but with absolute of the given value.
+        use_obstacle_reduction : bool, optional
+            If set to true, the Annex F obstacle reduction is applied as described in the Annex.
+            If set to false, no obstacle reduction is applied.
+            Default is true.
         
         Returns
         -------       
@@ -117,16 +107,31 @@ class CriticalAreaModels:
         OnlyOneVetorInputError
             There is more than one vector input, which is not supported.
         """
-        # Check on input argument validity
-        if not isinstance(critical_area_model, enums.CriticalAreaModel):
-            warnings.warn("Critical area model not recognized. Type set to RCC.")
-            critical_area_model = enums.CriticalAreaModel.RCC
-
         if not isinstance(aircraft, aircraft_specs.AircraftSpecs):
             raise exceptions.InvalidAircraftError("Aircraft not recognized. Must be of type AircraftSpecs.")
 
         # Instantiate necessary classes.
         exp = explosion_models.ExplosionModels()
+
+        # True if we should use the Annex F approach to applying KE to the crash. False otherwise.
+        KE_AnnexF_approach = lethal_kinetic_energy < 0
+        
+        # Set the correct lethal kinetic energy
+        if lethal_kinetic_energy == -1:
+            lethal_kinetic_energy = AnnexFParms.lethal_kinetic_energy
+        else:
+            lethal_kinetic_energy = abs(lethal_kinetic_energy)
+            
+        # Implement the Annex F approach
+        if KE_AnnexF_approach:
+            # Set value for a scalar width.
+            if not isinstance(aircraft.width, np.ndarray):
+                if aircraft.width <= 1:
+                    lethal_kinetic_energy = lethal_kinetic_energy * 2
+            # Set value for array width.
+            else:
+                #lethal_kinetic_energy = np.full(len(aircraft.width), lethal_kinetic_energy)
+                lethal_kinetic_energy = np.where(aircraft.width <= 1, 2 * lethal_kinetic_energy, lethal_kinetic_energy)
 
         # Compute additional parameters.
         horizontal_impact_speed = self.horizontal_speed_from_angle(impact_angle, impact_speed)
@@ -137,144 +142,58 @@ class CriticalAreaModels:
         velocity_min_kill = 0
         t_safe = 0
 
-        # Compute the inert LA.
-        if critical_area_model == enums.CriticalAreaModel.RCC:
-            # Slide distance based on friction.
-            slide_distance_friction = self.slide_distance_friction(horizontal_impact_speed,
-                                                                   aircraft.friction_coefficient)
-            # [RCC, p. D-4]
-            glide_area = np.multiply(aircraft.length + glide_distance + 2 * self.buffer,
-                                     aircraft.width + 2 * self.buffer)
-            slide_area = np.multiply(slide_distance_friction, aircraft.width + 2 * self.buffer)
-
-        elif critical_area_model == enums.CriticalAreaModel.RTI:
-            # Slide distance based on friction.
-            slide_distance_friction = self.slide_distance_friction(
-                aircraft.coefficient_of_restitution * horizontal_impact_speed, aircraft.friction_coefficient)
-
-            # [1, p. 6]
-            glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + math.pi * np.power(
-                self.buffer + aircraft.width / 2, 2)
-            slide_area = slide_distance_friction * (2 * self.buffer + aircraft.width)
-
-        elif critical_area_model == enums.CriticalAreaModel.FAA:
-            # [FAA, p. 99]
-            r_D = self.buffer + aircraft.width / 2
-
-            # F_A comes from table 6-5 in [FAA, p. 98]. Here using the median for 20/80 distribution between hard and
-            # soft surfaces.
-            if var1 == -1:
-                F_A = 4.36
-            else:
-                F_A = var1
-
-            r_Ac = self.buffer + aircraft.width / 2 * np.sqrt(F_A)
-            hs = self.height * np.sin(np.deg2rad(90 - impact_angle))
-            y2m = np.power(2 * r_Ac * hs, 2) - np.power(np.power(r_Ac, 2) + np.power(hs, 2) - np.power(r_D, 2), 2)
-
-            # If y2m becomes negative, it means that A_C_mark should become zero, because the secondary
-            # debris area is larger than the total glide area. This is accomplished by simply setting y2 = 0.
-            y2m = np.maximum(0, y2m)
-            y2 = np.sqrt(y2m) / (2 * hs)
-
-            A_C_mark = 2 * y2 * hs
-            A_C_mark = A_C_mark + (
-                    y2 * np.sqrt(np.power(r_D, 2) - np.power(y2, 2)) + np.power(r_D, 2) * np.arcsin(y2 / r_D))
-            A_C_mark = A_C_mark - (
-                    y2 * np.sqrt(np.power(r_Ac, 2) - np.power(y2, 2)) + np.power(r_Ac, 2) * np.arcsin(y2 / r_Ac))
-
-            # Note that this is not identical to (12), since (12) assumes 0 degrees is vertical and not horizontal.
-            LA_inert = math.pi * np.power(self.buffer + aircraft.width / 2 * np.sqrt(F_A), 2) + A_C_mark
-
-            glide_area = math.pi * np.power(self.buffer + aircraft.width / 2, 2)
-            slide_area = LA_inert - glide_area
-
-        elif critical_area_model == enums.CriticalAreaModel.NAWCAD:
-            # All from NAWCAD model
-            if var1 == -1:
-                KE_lethal = Conversion.ftlb_to_J(54)
-            else:
-                KE_lethal = var1
-
-            # P. 18 (the following equation is just KE to mass and velocity, not taken from NAWCAD)
-            velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
-
-            # Intermediate variable
-            acceleration = aircraft.friction_coefficient * constants.GRAVITY
-
-            # P. 17
-            # This is (15), but it seems to be wrong; normally at = v, not 2at = v
-            # t_safe = (horizontal_impact_speed - velocity_min_kill) / 2 / aircraft.friction_coefficient / constants.GRAVITATIONAL
-            # This seems to be the correct formula
-            t_safe = (horizontal_impact_speed - velocity_min_kill) / acceleration
-
-            # If t_safe is negative, it can safely be set to zero to be ignored in the following computations.
-            t_safe = np.maximum(0, t_safe)
-
-            # P. 17
-            skid_distance_lethal = (horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
-
-            # P. 25
-            glide_area = glide_distance * (2 * self.buffer + aircraft.width)
-            slide_area = skid_distance_lethal * (2 * self.buffer + aircraft.width)
-
-        elif critical_area_model == enums.CriticalAreaModel.JARUS:
-            if var1 == -1:
-                # Set default value for a scalar width.
-                if not isinstance(aircraft.width, np.ndarray):
-                    if aircraft.width <= 1:
-                        KE_lethal = 290 * 2
-                    else:
-                        KE_lethal = 290
-                # Set default value for array width.
+        default_impact_angle = AnnexFParms.scenario_angles[1]
+        
+        # Get the obstacle reduction factor as described in Annex F.
+        obstacle_reduction_factor = AnnexFParms.applied_obstacle_reduction_factor(aircraft.width)
+        
+        # Special concession on impact angle for below 1 m.
+        if isinstance(aircraft.width, np.ndarray):
+            if isinstance(impact_angle, np.ndarray):
+                raise Exception("impact_angle and aircraft.width cannot both be vectors.")
+            impact_angle = np.where(aircraft.width <= 1, max(default_impact_angle, impact_angle), impact_angle)
+        else:
+            if aircraft.width <= 1:
+                if not isinstance(impact_angle, np.ndarray):
+                    impact_angle = max(default_impact_angle, impact_angle)
                 else:
-                    KE_lethal = np.full(len(aircraft.width), 290)
-                    KE_lethal = np.where(aircraft.width <= 1, 2 * KE_lethal, KE_lethal)
-            else:
-                KE_lethal = var1
+                    impact_angle = np.where(impact_angle < default_impact_angle, default_impact_angle, impact_angle)                 
 
-            # Special concession for JARUS model below 1 m.
-            if not isinstance(aircraft.width, np.ndarray):
-                if aircraft.width <= 1:
-                    if not isinstance(impact_angle, np.ndarray):
-                        impact_angle = max(35, impact_angle)
-                    else:
-                        impact_angle = np.where(impact_angle < 35, 35, impact_angle)
-                        
-            else:
-                if isinstance(impact_angle, np.ndarray):
-                    raise Exception("impact_angle and aircraft.width cannot both be vectors.")
-                impact_angle = np.where(aircraft.width <= 1, max(35, impact_angle), impact_angle)
+        velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
+        acceleration = aircraft.friction_coefficient * constants.GRAVITY
+        
+        t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
+        t_safe = np.maximum(0, t_safe)
 
-            velocity_min_kill = np.sqrt(2 * KE_lethal / aircraft.mass)
-            acceleration = aircraft.friction_coefficient * constants.GRAVITY
-            
-            t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
-            t_safe = np.maximum(0, t_safe)
+        slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (
+                0.5 * acceleration * t_safe * t_safe)
 
-            slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (
-                    0.5 * acceleration * t_safe * t_safe)
+        # Compute a half disc to attach to one end of glide and slide.
+        circular_end = math.pi * np.power(self.buffer + aircraft.width / 2, 2) / 2
+        
+        glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + circular_end
+        slide_area = slide_distance_non_lethal * (2 * self.buffer + aircraft.width) + circular_end
 
-            # Compute a half disc to attach to one end of glide and slide.
-            circular_end = math.pi * np.power(self.buffer + aircraft.width / 2, 2) / 2
-            
-            glide_area = 2 * (self.buffer + aircraft.width / 2) * glide_distance + circular_end
-            slide_area = slide_distance_non_lethal * (2 * self.buffer + aircraft.width) + circular_end
+        # Concession for aircraft below 1 m.
+        if not isinstance(aircraft.width, np.ndarray):
+            if aircraft.width <= 1:
+                if not isinstance(slide_distance_non_lethal, np.ndarray):
+                    slide_distance_non_lethal = 0
+                else:
+                    slide_distance_non_lethal = np.full(len(slide_distance_non_lethal), 0)
+                if not isinstance(slide_area, np.ndarray):
+                    slide_area = 0
+                else:
+                    slide_area = np.full(len(slide_area), 0)
+        else:
+            slide_distance_non_lethal[aircraft.width <= 1] = 0
+            slide_area[aircraft.width <= 1] = 0
 
-            # Concession for aircraft below 1 m.
-            if not isinstance(aircraft.width, np.ndarray):
-                if aircraft.width <= 1:
-                    if not isinstance(slide_distance_non_lethal, np.ndarray):
-                        slide_distance_non_lethal = 0
-                    else:
-                        slide_distance_non_lethal = np.full(len(slide_distance_non_lethal), 0)
-                    if not isinstance(slide_area, np.ndarray):
-                        slide_area = 0
-                    else:
-                        slide_area = np.full(len(slide_area), 0)
-            else:
-                slide_distance_non_lethal[aircraft.width <= 1] = 0
-                slide_area[aircraft.width <= 1] = 0
+        # Obstacle reduction is applied to the right variables
+        if use_obstacle_reduction:
+            glide_area = glide_area * obstacle_reduction_factor
+            slide_area = slide_area * obstacle_reduction_factor
+            glide_distance = glide_distance * obstacle_reduction_factor
 
         # Add glide and slide from model.
         CA_inert = glide_area + slide_area
@@ -287,9 +206,19 @@ class CriticalAreaModels:
         CA_deflagration = np.maximum(FB, TLA)
 
         # Compute the overlapping area between inert and deflagration.
-        overlapping_area = np.minimum(CA_inert, CA_deflagration) * np.maximum(0, np.minimum(critical_areas_overlap, 1))
+        if np.any(critical_areas_overlap) < 0 or np.any(critical_areas_overlap) > 1:
+            warnings.warn("Critical area overlap must be between 0 and 1. Subsequent computations are not valid.")
+        overlapping_area = np.minimum(CA_inert, CA_deflagration) * critical_areas_overlap
 
-        return CA_inert + CA_deflagration - overlapping_area, glide_area, slide_area, CA_inert, CA_deflagration, glide_distance, slide_distance_non_lethal, velocity_min_kill, t_safe
+        return CA_inert + CA_deflagration - overlapping_area, \
+                glide_area, \
+                slide_area, \
+                CA_inert, \
+                CA_deflagration, \
+                glide_distance, \
+                slide_distance_non_lethal, \
+                velocity_min_kill, \
+                t_safe
 
     @staticmethod
     def slide_distance_friction(velocity, friction_coefficient):

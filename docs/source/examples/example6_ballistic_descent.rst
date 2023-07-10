@@ -1,5 +1,5 @@
 ============================
-Example 5: Ballistic descent
+Example 6: Ballistic descent
 ============================
 
 This example shows how to compute a series of values for a ballistic

@@ -140,12 +140,8 @@ class Figures:
         -------
         None
         """
-        # Data on person size.
-        person_width = 0.3
-        person_height = 1.8
-
         # Instantiate necessary class.
-        CA = CriticalAreaModels(person_width, person_height)
+        CA = CriticalAreaModels()
 
         # Sampling density.
         angle_samples = 100
@@ -158,7 +154,7 @@ class Figures:
         speed_plot_range = np.array([50, 70, 120, 250, 300])
 
         # Get the four scenario.
-        AFP = AnnexFParms(impact_angle)
+        AFP = AnnexFParms()
 
         # Contour levels for each plot.
         # Note that the CA target is not included, since it is already listed above (and is plotted in different color).
@@ -203,15 +199,14 @@ class Figures:
                 # Initialize CA matrix.
                 CA_matrix = np.zeros((speed_samples, angle_samples))
 
-                obstacle_reduction_factor = AFP.obstacle_reduction if AFP.CA_parms[c].aircraft.width < 40 else 1
+                #obstacle_reduction_factor = AFP.obstacle_reduction_factor if AFP.CA_parms[c].aircraft.width < 40 else 1
 
                 # Compute the CA matrix.
                 for i in range(speed_samples):
                     impact_speed_i = impact_speed[i]
 
-                    CA_matrix[i, :] = CA.critical_area(enums.CriticalAreaModel.JARUS, AFP.CA_parms[c].aircraft,
-                                                       impact_speed_i, impact_angle, overlap,
-                                                       -1)[0] * obstacle_reduction_factor
+                    CA_matrix[i, :] = CA.critical_area(AFP.CA_parms[c].aircraft, impact_speed_i, impact_angle,
+                                                       overlap)[0]
                     
                 # Show the CA matrix.
                 if show_matrix:
@@ -338,11 +333,11 @@ class Figures:
         show_old_quantization = show_old_quantization and show_reduced_CA_axis
 
         # Instantiate the Annex F class. The impact angle is not relevant for this example, so the value is random.
-        impact_angle = 35
-        AFP = AnnexFParms(impact_angle)
+        #impact_angle = 35
+        AFP = AnnexFParms()
 
         # Let CA span from 1 to 66k (we need to add a bit to the upper limit, so the numerics of the log10 does not
-        # exclude he value from the axis).
+        # exclude the value from the axis).
         CA = np.logspace(math.log10(1), math.log10(66e3 + 100), 500)
         # Let pop_density span from 0.01 to 500k.
         pop_density = np.logspace(math.log10(0.01), math.log10(5e5 + 3000), 500)
@@ -351,8 +346,8 @@ class Figures:
 
         for pop_density_i in range(len(pop_density)):
             for CA_i in range(len(CA)):
-                ORF = AFP.obstacle_reduction_factor(pop_density[pop_density_i], CA[CA_i]) if show_with_obstacles else 1
-                M[pop_density_i][CA_i] = AFP.iGRC(pop_density[pop_density_i], CA[CA_i] * ORF)[0] - 0.3
+                ORF = AnnexFParms.obstacle_reduction_factor if CA[CA_i] > 8 and CA[CA_i] < 43000 and show_with_obstacles else 1
+                M[pop_density_i][CA_i] = AFP.iGRC(pop_density[pop_density_i], CA[CA_i] * ORF, use_conservative_compensation = True)[0]
 
         fig = plt.figure(figsize=(16, 9))
         ax = plt.axes()
@@ -368,8 +363,7 @@ class Figures:
             fig.colorbar(im, cax=cax, orientation='vertical')
 
         # CA axis tick values in log10.
-        #CA_ticks = np.array([math.log10(CA[0]), 0.813, 2.3, 3.3, 4.3, 4.82])
-        CA_ticks = np.log10(np.array([CA[0], 6.5, 200, 2000, 20000, 66000]))
+        CA_ticks = np.log10(np.array([CA[0], 8, 80, 800, 8000, 43000]))
         CA_ticks_additional = np.log10(np.array([20, 50, 100, 500, 1000, 5E3, 10E3, 4E4, 10E4])) if show_additional_grid else []
 
         xtick_actual_values = np.sort(np.concatenate([CA_ticks, CA_ticks_additional]))

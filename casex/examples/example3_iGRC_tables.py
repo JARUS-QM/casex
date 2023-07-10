@@ -1,5 +1,5 @@
 """
-Example 11
+Example 3
 ---------
 This example provides the code for producing a large variety of iGRC tables, including the tables found in Annex F and the SORA.
 
@@ -9,8 +9,8 @@ from casex import AnnexFTables
 
 console_output = AnnexFTables.iGRC_tables(show_with_obstacles = True,
                                           show_ballistic = False,
-                                          show_integer_reduction = False,
-                                          show_glide_angle = True,
+                                          show_with_conservative_compensation = False,
+                                          show_glide_angle = False,
                                           show_additional_pop_density = False)
 
 for s in console_output:

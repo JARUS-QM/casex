@@ -1,6 +1,29 @@
 Bug fixes and updates
 =====================
+
+Version 1.2.2
+-------------
+
+* Updated documentation for examples. Still not complete.
+
+Known issues still to be fixed:
+
+* figures.py still needs more work to fit SORA 2.5.
+* Documentation has only partially been updated to fit all the changes following SORA 2.5.
+
+
+Version 1.2.1
+-------------
+
+* Removed models for RTI, RCC, NAVCAD, and FAA. These are no longer avaiable for computation. Also removed the associated enum.
+* Length has been removed from AircraftSpecs, since it is no longer needed.
+* Changed gravity from 9.82 to 9.81 to comply with MKS system.
+* Rearrange the order of the examples.
+
+
 Version 1.2.0
+-------------
+
 * Updated Casex to correspond to SORA 2.5. Most the following updates are adjustments to SORA 2.5, while most of the bug fixes are resulting from a general update of CasEx.
 * Changed numerous values in annex_f_tables.py to correspond to the coming public version of SORA 2.5.
 * Added ballistic_descent_table() to annex_f_tables.py (originally in figures.py) and expanded to show the full table.
@@ -12,6 +35,7 @@ Smaller changes
 * Change LA_inert to CA_inert and LA_deflagration to CA_deflagration in critical_area() method to reflect critial area instead of lethal area.
 * Change slide_distance_lethal to slide_distance_non_lethal in critical_area() method, since it is in fact the non-lethal distance.
 * Updated example 1 to comply with changes.
+* Deleted example 2.
 * Updated example 3 to comply with changes.
 * Updated example 4 to include obstacle reduction.
 * Updated example 7 to match new population bands.

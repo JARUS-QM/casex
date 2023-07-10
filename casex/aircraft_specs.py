@@ -18,8 +18,6 @@ class AircraftSpecs:
         Type of aircraft.
     width : float
         [m] Width of aircraft (wingspan, characteristic dimension).
-    length : float
-        [m] Length of aircraft.
     mass : float
         [kg] Mass of the aircraft.
     fuel_type : :class:'enums.FuelType, optional
@@ -35,8 +33,6 @@ class AircraftSpecs:
         This value is used to determine the width of the glide and slide areas. Therefore, this value is the wingspan
         for fixed wing aircraft, the rotor diameter for rotorcraft, and the rotortip to rotortip distance for
         multirotor aircraft.
-    length : float
-        [m] Length of the aircraft. The concept is the same as width. The length is only used in the RCC model.
     mass : float
         [kg] Mass of the aircraft in kg. This is the total mass at the time of crash, including fuel.
     aircraft_type : :class:`enums.AircraftType`
@@ -74,7 +70,7 @@ class AircraftSpecs:
         [-] Drag coefficient.
     """
 
-    def __init__(self, aircraft_type, width, length, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
+    def __init__(self, aircraft_type, width, mass, fuel_type=enums.FuelType.GASOLINE, fuel_quantity=0):
         self.ballistic_frontal_area = None
         self.ballistic_drag_coefficient = None
         self.glide_drag_coefficient = None
@@ -89,7 +85,6 @@ class AircraftSpecs:
         self.reset_values()
 
         self.width = width
-        self.length = length
         self.mass = mass
 
         # Default values.
@@ -98,7 +93,7 @@ class AircraftSpecs:
         self.fuel_type = fuel_type
         self.fuel_quantity = fuel_quantity
 
-        self.width_length_mass_check()
+        self.width_mass_check()
 
         if not isinstance(aircraft_type, enums.AircraftType):
             warnings.warn("Aircraft type not recognized. Type set to fixed wing.")
@@ -141,22 +136,7 @@ class AircraftSpecs:
         None
         """
         self.width = width
-        self.width_length_mass_check()
-
-    def set_length(self, length):
-        """Set the aircraft length.
-        
-        Parameters
-        ----------
-        length : float
-            [m] Length of the aircraft.
-
-        Returns
-        -------
-        None
-        """
-        self.length = length
-        self.width_length_mass_check()
+        self.width_mass_check()
 
     def set_mass(self, mass):
         """Set the aircraft mass.
@@ -171,12 +151,12 @@ class AircraftSpecs:
         None
         """
         self.mass = mass
-        self.width_length_mass_check()
+        self.width_mass_check()
 
-    def width_length_mass_check(self):
-        """Out of range check on width, length, and mass.
+    def width_mass_check(self):
+        """Out of range check on width and mass.
         
-        Performs an out of range check of width, length, and mass. Warnings are issued for parameters out of range.
+        Performs an out of range check of width and mass. Warnings are issued for parameters out of range.
         
         Parameters
         ----------
@@ -193,11 +173,6 @@ class AircraftSpecs:
             warnings.warn("Non-positive width does not make sense. Subsequent results are invalid.")
         elif np.any(self.width < 0.1):
             warnings.warn("This package is not designed for a width below 0.1 m. Subsequent results cannot be trusted.")
-        if np.any(self.length <= 0):
-            warnings.warn("Non-positive length does not make sense. Subsequent results are invalid.")
-        elif np.any(self.length < 0.1):
-            warnings.warn(
-                "This package is not designed for a length below 0.1 m. Subsequent results cannot be trusted.")
 
     def set_fuel_type(self, fuel_type):
         """Set the type of fuel.
@@ -436,7 +411,6 @@ class AircraftSpecs:
         """
         self.aircraft_type = None
         self.width = None
-        self.length = None
         self.mass = None
         self.cruise_speed = None
         self.max_flight_time = None
