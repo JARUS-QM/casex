@@ -18,7 +18,7 @@ We first instantiate the class.
 We set the standard aircraft parameters
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
-    :lines: 17-20
+    :lines: 17-19
 
 and instantiate the aircraft class.
 
@@ -59,7 +59,7 @@ We can now compute the ballistic descent.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
     :lines: 34
-    
+
 Note that `p` is a list with various values about the descent. Note also that
  `BDM` has additional values (attributes) available, relating to the intermediate
 computations as decribed in :cite:`i-lacourharbo2020a`. All available values
@@ -67,7 +67,7 @@ are printed to the screen here.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
     :lines: 36-42
-    
+
 which gives
 
 .. code-block:: console

@@ -17,7 +17,7 @@ CA_width = 3
 CA_length = 140/CA_width
 
 # Obstacle density in obstacles per square meter.
-houses_per_square_km = 858
+houses_per_square_km = 800
 obstacle_density = houses_per_square_km / 1e6
 
 # Average width of house and variation in house width.
@@ -35,7 +35,7 @@ OS = Obstacles(CA_width, CA_length, 0)
 # This does not need to be terribly high for plotting, since the resulting curve is always smooth.
 # But it should not be too low if you plan to use the expected value (average length), which is
 # also returned by the `cdf` method.
-x_resolution = 30
+x_resolution = 10
 x = np.linspace(0, CA_length, x_resolution)
 
 # Resolution of PDFs in computations. Higher res gives better accuracy, but also longer computation time.
