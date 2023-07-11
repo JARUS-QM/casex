@@ -3,7 +3,8 @@ Bug fixes and updates
 
 Version 1.2.3
 -------------
-* 
+* Updated documentation for examples 1 through 8, including adjustments to the examples to fit good documentation.
+* Example 9 on figures is still work in progress.
 
 Version 1.2.2
 -------------
