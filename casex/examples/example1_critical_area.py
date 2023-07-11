@@ -19,7 +19,7 @@ impact_angle = 35
 
 # Set aircraft values.
 aircraft_type = enums.AircraftType.GENERIC
-width = 1.5
+width = 2.2
 mass = 5
 friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.RUBBER,
                                           enums.GroundMaterial.CONCRETE)
@@ -49,7 +49,7 @@ p = CA.critical_area(aircraft, impact_speed, impact_angle,
                      critical_areas_overlap, lethal_kinetic_energy)
 
 # Compute the raw iGRC according to Annex F.
-raw_iGRC = AnnexFParms.iGRC(800, p[0])
+raw_iGRC = AnnexFParms.iGRC(3000, p[0])
 
 print("Wingspan:                   {:1.1f} m".format(aircraft.width))
 print("Mass:                       {:1.0f} kg".format(aircraft.mass))

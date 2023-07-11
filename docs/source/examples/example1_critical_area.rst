@@ -2,8 +2,6 @@
 Example 1: Critical area
 ========================
 
-NOT YET UPDATED TO SORA 2.5
-
 This first example demonstrates how to use the CasEx package for computing a critical area for a specific aircraft.
 This computation can be used for determining a more accurate iGRC value than what is possible for the iGRC table.
 
@@ -13,7 +11,7 @@ a person seen from above. It is possible to leave out these values when instanti
 to the standard value, which are the same as we use here (and also the values used throughout Annex F).
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 8-10
+    :lines: 9-10
     
 We then instantiate first the class that can provide some friction coefficients, and then the class
 that holds the various models for computing the size of the critical area.
@@ -28,7 +26,7 @@ shallow impact, while 90 is a vertical impact. For this example, we chose a spee
 45 m/s and a 35 degree impact angle .
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 16-18
+    :lines: 17-18
 
 We also need to specify some properties of the aircraft. This is done using the :class:`AircraftSpecs` class. But first, we set some of the
 parameters used in the instantiation of the class.
@@ -38,7 +36,7 @@ between the aircraft and the terrain. The latter is in this case captured from t
 manually. Note that in Annex F this value is always 0.65.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 20-25
+    :lines: 21-25
 
 Then we instantiate the aircraft class, and set the friction value.
 
@@ -69,7 +67,7 @@ Note that this value is not used when there is no fuel onboard, and therefore no
 During the slide, the aircraft dissipates kinetic energy, which ends at 0 when the aircraft comes to a halt. It is possible to
 reduce the size of the critical area by assuming that the aircraft is no longer lethal at a higher kinetic energy than 0. The
 chosen value is set here. If the default value is to be used, the value is set to -1.
-The documentation for :class:`critical_area_models` have more info on this.
+The documentation for :class:`critical_area_models` has more info on this.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
     :lines: 45
@@ -87,32 +85,32 @@ the non-lethal limit, 8) the speed at which the sliding aircraft has the kinetin
 The first five are shown in the output below along with some of the aircraft parameters.
 
 Finally, we can also compute the raw iGRC as described in Annex F. This is done using the :class:`AnnexFParms` class. Here we need to input
-the population density, which is set to 800 here.
+the population density, which is set to 3000 here.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
     :lines: 52
 
 This iGRC value can now be used in the SORA process. The value should be rounded up to the nearest larger integer.
 
-The output of the example is as follows. We see that the raw iGRC is 5.7, which must be rounded up to
-6 for the actual iGRC value. This demonstrates
+The output of the example is as follows. We see that the raw iGRC is 6.4, which must be rounded up to
+7 for the actual iGRC value. This demonstrates
 how an aircraft, which belongs in the third column (due to the high impact speed above 35 m/s)
 can achieve a lower iGRC value that given in the
-table (which would be 7) by doing the actual calculations for the critical area.
+table (which would be 8) by doing the actual calculations for the critical area.
 
 It is important to note that this example uses rubber against concrete as the friction coefficient.
 This obviously has to be adjusted depending on
-the aircraft and the overflown terrain.
+the aircraft and the overflown terrain. Alternatively, it is always acceptable to use the Annex F standard value of 0.65.
 
 .. code-block:: console
 
-    Wingspan:                   1.5 m
+    Wingspan:                   2.2 m
     Mass:                       5 kg
     Horizontal impact speed:    36.9 m/s
-    Glide area:                 4.3 m^2
-    Slide area:                 58.2 m^2
-    Critical area inert:        62.5 m^2
+    Glide area:                 6.2 m^2
+    Slide area:                 78.1 m^2
+    Critical area inert:        84.2 m^2
     Critical area deflagration: 0.0 m^2
-    Total critical area:        62 m^2
-    Raw iGRC:                   5.7
+    Total critical area:        84 m^2
+    Raw iGRC:                   6.4
 

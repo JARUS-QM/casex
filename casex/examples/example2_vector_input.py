@@ -6,16 +6,11 @@ Using this feature it is possible to generate graphs for variations on one input
 
 This example shows this for the following parameters:
     width
-    length
     impact angle
     impact speed
     lethal area overlap
     fuel quantity
     friction coefficient
-
-Note that not all models include all of the above parameters. If a model does not include a
-specific parameters, it does not produce a vector output, even if a vector input is given
-for that parameter.
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,24 +18,19 @@ import numpy as np
 from casex import FrictionCoefficients, CriticalAreaModels, enums, AircraftSpecs
 
 
-# Data on person size.
-person_width = 0.3
-person_height = 1.8
-
 # Instantiate necessary classes.
 FC = FrictionCoefficients()
-CA = CriticalAreaModels(person_width, person_height)
+CA = CriticalAreaModels()
 
 # Set aircraft values.
 aircraft_type = enums.AircraftType.FIXED_WING
 width = 4
-length = 3.2
 mass = 25
 friction_coefficient = FC.get_coefficient(enums.AircraftMaterial.ALUMINUM,
                                           enums.GroundMaterial.CONCRETE)
 
 # Instantiate and add data to AircraftSpecs class.
-aircraft = AircraftSpecs(aircraft_type, width, length, mass)
+aircraft = AircraftSpecs(aircraft_type, width, mass)
 aircraft.set_fuel_type(enums.FuelType.GASOLINE)
 aircraft.set_fuel_quantity(5)
 aircraft.set_friction_coefficient(friction_coefficient)
