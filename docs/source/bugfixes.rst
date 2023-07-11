@@ -29,6 +29,7 @@ Version 1.2.0
 * Added ballistic_descent_table() to annex_f_tables.py (originally in figures.py) and expanded to show the full table.
 
 Smaller changes
+
 * Change upper proper CoF value in aircraft_specs.py from 1.5 to 1.0.
 * Moved COR_from_impact_angle() from aircraft_specs.py to annex_f_parms.py and made it static.
 * Added default values for person_radius (0.3) and person_height (1.8) to AnnexFParms.

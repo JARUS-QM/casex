@@ -9,53 +9,52 @@ This computation can be used for determining a more accurate iGRC value than wha
 
 We start by setting two basic parameters required for computing the size of the critical area, namely
 the height of a standad person and the "radius" of a standard person. The latter is the radius of a circle circumscribing
-a person seen from above.
+a person seen from above. It is possible to leave out these values when instantiating the critical area model, and it will revert
+to the standard value, which are the same as we use here (and also the values used throughout Annex F).
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 9-11
+    :lines: 8-10
     
-Even though these values are relative constant, they are still part of the parameter set for this package.
-
 We then instantiate first the class that can provide some friction coefficients, and then the class
 that holds the various models for computing the size of the critical area.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 14-15
+    :lines: 13-14
 
 We then need to decide the impact speed and the impact angle. The former is the speed the aircraft will have along the direction
 of travel at the time it impacts the ground. This is used for computing the glide distance after impact. The latter is the angle
-of the straight line that the aircraft follows just prior to impact. This is measure from horizontal, so that 10 degrees is a very
+of the straight line that the aircraft follows just prior to impact. This is measured from horizontal, so that 10 degrees is a very
 shallow impact, while 90 is a vertical impact. For this example, we chose a speed of impact of
 45 m/s and a 35 degree impact angle .
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 18-19
+    :lines: 16-18
 
 We also need to specify some properties of the aircraft. This is done using the :class:`AircraftSpecs` class. But first, we set some of the
 parameters used in the instantiation of the class.
 
-We have the wingspan (also known as width or characterstic dimension), the length of the aircraft, the mass, and the coefficient of friction
+We have the wingspan (also known as width or characterstic dimension), the mass, and the coefficient of friction
 between the aircraft and the terrain. The latter is in this case captured from the :class:`FrictionCoefficients`, but could also be set
-manually. Note that in Annex F this value is always 0.5.
+manually. Note that in Annex F this value is always 0.65.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 22-27
+    :lines: 20-25
 
 Then we instantiate the aircraft class, and set the friction value.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 30-31
+    :lines: 28-29
 
 The deflagration model can be included by setting the type of fuel and the amount of fuel. Here, we set the amount to 0, which
 effectively deactivates the deflagration model. It can be activated by setting a non-zero amount of fuel.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 34-35
+    :lines: 32-33
 
 The coefficient of restitution is set as a function of the impact angle.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 38
+    :lines: 36
 
 When the deflagration model is used there will be an overlap between the critical area from the glide and slide and the
 critical area from the deflagration (since the deflagration happens to some extend in the same area). We therefore need to
@@ -65,7 +64,7 @@ multiplied with the overlap factor.
 Note that this value is not used when there is no fuel onboard, and therefore no deflagration.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 42
+    :lines: 40
 
 During the slide, the aircraft dissipates kinetic energy, which ends at 0 when the aircraft comes to a halt. It is possible to
 reduce the size of the critical area by assuming that the aircraft is no longer lethal at a higher kinetic energy than 0. The
@@ -73,29 +72,36 @@ chosen value is set here. If the default value is to be used, the value is set t
 The documentation for :class:`critical_area_models` have more info on this.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 47
+    :lines: 45
 
-We are now ready to compute the size of the critical area. We do this by calling the `critical_area` method. Here we select to used
-the JARUS model, but other models are also available (see example 2).
+We are now ready to compute the size of the critical area. We do this by calling the `critical_area` method.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 50-51
+    :lines: 48-49
     
-The output from this method is a list with five values.
-These are total critical area, glide area, slide area, the inert critical area, and the critical
-area from the deflagration. These are shown in the output below along with some of the aircraft parameters.
+The output from this method is a list with nine values.
+These are 1) total critical area, 2) glide area, 3) slide area, 4) the inert critical area, 5) the critical
+area from the deflagration, 6) the glide distance, 7) the slide distance until the kinetic energy has reached
+the non-lethal limit, 8) the speed at which the sliding aircraft has the kinetinc energy from 7),
+9) the time it takes to reach the kinetic energy from 7).
+The first five are shown in the output below along with some of the aircraft parameters.
 
 Finally, we can also compute the raw iGRC as described in Annex F. This is done using the :class:`AnnexFParms` class. Here we need to input
 the population density, which is set to 800 here.
 
 .. literalinclude:: ../../../casex/examples/example1_critical_area.py
-    :lines: 54
+    :lines: 52
 
-The output of the example is as follows. We see that the raw iGRC is 5.9, which must be rounded up to 6 for the actual iGRC value. This demonstrates
-how an aircraft, which belongs in the third column (due to the high impact speed above 35 m/s) can achieve a lower iGRC value that given in the
+This iGRC value can now be used in the SORA process. The value should be rounded up to the nearest larger integer.
+
+The output of the example is as follows. We see that the raw iGRC is 5.7, which must be rounded up to
+6 for the actual iGRC value. This demonstrates
+how an aircraft, which belongs in the third column (due to the high impact speed above 35 m/s)
+can achieve a lower iGRC value that given in the
 table (which would be 7) by doing the actual calculations for the critical area.
 
-It is important to note that this example uses rubber against concrete as the friction coefficient. This obviously has to be adjusted depending on
+It is important to note that this example uses rubber against concrete as the friction coefficient.
+This obviously has to be adjusted depending on
 the aircraft and the overflown terrain.
 
 .. code-block:: console
@@ -103,10 +109,10 @@ the aircraft and the overflown terrain.
     Wingspan:                   1.5 m
     Mass:                       5 kg
     Horizontal impact speed:    36.9 m/s
-    Glide area:                 8.9 m^2
-    Slide area:                 98.6 m^2
-    Critical area inert:        107.5 m^2
+    Glide area:                 4.3 m^2
+    Slide area:                 58.2 m^2
+    Critical area inert:        62.5 m^2
     Critical area deflagration: 0.0 m^2
-    Total critical area:        107 m^2
-    Raw iGRC:                   5.9
+    Total critical area:        62 m^2
+    Raw iGRC:                   5.7
 
