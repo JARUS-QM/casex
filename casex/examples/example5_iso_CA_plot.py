@@ -15,12 +15,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from casex import FrictionCoefficients, CriticalAreaModels, enums, AircraftSpecs, AnnexFParms
 
 
-# Data on person size.
-person_width = 0.3
-person_height = 1.8
-
 # Instantiate necessary classes.
-CA = CriticalAreaModels(person_width, person_height)
+CA = CriticalAreaModels()
 
 # Get the Annex F parameters class, since we will be using values from it.
 AFP = AnnexFParms()
@@ -39,8 +35,7 @@ X_angle, Y_speed = np.meshgrid(x_angle, y_speed)
 Z_CA = np.zeros((X_angle.shape[0], Y_speed.shape[0]))
 for i, y in enumerate(Y_speed):
     for j, x in enumerate(X_angle):
-        Z_CA[i, j] = CA.critical_area(aircraft, y_speed[i],
-                                      x_angle[j], use_obstacle_reduction = True)[0]
+        Z_CA[i, j] = CA.critical_area(aircraft, y_speed[i], x_angle[j])[0]
 
 fig = plt.figure()
 ax = plt.axes()

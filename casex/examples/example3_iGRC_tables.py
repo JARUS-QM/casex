@@ -11,7 +11,7 @@ console_output = AnnexFTables.iGRC_tables(show_with_obstacles = True,
                                           show_ballistic = False,
                                           show_with_conservative_compensation = False,
                                           show_glide_angle = False,
-                                          show_additional_pop_density = False)
+                                          show_additional_pop_density = True)
 
 for s in console_output:
     print(s)

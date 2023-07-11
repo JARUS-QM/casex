@@ -16,11 +16,10 @@ BDM = BallisticDescent2ndOrderDragApproximation()
 # Set aircraft values.
 aircraft_type = enums.AircraftType.FIXED_WING
 width = 2.8
-length = 3.2
 mass = 90
 
 # Instantiate and add data to AircraftSpecs class.
-aircraft = AircraftSpecs(aircraft_type, width, length, mass)
+aircraft = AircraftSpecs(aircraft_type, width, mass)
 aircraft.set_ballistic_drag_coefficient(0.8)
 aircraft.set_ballistic_frontal_area(0.6 * 0.6)
 BDM.set_aircraft(aircraft)
@@ -49,12 +48,10 @@ altitude = 150
 initial_velocity_x = np.linspace(0, 80, 100)
 initial_velocity_y = np.linspace(-10, 10, 100)
 
-aircraft.set_mass(100)
 BDM.set_aircraft(aircraft)
 
-# Array for horizontal velocity.
+# Array for horizontal velocity and vertical velocity.
 p_vel_x = BDM.compute_ballistic_distance(altitude, initial_velocity_x, -2)
-# Array for vertical velocity.
 p_vel_y = BDM.compute_ballistic_distance(altitude, 30, initial_velocity_y)
 
 # Array for drag coefficient.
