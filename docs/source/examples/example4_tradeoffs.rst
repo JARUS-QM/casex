@@ -26,12 +26,12 @@ tables.
 We then call the AnnexFTables method
 
 .. literalinclude:: ../../../casex/examples/example4_tradeoffs.py
-    :lines: 22
+    :lines: 22-23
 
 and run
 
 .. literalinclude:: ../../../casex/examples/example4_tradeoffs.py
-    :lines: 24-25
+    :lines: 25-26
 
 to show the result
 

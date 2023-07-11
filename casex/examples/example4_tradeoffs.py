@@ -19,7 +19,8 @@ show_integer_iGRC = True
 # Show values relative to nominal iGRC table.
 show_relative = False
 
-console_output = AnnexFTables.iGRC_tradeoff_tables(tradeoff_type, show_integer_iGRC, show_relative)
+console_output = AnnexFTables.iGRC_tradeoff_tables(tradeoff_type,
+                                                   show_integer_iGRC, show_relative)
 
 for s in console_output:
     print(s)

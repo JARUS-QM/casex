@@ -8,12 +8,12 @@ as well as with and without both obstacles and the conservative assumption of -0
 
 First, we call the AnnexFTables class (the called method is static).
 
-.. literalinclude:: ../../../casex/examples/example11_iGRC_tables.py
+.. literalinclude:: ../../../casex/examples/example3_iGRC_tables.py
     :lines: 10-14
 
 The returned value is a list of strings to print to the console, which we then do.
 
-.. literalinclude:: ../../../casex/examples/example11_iGRC_tables.py
+.. literalinclude:: ../../../casex/examples/example3_iGRC_tables.py
     :lines: 16-17
 
 .. code-block:: console

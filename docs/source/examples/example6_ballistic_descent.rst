@@ -12,18 +12,18 @@ describes the detail on how the ballistic descent model works.
 
 We first instantiate the class.
 
-.. literalinclude:: ../../../examples/example6_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
     :lines: 14
 
 We set the standard aircraft parameters
 
-.. literalinclude:: ../../../examples/example6_ballistic_descent.py
+.. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
     :lines: 17-20
 
 and instantiate the aircraft class.
 
-.. literalinclude:: ../../../examples/example6_ballistic_descent.py
-    :lines: 23
+.. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
+    :lines: 22
     
 We need to set the drag coefficient and the frontal area, since they are
 used in the computation of the ballistic descent.
@@ -42,23 +42,23 @@ descent. Here we guess that it will be 60 cm by 60 cm, which is reasonable
 for a 90 kg aircraft.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
-    :lines: 24-25
+    :lines: 23-24
     
 The ballistic descent class must "be aware" of the aircraft.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
-    :lines: 26
+    :lines: 25
 
 We also set the initial values for the descent, namely the altitude above the ground
 and the velocity of the aircraft at the beginning of the descent.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
-    :lines: 29-31
+    :lines: 28-30
 
 We can now compute the ballistic descent.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
-    :lines: 35
+    :lines: 34
     
 Note that `p` is a list with various values about the descent. Note also that
  `BDM` has additional values (attributes) available, relating to the intermediate
@@ -66,7 +66,7 @@ computations as decribed in :cite:`i-lacourharbo2020a`. All available values
 are printed to the screen here.
 
 .. literalinclude:: ../../../casex/examples/example6_ballistic_descent.py
-    :lines: 37-43
+    :lines: 36-42
     
 which gives
 

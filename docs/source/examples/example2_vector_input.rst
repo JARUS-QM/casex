@@ -51,7 +51,7 @@ The fuel quantity is set as an array.
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
     :lines: 68-70
 
-And finally, we also set the friction coefficient as an array.
+We can also set the friction coefficient as an array.
 
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
     :lines: 73-76
