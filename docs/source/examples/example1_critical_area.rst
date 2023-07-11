@@ -95,12 +95,8 @@ This iGRC value can now be used in the SORA process. The value should be rounded
 The output of the example is as follows. We see that the raw iGRC is 6.4, which must be rounded up to
 7 for the actual iGRC value. This demonstrates
 how an aircraft, which belongs in the third column (due to the high impact speed above 35 m/s)
-can achieve a lower iGRC value that given in the
+can achieve a lower iGRC value than given in the
 table (which would be 8) by doing the actual calculations for the critical area.
-
-It is important to note that this example uses rubber against concrete as the friction coefficient.
-This obviously has to be adjusted depending on
-the aircraft and the overflown terrain. Alternatively, it is always acceptable to use the Annex F standard value of 0.65.
 
 .. code-block:: console
 
@@ -113,4 +109,8 @@ the aircraft and the overflown terrain. Alternatively, it is always acceptable t
     Critical area deflagration: 0.0 m^2
     Total critical area:        84 m^2
     Raw iGRC:                   6.4
+
+It is important to note that this example uses rubber against concrete as the friction coefficient.
+This obviously has to be adjusted depending on
+the aircraft and the overflown terrain. Alternatively, it is always acceptable to use the Annex F standard value of 0.65.
 

@@ -39,9 +39,6 @@ aircraft.set_friction_coefficient(friction_coefficient)
 impact_speed = 50
 impact_angle = 25
 
-# Fraction of overlap between lethal area from aircraft and from deflagration (explosion).
-critical_areas_overlap = 0.5
-
 # Setup figure to plot a comparison of the model for 4 different scenarios.
 fig, ax = plt.subplots(3, 2, figsize=(12, 6))
 plt.style.use('fivethirtyeight')
@@ -52,31 +49,31 @@ p = []
 # This is how to vary the width.
 v_width = np.linspace(1, 5, 100)
 aircraft.set_width(v_width)
-p.append(CA.critical_area(aircraft, impact_speed, impact_angle, critical_areas_overlap))
+p.append(CA.critical_area(aircraft, impact_speed, impact_angle))
 
 # This is how to vary the impact_angle.
 v_impact_angle = np.linspace(10, 80, 100)
 aircraft.set_width(width)
-p.append(CA.critical_area(aircraft, impact_speed, v_impact_angle, critical_areas_overlap))
+p.append(CA.critical_area(aircraft, impact_speed, v_impact_angle))
 
 # Varying impact_speed.
 v_impact_speed = np.linspace(5, 40, 100)
-p.append(CA.critical_area(aircraft, v_impact_speed, impact_angle, critical_areas_overlap))
+p.append(CA.critical_area(aircraft, v_impact_speed, impact_angle))
 
 # This is how to vary the critical_area_overlap.
 v_critical_areas_overlap = np.linspace(0, 1, 100)
-p.append(CA.critical_area(aircraft, impact_speed, impact_angle, v_critical_areas_overlap))
+p.append(CA.critical_area(aircraft, impact_speed, impact_angle))
 
 # This is how to vary the fuel_quantity.
 v_fuel_quantity = np.linspace(0, 10, 100)
 aircraft.set_fuel_quantity(v_fuel_quantity)
-p.append(CA.critical_area(aircraft, impact_speed, impact_angle, critical_areas_overlap))
+p.append(CA.critical_area(aircraft, impact_speed, impact_angle))
 
 # This is how to vary the friction coefficient (ground friction during slide).
 aircraft.set_fuel_quantity(5)
 v_friction_coefficient = np.linspace(0.2, 0.9, 100)
 aircraft.set_friction_coefficient(v_friction_coefficient)
-p.append(CA.critical_area(aircraft, impact_speed, impact_angle, critical_areas_overlap))
+p.append(CA.critical_area(aircraft, impact_speed, impact_angle))
 
 # Now plotting all the results for all the models.
 ax[0, 0].plot(v_width, p[0][0], linewidth=1)

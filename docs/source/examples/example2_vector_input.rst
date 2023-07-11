@@ -25,13 +25,13 @@ to vary from 1 to 5 meters over 100 steps. The input is set via the aircraft cla
 We collect the result in the p array.
 
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
-    :lines: 53-55
+    :lines: 50-52
 
 The we set the impact speed as a vector. Since only one parameters at a time can be a vector input, we reset the width to
 a scalar value. 
 
-.. literalinclude:: ../../../examples/example3_vector_input.py
-    :lines: 58-60
+.. literalinclude:: ../../../casex/examples/example2_vector_input.py
+    :lines: 55-57
 
 Since the impact angle is not set through the aircraft class, but directly
 as an input to `critical_area`, we do not need to reset the impact angle. We
@@ -39,22 +39,22 @@ simply use the original variable `impact_angle`. And we set the impact speed
 to be an array.
 
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
-    :lines: 63-64
+    :lines: 60-61
     
 We do the same with the critical area overlap.
 
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
-    :lines: 67-68
+    :lines: 64-65
     
 The fuel quantity is set as an array.
 
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
-    :lines: 71-73
+    :lines: 68-70
 
 And finally, we also set the friction coefficient as an array.
 
 .. literalinclude:: ../../../casex/examples/example2_vector_input.py
-    :lines: 76-79
+    :lines: 73-76
 
 Finally, we plot all the outputs.
 
