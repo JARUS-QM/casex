@@ -154,7 +154,7 @@ class AnnexFParms:
             self.CA_parms[k].ballistic_impact_KE = 0.5 * self.CA_parms[k].mass * np.power(p[1], 2)        
 
     @staticmethod
-    def iGRC(pop_dens, CA, TLOS=1E-6, width = 0, use_conservative_compensation = False):
+    def iGRC(pop_dens, CA, TLOS=1E-6, use_conservative_compensation = False):
         """Compute the finale integer iGRC as described in Annex F :cite:`a-JARUS_AnnexF`.
         
         This method computes the integer and the raw iGRC values for a given population density and
@@ -174,9 +174,6 @@ class AnnexFParms:
         TLOS : float, optional
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
-        width : float, optional
-            Width of the aircraft. This is needed if use_obstacle_reduction is set to True. Otherwise, it is ignored.
-            Default value is 0.
         use_conservative_compensation: bool, optional
             if True, the 0.3 reduction in iGRC value is applied.
             
@@ -187,7 +184,7 @@ class AnnexFParms:
         raw iGRC : float
             The raw iGRC before rounding up.
         """
-        # Note that the 1E-6 here is the conversion from km^2 to m^2.
+        # Note that the 1E-6 here is the conversion of pop_dens from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
         
         if use_conservative_compensation:

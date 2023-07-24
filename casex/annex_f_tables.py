@@ -125,7 +125,7 @@ class AnnexFTables:
             if (pop_density[i] > 1):
                 s = "{:7.0f} [ppl/km^2]  | ".format(pop_density[i])
             else:
-                s = "Controlled (< 0.1)  | "
+                s = "Controlled (< 0.25) | "
          
             for j in range(0, 5):
                 s = s + "{:7.1f}   ".format(iGRC_table[i][j])
