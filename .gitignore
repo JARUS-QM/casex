@@ -236,3 +236,9 @@ examples/__pycache__/
 *.png
 examples/temporary_testing_figures.py
 Upload_new_version.bat
+*.cache
+obj/Any CPU/Debug/casex.pyproj.FileListAbsolute.txt
+*.lock
+*.vsidx
+.vs/casex/v17/.suo
+casex.pyproj.user

@@ -99,9 +99,10 @@ class Obstacles:
         self.BLUE = '#6699cc'
         self.GRAY = '#999999'
         self.DARKGRAY = '#333333'
-        self.YELLOW = '#ffcc33'
+        self.YELLOW = '#fff700'
         self.GREEN = '#339933'
         self.RED = '#ff3333'
+        self.ORANGE = '#fc6a03'
         self.BLACK = '#000000'
 
     def generate_rectangular_obstacles_normal_distributed(self, num_of_obstacles, width_mu, width_sigma, length_mu,
@@ -453,7 +454,7 @@ class Obstacles:
                 self.CA_lengths.append(np.sqrt((x[1] - x[2]) * (x[1] - x[2]) + (y[1] - y[2]) * (y[1] - y[2])))
 
         if not count_empties == self.num_of_empty_CA:
-            warning("Sanity check fail for number of empty CAs.")
+            warning("Sanity check failed for number of empty CAs.")
 
     def compute_coverage(self):
         """Determine total obstacle coverage.
@@ -476,8 +477,17 @@ class Obstacles:
                 if self.obstacles[k].intersects(self.obstacles[j]):
                     self.total_coverage = self.total_coverage - self.obstacles[k].intersection(self.obstacles[j]).area
 
-    def sanity_check(self):
-        """Conduct sanity check: No overlapping between any obstacle and any reduced CA.
+    def missed_obstacle_CA_intersections(self):
+        """Identifies missed intersections metween obstacle and reduced CA.
+
+        In the simulation, it may happen that a critical areas is reduced, and the part of the critical area that has
+        been reduced away intersects another obstacle that the one causing the reduction. If this overlap is such
+        that the nominal critica area is not completely separated in two (i.e., the obstacle has a corner inside
+        the CA without going all the way through), the overlapping area will not contribute correctly to the simulation
+        results.
+
+        This is a rare event, and is therefore ignore. To visualize these problematic overlaps, this function
+        provide a list of the affect obstacles and CAs, plus compute the area missed in the simulation.
 
         Parameters
         ----------
@@ -499,94 +509,155 @@ class Obstacles:
 
         for CAr in self.CAs_reduced:
             potentially_intersecting_obstacles = self.obstacles_rtree.query(CAr)
-            for o in potentially_intersecting_obstacles:
-                if o.intersects(CAr):
-                    intersection_area = intersection_area + o.intersection(CAr).area
-                    problematic_obstacles.append(o)
+            for obstacle in potentially_intersecting_obstacles:
+                if obstacle.intersects(CAr):
+                    intersection_area = intersection_area + obstacle.intersection(CAr).area
+                    problematic_obstacles.append(obstacle)
                     problematic_CAs.append(CAr)
 
         return intersection_area, problematic_obstacles, problematic_CAs
 
-    def show_simulation(self, ax, **options):
-        """MISSING DOC
+    def show_simulation(self, ax, problematic_obstacles = None, problematic_CAs = None, show_CAs = True, 
+                        show_CA_first_point = False, show_CAs_reduced = True, show_obstacles = True,
+                        show_obstacles_intersected = True, show_debug_points = False):
+        """Visualize simulation with obstacles and critical areas.
+
+        This functions makes it easy to visualize the result of simulations. It will show the simulated square area with obstacles (possible
+        showing which are impacted and which are not), critical areas (both which are "full" and which have been reduced).
+
+        It can also show a list of problematic obstacles and critical areas. For more details on what that is and how to detect them, see
+        the help for `sanity_check()`.
 
         Parameters
         ----------
-        ax : MISSING DOC
-            MISSING DOC
-        options : MISSING DOC
-            MISSING DOC
+        ax : axis to plot in
+            Handle to the plot axis
+        problematic_obstacles : list of polygon (default None)
+            Show the provided problematic obstacles (in yellow).
+        problematic_CAs : list of polygon (default None)
+            Show the provided problematic CAs (in yellow).
+        show_CAs : bool (default True)
+            Show the nominal critical areas.
+        show_CA_first_point : bool (default False)
+            Show a point at the starting end of each CA.
+        show_CAs_reduced : bool (default True)
+            Show the reduced critical areas.
+        show_obstacles : bool (default True)
+            Show all obstacles (in green).
+        show_obstacles_intersected : bool (default True)
+            Show the obstacles intersected by critical areas (in orange instead of green).
+        show_debug_points : bool (default False)
+            Show debug points on the CAs to help verify that intersections and polygonal reduction is corrected.
+            Typically only used for debugging.
 
         Returns
         -------
         None
         """
         # Viz all the original CAs
-        if options.get("CAs"):
+        if show_CAs:
             for CA in self.CAs:
                 x, y = CA.exterior.coords.xy
                 ax.plot(x, y, '-', color=self.BLACK, linewidth=0.25)
-                if options.get("CA_first_point"):
-                    ax.plot(x[0], y[0], 'o', color=self.BLACK)
+                if show_CA_first_point:
+                    ax.plot((x[0]+x[1])/2, (y[0]+y[1])/2, 'o', color=self.BLACK)
+            ax.add_patch(PolygonPatch(Polygon([(0,0), (0,1), (1,0)]), facecolor='#ffffff', edgecolor=self.BLACK, alpha=1, linewidth=0.25, label="Nominal CA"))
 
-        if options.get("CAs_reduced"):
+            if show_CA_first_point:
+                ax.plot(-10000, -10000, 'o', color=self.BLACK, label="Start of CA")
+
+        if show_CAs_reduced:
             for CAr in self.CAs_reduced:
                 if not CAr.is_empty:
-                    ax.add_patch(
-                        PolygonPatch(CAr, facecolor='#6600cc', edgecolor=self.RED, alpha=1, zorder=3, linewidth=0.25))
+                    ax.add_patch(PolygonPatch(CAr, facecolor='#6600cc', edgecolor=self.RED, alpha=1, zorder=3, linewidth=0.25))
+            ax.add_patch(PolygonPatch(Polygon([(0,0), (0,1), (1,0)]), facecolor='#6600cc', edgecolor=self.RED, alpha=1, label="Reduced CA"))
 
-        if options.get("obstacles_original"):
+        if show_obstacles:
             for o in self.obstacles:
                 ax.add_patch(
-                    PolygonPatch(o, facecolor='#00ff00', edgecolor='#000000', alpha=1, zorder=2, linewidth=0.25))
+                    PolygonPatch(o, facecolor='#00ff00', edgecolor=self.BLACK, alpha=1, zorder=2, linewidth=0.25))
+            if show_obstacles_intersected:
+                label_text = "Obstacles (not intersected)"
+            else:
+                label_text = "Obstacles"
+            ax.add_patch(PolygonPatch(Polygon([(0,0), (0,1), (1,0)]), facecolor='#00ff00', edgecolor=self.BLACK, alpha=1, linewidth=0.25, label=label_text))
 
-        if options.get("obstacles_intersected"):
+        if show_obstacles_intersected:
             for o in self.intersected_obstacles:
                 ax.add_patch(
-                    PolygonPatch(o, facecolor='#ff8800', edgecolor='#000000', alpha=1, zorder=2, linewidth=0.25))
+                    PolygonPatch(o, facecolor='#ff8800', edgecolor=self.BLACK, alpha=1, zorder=2, linewidth=0.25))
+            ax.add_patch(PolygonPatch(Polygon([(0,0), (0,1), (1,0)]), facecolor='#ff8800', edgecolor=self.BLACK, alpha=1, linewidth=0.25, label="Obstacles (intersected)"))
 
-        if options.get("debug_points"):
+        if problematic_obstacles is not None:
+            for po in problematic_obstacles:
+                ax.add_patch(PolygonPatch(po, facecolor=self.YELLOW, edgecolor=self.BLACK, alpha=1, zorder=10, linewidth=0.25))
+
+        if problematic_CAs is not None:
+            for CAr in problematic_CAs:
+                ax.add_patch(PolygonPatch(CAr, facecolor=self.YELLOW, edgecolor=self.BLACK, alpha=1, zorder=10, linewidth=0.25))
+
+        if problematic_obstacles is not None or problematic_CAs is not None:
+            ax.add_patch(PolygonPatch(Polygon([(0,0), (0.0001,0), (0,0.0001)]), facecolor=self.YELLOW, edgecolor=self.BLACK, 
+                                       label='Obstacles with missed area', linewidth=0.25))
+
+        if show_debug_points:
             for p in self.closest:
-                ax.plot(p.x, p.y, 'o', color='#ffff00')
+                ax.plot(p.x, p.y, 'o', color=self.YELLOW)
 
             for p in self.CA_cut_off_coords:
-                ax.plot(p.x, p.y, 'x', color='#00ffff', zorder=5)
+                ax.plot(p.x, p.y, 'x', color=self.GRAY, zorder=5)
 
         self.set_limits(ax, -100, self.trial_area_sidelength + 100, -100, self.trial_area_sidelength + 100, 100)
         ax.set_xlabel('Size [m]')
         ax.set_ylabel('Size [m]')
         ax.grid()
+        ax.legend(loc="upper left", )
 
-    def show_CDF(self, ax, show_CA_as_size, lbl = 0):
-        """MISSING DOC
+
+    def show_CDF(self, ax, show_CA_as_size = True, line_label = None, line_color = 'blue', line_width = 3):
+        """Plots the CDF
+
+        Plots a histogram of simulation results to the provided axis.
 
         Parameters
         ----------
-        ax : MISSING DOC
-            MISSING DOC
-        show_CA_as_size : MISSING DOC
-            MISSING DOC
+        ax : handle
+            Handle to the plotting axis.
+        show_CA_as_size : bool (default is True)
+            If True, show the first axis as size of CA. If False, show the first axis as CA length (i.e., CA size divided by width).
+        line_label : text (default is None)
+            If None, a label text is generated. If not None, the provided text is used for label text.
+        line_color : color (default is 'blue')
+            Color of CDF graph (passed directly to plot).
+        line_width : float (default 3)
+            Width of CDF graph (passed directly to plot).
 
         Returns
         -------
         None
         """
-        F = 1
-        if show_CA_as_size:
-            F = self.CA_width
+        F = self.CA_width if show_CA_as_size else 1
 
         num_bins = int(round(4 * np.sqrt(self.trials_count)))
 
-        if lbl == 0:
+        if line_label is None:
             lbl = "Simulated {:1.0f} trials".format(self.trials_count)
+        else:
+            lbl = line_label
 
         n = ax.hist(np.array(self.CA_lengths) * F, num_bins, density=True, histtype='step', cumulative=True,
-                label=lbl, edgecolor='blue', linewidth=3)
+                edgecolor=line_color, linewidth=line_width)
 
-        if not show_CA_as_size:
-            ax.set_xlabel('Length of CA [m]')
-        else:
+        # We plot a piece of line somewhere outside view to generate a label for the legend.
+        # We do not use the histogram, as this will give a rectangle in the legend, and we want a line.
+        ax.plot(-1, -1, color=line_color, linewidth=line_width, label=lbl)
+
+        ax.set_ylim([0, 1])
+
+        if show_CA_as_size:
             ax.set_xlabel('Size of CA [m^2]')
+        else:
+            ax.set_xlabel('Length of CA [m]')
 
         ax.set_ylabel('Accumulated fraction of total')
         
@@ -715,9 +786,7 @@ class Obstacles:
             for b in Bv:
                 Cv.append(affinity.translate(a, -b.x, -b.y))
 
-        C = MultiPoint(Cv).convex_hull
-
-        return C
+        return MultiPoint(Cv).convex_hull
 
     @staticmethod
     def mirror_polygon_in_origin(polygon):
@@ -733,14 +802,9 @@ class Obstacles:
         m : Polygon
             A polygon that is the mirror of the original polygon
         """
-        coords = polygon.exterior.coords
-        print(coords[0])
+        return Polygon([(-c[0], -c[1]) for c in polygon.exterior.coords])
 
-        mirrored = Polygon([(-c[0], -c[1]) for c in coords])
-
-        return mirrored
-
-    def cdf(self, x, obstacle_density, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
+    def cdf(self, x, obstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
             obstacle_length_sigma, pdf_resolution):
         """Compute the CDF for the length of the critical area when rectangular obstacles are present.
         
@@ -748,6 +812,8 @@ class Obstacles:
         obstacles with dimension given by normal distributions. To draw the full CDF, a typical input for x is an array
         ranging in value from 0 to the nominal length of the CA. Since this is usually a rather smooth curve, it can be
         approximated well by relatively few x values (typically 10 or 15).
+
+        Note that this function relies on a previous call to generate_rectangular_obstacles_normal_distributed().
         
         For a more detailed explanation of the CDF, see :cite:`f-lacour2021`.
 
@@ -755,10 +821,6 @@ class Obstacles:
         ----------
         x : float array
             [m] The length of the critical area for which the CDF is computed. This can be a scalar or an array.
-        obstacle_density : float
-            [1/m^2] The density of obstacles measured as the number of obstacles per square meter. Note that in many
-            cases, the obstacles density is given as obstacles per square kilometer. If so, the user must take care to
-            divide by 1e6 before using this method.
         obstacle_width_mu : float
             The mean of the normal distribution of the width of the obstacles.
         obstacle_width_sigma : float
@@ -767,8 +829,9 @@ class Obstacles:
             The mean of the normal distribution of the length of the obstacles.
         obstacle_length_sigma : float
             The standard deviation of the normal distribution of the length of the obstacles.
-        pdf_resolution : int
+        pdf_resolution : int (default is 20)
             The number of points for the discretization of the integrals. A good starting value is 15.
+            For high resolution, 100 is an approprite choice.
 
         Returns
         -------
@@ -816,6 +879,7 @@ class Obstacles:
         EX = 0
         beta_acc = 0
         acc_probability_check = 0
+        obstacle_density = self.obstacle_density()
  
         for idx_x, x_val in enumerate(x):
             # Reset acc for integral.
@@ -955,3 +1019,7 @@ class Obstacles:
         ax.legend()
         ax.set_xlabel(r"$\theta$ (deg)")
         plt.show()
+
+    def obstacle_density(self):
+        return self.num_of_obstacles / self.trial_area_sidelength / self.trial_area_sidelength
+

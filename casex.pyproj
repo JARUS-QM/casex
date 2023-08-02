@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{52dba72a-c0f7-4a32-a91a-c25f26e1ff5a}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>casex\obstacle_paper_figs.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{e614c764-6d9e-4607-9337-b7073809a0bd};{1b580a1a-fdb3-4b32-83e1-6407eb2722e6};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Web launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|3.9</InterpreterId>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <PythonDebugWebServerCommandArguments>--debug $(CommandLineArguments)</PythonDebugWebServerCommandArguments>
+    <PythonWsgiHandler>{StartupModule}.wsgi_app()</PythonWsgiHandler>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="docs\source\examples\images\example_2.png" />
+    <Content Include="docs\source\examples\images\example_5.png" />
+    <Content Include="docs\source\examples\images\example_6.png" />
+    <Content Include="docs\source\examples\images\example_7.png" />
+    <Content Include="docs\source\examples\images\example_8.png" />
+    <Content Include="LICENSE.txt" />
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="casex\aircraft_specs.py" />
+    <Compile Include="casex\annex_f_parms.py" />
+    <Compile Include="casex\annex_f_tables.py" />
+    <Compile Include="casex\ballistic_descent_models.py" />
+    <Compile Include="casex\constants.py" />
+    <Compile Include="casex\conversion.py" />
+    <Compile Include="casex\critical_area_models.py" />
+    <Compile Include="casex\enums.py" />
+    <Compile Include="casex\examples\example10_ground_risk_buffer.py" />
+    <Compile Include="casex\examples\example1_critical_area.py" />
+    <Compile Include="casex\examples\example2_vector_input.py" />
+    <Compile Include="casex\examples\example3_iGRC_tables.py" />
+    <Compile Include="casex\examples\example4_tradeoffs.py" />
+    <Compile Include="casex\examples\example5_iso_CA_plot.py" />
+    <Compile Include="casex\examples\example6_ballistic_descent.py" />
+    <Compile Include="casex\examples\example7_JARUS_model_vs_iGRC.py" />
+    <Compile Include="casex\examples\example8_obstacles.py" />
+    <Compile Include="casex\examples\example9_figures.py" />
+    <Compile Include="casex\examples\mytest.py" />
+    <Compile Include="casex\examples\mytest2.py" />
+    <Compile Include="casex\exceptions.py" />
+    <Compile Include="casex\explosion_models.py" />
+    <Compile Include="casex\figures.py" />
+    <Compile Include="casex\friction_coefficient.py" />
+    <Compile Include="casex\ground_risk_buffer.py" />
+    <Compile Include="casex\misc.py" />
+    <Compile Include="casex\obstacles.py" />
+    <Compile Include="casex\obstacle_paper_figs.py" />
+    <Compile Include="casex\obstacle_simulation.py" />
+    <Compile Include="casex\temporary_testing_figures.py" />
+    <Compile Include="casex\__init__.py" />
+    <Compile Include="docs\source\conf.py" />
+    <Compile Include="setup.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="casex" />
+    <Folder Include="casex\examples" />
+    <Folder Include="docs\" />
+    <Folder Include="docs\source" />
+    <Folder Include="docs\source\examples\" />
+    <Folder Include="docs\source\examples\images" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.9" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <AutoAssignPort>True</AutoAssignPort>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

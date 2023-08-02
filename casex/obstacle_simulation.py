@@ -6,11 +6,35 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 from descartes.patch import PolygonPatch
+from shapely.geometry import Polygon
 
 from casex import Obstacles
 
-
-def obstacle_simulation():
+def obstacle_simulation(CA_width, 
+                        CA_length, 
+                        num_of_obstacles, 
+                        trials_count = 1000,
+                        trial_area_sidelength = 1000,
+                        obstacle_width_mu = 17,
+                        obstacle_width_sigma = 3,
+                        obstacle_length_mu = 8,
+                        obstacle_length_sigma = 2,
+                        CDF_x_resolution = 100,
+                        do_compute_coverage = True,
+                        do_problematic_check = True,
+                        do_theory = True,
+                        do_viz_obstacles = True,
+                        do_viz_CDF = True,
+                        do_show_CAs = True,
+                        do_show_CA_first_point = True,
+                        do_show_CAs_reduced = True,
+                        do_show_obstacles = True,
+                        do_show_obstacles_intersected = True,
+                        do_houses_along_roads = False,
+                        do_show_CA_as_size = True,
+                        viz_obstacle_zoom = None,
+                        random_generator_seed = None,
+                        save_file_name = None):
     """MISSING DOC
 
     Parameters
@@ -22,29 +46,12 @@ def obstacle_simulation():
     """
     start_time = time.time()
 
-    # CA properties.
-    CA_width = 3
-    CA_length = 67
-    trials_count = 1000
-    trial_area_sidelength = 1000
-    num_of_obstacles = 861
-
-    obstacle_width_mu = 17
-    obstacle_width_sigma = 3
-    obstacle_length_mu = 8
-    obstacle_length_sigma = 2
-
-    # Booleans to control the computations and visualization
-    do_compute_coverage = True
-    do_sanity_check = False
-    do_theory = True
-    do_viz = True
-    do_not_show_CAs = True
-    do_houses_along_roads = True
+    np.random.seed(random_generator_seed)
 
     OS = Obstacles(CA_width, CA_length, trial_area_sidelength)
 
     gen_polygons_time = time.time()
+    print('Generate polygons time:   ', end='', flush=True)
     if do_houses_along_roads:
         houses_along_street = 30
         rows_of_houses = 15
@@ -56,111 +63,181 @@ def obstacle_simulation():
         OS.generate_rectangular_obstacles_normal_distributed(num_of_obstacles, obstacle_width_mu, obstacle_width_sigma,
                                                              obstacle_length_mu, obstacle_length_sigma)
 
-    # Number of obstacles may come from OS, so use that value
-    obstacle_density = OS.num_of_obstacles / OS.trial_area_sidelength / OS.trial_area_sidelength
-
     OS.generate_CAs(trials_count)
-    print('Generate polygons time:  {:1.3f} sec'.format(time.time() - gen_polygons_time))
+    print('{:1.1f} sec'.format(time.time() - gen_polygons_time), flush=True)
 
     # Run trials.
     intersection_time = time.time()
+    print('Intersection time:        ', end='', flush=True)
     OS.compute_reduced_CAs()
     OS.compute_CA_lengths()
-    print('Intersection time:       {:1.3f} sec'.format(time.time() - intersection_time))
+    print('{:1.1f} sec'.format(time.time() - intersection_time), flush=True)
+
+    # Determine coverage.
+    print('Coverage time:            ', end='', flush=True)
     if do_compute_coverage:
         coverage_time = time.time()
         OS.compute_coverage()
-        print('Coverage time:           {:1.3f} sec'.format(time.time() - coverage_time))
-
-    if do_sanity_check:
-        sanity_check_time = time.time()
-        problematic_area, problematic_obstacles, problematic_CAs = OS.sanity_check()
-        print('Sanity check time:       {:1.3f} sec'.format(time.time() - sanity_check_time))
+        print('{:1.1f} sec'.format(time.time() - coverage_time), flush=True)
     else:
-        print('Sanity check time:       None')
+        print('Not computed', flush=True)
+
+    # Do sanity check (basically checking if the probelmatic areas are sufficiently small)
+    print('Problematic obstacles:    ', end='', flush=True)
+    if do_problematic_check:
+        problematic_check_time = time.time()
+        problematic_area, problematic_obstacles, problematic_CAs = OS.missed_obstacle_CA_intersections()
+        print('{:1.1f} sec'.format(time.time() - problematic_check_time), flush=True)
+    else:
+        problematic_obstacles = None
+        problematic_CAs = None
+        print('Not computed')
 
     # Compute the probability based on theory.
+    print('Theory time:              ', end='', flush=True)
     if do_theory:
         theory_time = time.time()
-        x_resolution = 100
-        x = np.linspace(0, CA_length, x_resolution)
+        x = np.linspace(0, CA_length, CDF_x_resolution)
         pdf_resolution = 25
-        p_x, EX, beta_analytical, sanity_check = OS.cdf(x, obstacle_density, obstacle_width_mu,
+        p_x, EX, beta_analytical, acc_probability_check = OS.cdf(x, obstacle_width_mu,
                                                         obstacle_width_sigma, obstacle_length_mu,
                                                         obstacle_length_sigma, pdf_resolution)
-        print('Theory time:             {:1.3f} sec'.format(time.time() - theory_time))
-        beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
+        print('{:1.1f} sec'.format(time.time() - theory_time), flush=True)
+
+        if do_compute_coverage:
+            beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
+    else:
+        print('Not computed')
 
     # Create figure for visual output.
-    viz_time = time.time()
-    show_CA_as_size = True
-    fig = plt.figure(1, figsize=(12, 8), dpi=90)
-    if do_viz:
-        ax1 = fig.add_subplot(121)
-        OS.show_simulation(ax1, CAs=(not do_not_show_CAs), CAs_reduced=(not do_not_show_CAs), obstacles_original=True,
-                           obstacles_intersected=(not do_not_show_CAs), CA_first_point=False, debug_points=False)
-        ax2 = fig.add_subplot(122)
+    print('Visualization time:       ', end='', flush=True)
+    if do_viz_obstacles or do_viz_CDF:
+        viz_time = time.time()
+
+        # Set font size on plots
+        plt.rcParams.update({'font.size': 10})
+
+        fig = plt.figure(1, figsize=(12, 8), dpi=90)
+
+        # Logic to create the appropriate subplots.
+        if do_viz_obstacles and do_viz_CDF:
+            ax1 = fig.add_subplot(121)
+            ax2 = fig.add_subplot(122)
+        elif do_viz_obstacles and (not do_viz_CDF):
+            ax1 = fig.add_subplot(111)
+        elif (not do_viz_obstacles) and do_viz_CDF:
+            ax2 = fig.add_subplot(111)
+
+        if do_viz_obstacles:
+            OS.show_simulation(ax1, 
+                               problematic_obstacles = problematic_obstacles,
+                               problematic_CAs = problematic_CAs,
+                               show_CAs = do_show_CAs, 
+                               show_CAs_reduced = do_show_CAs_reduced, 
+                               show_obstacles = do_show_obstacles,
+                               show_obstacles_intersected = do_show_obstacles_intersected, 
+                               show_CA_first_point = do_show_CA_first_point)
+
+            # If there is request for zoom in this axis.
+            if viz_obstacle_zoom is not None:
+                ax1.set_xlim(viz_obstacle_zoom[0])
+                ax1.set_ylim(viz_obstacle_zoom[1])
+    
+        if do_viz_CDF:
+            OS.show_CDF(ax2, 
+                        show_CA_as_size = do_show_CA_as_size, 
+                        line_color = 'blue', 
+                        line_width = 2.5, 
+                        line_label = 'Simulated CDF')
+
+        print('{:1.1f} sec'.format(time.time() - viz_time), flush=True)
     else:
-        ax2 = fig.add_subplot(111)
+        print('None', flush=True)
 
-    OS.show_CDF(ax2, show_CA_as_size)
-
-    if do_sanity_check & do_viz:
-        for o in problematic_obstacles:
-            ax1.add_patch(PolygonPatch(o, facecolor='#ffff00', edgecolor='#000000', alpha=1, zorder=10, linewidth=0.25))
-        for CAr in problematic_CAs:
-            ax1.add_patch(
-                PolygonPatch(CAr, facecolor='#ffff00', edgecolor='#000000', alpha=1, zorder=10, linewidth=0.25))
-
-    print('Visualization time:      {:1.3f} sec'.format(time.time() - viz_time))
-
-    print('Total time:              {:1.3f} sec'.format(time.time() - start_time))
+    print('Total time:               {:1.1f} sec'.format(time.time() - start_time))
 
     print('---------------------------')
 
-    print('Original CA:             {:1.0f} m^2'.format(OS.CA_length * OS.CA_width))
-    print('Average reduced CA:      {:1.0f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
+    print('Original CA:              {:1.0f} m^2'.format(OS.CA_length * OS.CA_width))
+    print('Average reduced CA:       {:1.0f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
         round(100 * np.mean(OS.CA_lengths) / OS.CA_length))))
-    print('Analytical reduced CA    {:1.0f} m^2'.format(EX * OS.CA_width))
+    if do_theory:
+        print('Analytical reduced CA     {:1.0f} m^2'.format(EX * OS.CA_width))
+    else:
+        print('Analytical reduced CA     Not computed')
 
     print('---------------------------')
-    if do_sanity_check:
-        print('Total intersection area: {:1.0f} m^2 (should be small or zero)'.format(problematic_area))
-    print('Number of CA reduced:    {:d}   ({:d}%)'.format(OS.num_of_reduced_CA,
+    print('Number of CA reduced:     {:d}   ({:d}%)'.format(OS.num_of_reduced_CA,
                                                            int(round(100 * OS.num_of_reduced_CA / OS.trials_count))))
-    print('Number of CA empty:      {:d}   ({:d}%)'.format(OS.num_of_empty_CA,
+    print('Number of CA empty:       {:d}   ({:d}%)'.format(OS.num_of_empty_CA,
                                                            int(round(100 * OS.num_of_empty_CA / OS.trials_count))))
-    print('Obstacle density:        {:1.0f} #/km^2'.format(obstacle_density * 1E6))
+    print('Obstacle density:         {:1.0f} #/km^2'.format(OS.obstacle_density() * 1E6))
+
     if do_compute_coverage:
-        print('Obstacle total area:     {:1.0f} m^2'.format(OS.total_obstacle_area))
-        print('Obstacle coverage (num): {:1.0f} m^2'.format(OS.total_coverage))
-        print('Obstacle coverage (ana): {:1.0f} m^2'.format(
+        print('Obstacle total area:      {:1.0f} m^2'.format(OS.total_obstacle_area))
+        print('Obstacle coverage (num):  {:1.0f} m^2'.format(OS.total_coverage))
+        print('Obstacle coverage (ana):  {:1.0f} m^2 (should be close to num)'.format(
             OS.num_of_obstacles * obstacle_width_mu * obstacle_length_mu))
-        print('Coverage ratio:          {:1.3f}'.format(OS.total_coverage / OS.total_obstacle_area))
+        print('Coverage ratio:           {:1.3f}'.format(OS.total_coverage / OS.total_obstacle_area))
+    else:
+        print('Obstacle total area:      Not computed')
+        print('Obstacle coverage (num):  Not computed')
+        print('Obstacle coverage (ana):  Not computed')
+        print('Coverage ratio:           Not computed')
+
     if do_theory:
-        print('beta (numerical):        {:1.5f}'.format(beta_numerical))
-        print('beta (analytical):       {:1.5f}'.format(beta_analytical))
-        print('fractiona of empty CA):  {:1.3f}'.format(OS.num_of_empty_CA / trials_count))
-    if do_sanity_check:
-        print('PDF sanity check:        {:1.3f}'.format(sanity_check))
+        if do_compute_coverage:
+            print('beta (numerical):         {:1.5f}'.format(beta_numerical))
+        else:
+            print('beta (numerical):         Not computed')
+        print('beta (analytical):        {:1.5f}'.format(beta_analytical))
+        print('PDF sanity check:         {:1.3f} (should be close to 1)'.format(acc_probability_check))
+    else:
+        print('beta (numerical):         Not computed')
+        print('beta (analytical):        Not computed')
+        print('PDF sanity check:         Not computed')
+
+    print('fraction of empty CA):    {:1.3f}'.format(OS.num_of_empty_CA / trials_count))
+
+    if do_problematic_check:
+        print('Missed intersection area: {:1.2f} m^2 (should be small or zero)'.format(problematic_area))
+        print('Num of involved obstacle: {:d}'.format(len(problematic_obstacles)))
+    else:
+        print('Missed intersection area: Not computed')
+        print('Num of involved obstacle: Not computed')
+
 
     # Show the curve from theory    
-    if do_theory:
-        if not show_CA_as_size:
-            ax2.plot(x, p_x, '.', label='Model CDF')
+    if do_theory and do_viz_CDF:
+        if do_show_CA_as_size:
+            ax2.plot(x * OS.CA_width, p_x, '-', linewidth = 1.5, color = OS.ORANGE, label='Model CDF')
         else:
-            ax2.plot(x * OS.CA_width, p_x, '-', label='Model CDF')
-        ax2.plot(0, beta_analytical, 'o', color='#00ff00', label='beta anlytical')
-        ax2.plot(0, beta_numerical, 'o', color='#ff0000', label='beta numerical')
-        ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color='#0000ff', label='Frac of empty CA')
+            ax2.plot(x, p_x, '.', label='Model CDF')
+        ax2.plot(0, beta_analytical, 'o', color=OS.GREEN, label='beta analytical')
+
+        if do_compute_coverage:
+            ax2.plot(0, beta_numerical, 'x', color=OS.RED, label='beta numerical')
+
+    if do_viz_CDF:
+        ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color=OS.YELLOW, label='Fraction of empty CA')
         ax2.legend(loc="upper left", )
         ax2.grid()
         ax2.yaxis.set_ticks(np.arange(0, 1, 0.1))
 
-    plt.show()
+        # Make the second axis square to give it same height as first axis.
+        ax2.set_aspect(np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0])
 
-    fig.savefig('Sim_random.png', format='png', dpi=300)
+    if do_viz_obstacles or do_viz_CDF:
+        plt.show()
 
+        if save_file_name is not None:
+            print('Saving figure:            ', end='', flush=True)
+            fig.savefig(save_file_name, format='png', dpi=300, bbox_inches = 'tight')
+            print('Done', flush=True)
+        
+        return fig
+    else:
+        return None
 
-if __name__ == '__main__':
-    obstacle_simulation()
+#if __name__ == '__main__':
+
