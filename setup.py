@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='casex',
-    version='1.2.3',
+    version='1.2.4',
     description='Casualty expectation toolbox',
     long_description=long_description,
     long_description_content_type='text/x-rst',
@@ -21,7 +21,7 @@ setuptools.setup(
     author_email='anders@lacourfamily.dk',
     license='CC-BY-4.0',
     packages=setuptools.find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     zip_safe=False,
     install_requires=[
         'numpy',

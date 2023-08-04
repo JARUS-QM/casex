@@ -20,18 +20,20 @@ def obstacle_simulation(CA_width,
                         obstacle_length_mu = 8,
                         obstacle_length_sigma = 2,
                         CDF_x_resolution = 100,
-                        do_compute_coverage = True,
+                        compute_coverage = True,
                         do_problematic_check = True,
-                        do_theory = True,
-                        do_viz_obstacles = True,
-                        do_viz_CDF = True,
-                        do_show_CAs = True,
-                        do_show_CA_first_point = True,
-                        do_show_CAs_reduced = True,
-                        do_show_obstacles = True,
-                        do_show_obstacles_intersected = True,
+                        do_model_CDF = True,
+                        model_CDF_high_res = False,
+                        visualize_obstacles = True,
+                        visualize_CDF = True,
+                        show_CAs = True,
+                        show_CA_first_point = True,
+                        show_CAs_reduced = True,
+                        show_obstacles = True,
+                        show_obstacles_intersected = True,
+                        show_CA_as_size = True,
+                        show_legends = True,
                         do_houses_along_roads = False,
-                        do_show_CA_as_size = True,
                         viz_obstacle_zoom = None,
                         random_generator_seed = None,
                         save_file_name = None):
@@ -48,7 +50,7 @@ def obstacle_simulation(CA_width,
 
     np.random.seed(random_generator_seed)
 
-    OS = Obstacles(CA_width, CA_length, trial_area_sidelength)
+    OS = Obstacles(CA_width, CA_length, num_of_obstacles, trial_area_sidelength)
 
     gen_polygons_time = time.time()
     print('Generate polygons time:   ', end='', flush=True)
@@ -60,7 +62,7 @@ def obstacle_simulation(CA_width,
                                                        obstacle_length_sigma, houses_along_street, rows_of_houses,
                                                        distance_between_two_houses)
     else:
-        OS.generate_rectangular_obstacles_normal_distributed(num_of_obstacles, obstacle_width_mu, obstacle_width_sigma,
+        OS.generate_rectangular_obstacles_normal_distributed(obstacle_width_mu, obstacle_width_sigma,
                                                              obstacle_length_mu, obstacle_length_sigma)
 
     OS.generate_CAs(trials_count)
@@ -75,7 +77,7 @@ def obstacle_simulation(CA_width,
 
     # Determine coverage.
     print('Coverage time:            ', end='', flush=True)
-    if do_compute_coverage:
+    if compute_coverage:
         coverage_time = time.time()
         OS.compute_coverage()
         print('{:1.1f} sec'.format(time.time() - coverage_time), flush=True)
@@ -95,57 +97,63 @@ def obstacle_simulation(CA_width,
 
     # Compute the probability based on theory.
     print('Theory time:              ', end='', flush=True)
-    if do_theory:
+    if do_model_CDF:
         theory_time = time.time()
         x = np.linspace(0, CA_length, CDF_x_resolution)
-        pdf_resolution = 25
-        p_x, EX, beta_analytical, acc_probability_check = OS.cdf(x, obstacle_width_mu,
-                                                        obstacle_width_sigma, obstacle_length_mu,
-                                                        obstacle_length_sigma, pdf_resolution)
+
+        if model_CDF_high_res:
+            pdf_resolution = 25
+        else:
+            pdf_resolution = 15
+
+        p_x, EX, beta_analytical, acc_probability_check = OS.cdf(x, pdf_resolution)
         print('{:1.1f} sec'.format(time.time() - theory_time), flush=True)
 
-        if do_compute_coverage:
+        if compute_coverage:
             beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
     else:
         print('Not computed')
 
     # Create figure for visual output.
     print('Visualization time:       ', end='', flush=True)
-    if do_viz_obstacles or do_viz_CDF:
+    if visualize_obstacles or visualize_CDF:
         viz_time = time.time()
 
         # Set font size on plots
-        plt.rcParams.update({'font.size': 10})
+        if visualize_obstacles and visualize_CDF:
+            plt.rcParams.update({'font.size': 18})
+        else:
+            plt.rcParams.update({'font.size': 18})
 
-        fig = plt.figure(1, figsize=(12, 8), dpi=90)
+        fig = plt.figure(1, figsize=(20, 12), dpi=90)
 
         # Logic to create the appropriate subplots.
-        if do_viz_obstacles and do_viz_CDF:
+        if visualize_obstacles and visualize_CDF:
             ax1 = fig.add_subplot(121)
             ax2 = fig.add_subplot(122)
-        elif do_viz_obstacles and (not do_viz_CDF):
+        elif visualize_obstacles and (not visualize_CDF):
             ax1 = fig.add_subplot(111)
-        elif (not do_viz_obstacles) and do_viz_CDF:
+        elif (not visualize_obstacles) and visualize_CDF:
             ax2 = fig.add_subplot(111)
 
-        if do_viz_obstacles:
+        if visualize_obstacles:
             OS.show_simulation(ax1, 
                                problematic_obstacles = problematic_obstacles,
                                problematic_CAs = problematic_CAs,
-                               show_CAs = do_show_CAs, 
-                               show_CAs_reduced = do_show_CAs_reduced, 
-                               show_obstacles = do_show_obstacles,
-                               show_obstacles_intersected = do_show_obstacles_intersected, 
-                               show_CA_first_point = do_show_CA_first_point)
+                               show_CAs = show_CAs, 
+                               show_CAs_reduced = show_CAs_reduced, 
+                               show_obstacles = show_obstacles,
+                               show_obstacles_intersected = show_obstacles_intersected, 
+                               show_CA_first_point = show_CA_first_point)
 
             # If there is request for zoom in this axis.
             if viz_obstacle_zoom is not None:
                 ax1.set_xlim(viz_obstacle_zoom[0])
                 ax1.set_ylim(viz_obstacle_zoom[1])
     
-        if do_viz_CDF:
+        if visualize_CDF:
             OS.show_CDF(ax2, 
-                        show_CA_as_size = do_show_CA_as_size, 
+                        show_CA_as_size = show_CA_as_size, 
                         line_color = 'blue', 
                         line_width = 2.5, 
                         line_label = 'Simulated CDF')
@@ -159,10 +167,10 @@ def obstacle_simulation(CA_width,
     print('---------------------------')
 
     print('Original CA:              {:1.0f} m^2'.format(OS.CA_length * OS.CA_width))
-    print('Average reduced CA:       {:1.0f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
+    print('Average reduced CA:       {:1.1f} m^2 ({:d}%)'.format(np.mean(OS.CA_lengths) * OS.CA_width, int(
         round(100 * np.mean(OS.CA_lengths) / OS.CA_length))))
-    if do_theory:
-        print('Analytical reduced CA     {:1.0f} m^2'.format(EX * OS.CA_width))
+    if do_model_CDF:
+        print('Analytical reduced CA     {:1.1f} m^2'.format(EX * OS.CA_width))
     else:
         print('Analytical reduced CA     Not computed')
 
@@ -173,20 +181,20 @@ def obstacle_simulation(CA_width,
                                                            int(round(100 * OS.num_of_empty_CA / OS.trials_count))))
     print('Obstacle density:         {:1.0f} #/km^2'.format(OS.obstacle_density() * 1E6))
 
-    if do_compute_coverage:
+    if compute_coverage:
         print('Obstacle total area:      {:1.0f} m^2'.format(OS.total_obstacle_area))
         print('Obstacle coverage (num):  {:1.0f} m^2'.format(OS.total_coverage))
-        print('Obstacle coverage (ana):  {:1.0f} m^2 (should be close to num)'.format(
+        print('Obstacle coverage (ana):  {:1.0f} m^2 '.format(
             OS.num_of_obstacles * obstacle_width_mu * obstacle_length_mu))
-        print('Coverage ratio:           {:1.3f}'.format(OS.total_coverage / OS.total_obstacle_area))
+        print('Obstacle coverage ratio:  {:1.3f}'.format(OS.total_coverage / OS.total_obstacle_area))
     else:
         print('Obstacle total area:      Not computed')
         print('Obstacle coverage (num):  Not computed')
         print('Obstacle coverage (ana):  Not computed')
         print('Coverage ratio:           Not computed')
 
-    if do_theory:
-        if do_compute_coverage:
+    if do_model_CDF:
+        if compute_coverage:
             print('beta (numerical):         {:1.5f}'.format(beta_numerical))
         else:
             print('beta (numerical):         Not computed')
@@ -208,26 +216,37 @@ def obstacle_simulation(CA_width,
 
 
     # Show the curve from theory    
-    if do_theory and do_viz_CDF:
-        if do_show_CA_as_size:
+    if do_model_CDF and visualize_CDF:
+        if show_CA_as_size:
             ax2.plot(x * OS.CA_width, p_x, '-', linewidth = 1.5, color = OS.ORANGE, label='Model CDF')
         else:
             ax2.plot(x, p_x, '.', label='Model CDF')
-        ax2.plot(0, beta_analytical, 'o', color=OS.GREEN, label='beta analytical')
 
-        if do_compute_coverage:
-            ax2.plot(0, beta_numerical, 'x', color=OS.RED, label='beta numerical')
+        # Plot CDF of singleton objects
+        ax2.plot(x * OS.CA_width, OS.singleton_objects_CDF(x), '-', linewidth = 1.5, color=OS.GREEN, label='Singleton CDF')
 
-    if do_viz_CDF:
-        ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color=OS.YELLOW, label='Fraction of empty CA')
-        ax2.legend(loc="upper left", )
+        #ax2.plot(0, beta_analytical, 'o', color=OS.GREEN, label='beta analytical')
+
+        #if compute_coverage:
+        #    ax2.plot(0, beta_numerical, 'x', color=OS.RED, label='beta numerical')
+
+    if visualize_obstacles:
+        ax1.set_title('Obstacles: {:d}  CAs: {:d}   CA nominal size: {:1.0f} m$^2$'.format(OS.num_of_obstacles, trials_count, CA_length * CA_width))
+
+    if visualize_CDF:
+        ax2.plot(0, OS.num_of_empty_CA / trials_count, 'o', color=OS.RED, label='Fraction of empty CA')
+
+        if show_legends:
+            ax2.legend(loc="upper left", )
+
         ax2.grid()
         ax2.yaxis.set_ticks(np.arange(0, 1, 0.1))
+        ax2.set_title('Obstacle density: {:1.0f}/km$^2$ and {:1.1f} obstacles per CA'.format(OS.obstacle_density() * 1e6, OS.num_of_obstacles / trials_count))
 
         # Make the second axis square to give it same height as first axis.
         ax2.set_aspect(np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0])
 
-    if do_viz_obstacles or do_viz_CDF:
+    if visualize_obstacles or visualize_CDF:
         plt.show()
 
         if save_file_name is not None:
@@ -238,6 +257,3 @@ def obstacle_simulation(CA_width,
         return fig
     else:
         return None
-
-#if __name__ == '__main__':
-
