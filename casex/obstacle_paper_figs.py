@@ -2,10 +2,33 @@
 from obstacle_simulation import *
 
 if True:
+    CA_width = 3
+    CA_length = 80 / 3
+    num_of_obstacles = 1800
+
+    obstacle_simulation(CA_width, 
+                        CA_length, 
+                        num_of_obstacles, 
+                        do_model_CDF = True, 
+                        compute_coverage = False,
+                        visualize_obstacles = True,
+                        do_problematic_check = False,
+                        show_CA_first_point = False,
+                        model_CDF_high_res = True,
+                        obstacle_orientation = Obstacles.ObstacleOrientation.UNIFORM,
+                        obstacle_orientation_loc = 0,
+                        obstacle_orientation_scale = 19.5,
+                        obstacle_orientation_resolution = 100,
+                        trials_count = 2000,
+                        trial_area_sidelength = 1000,
+                        random_generator_seed = 12346)
+
+
+if False:
     print('--- CASE 1 ---')
     CA_width = 3
     CA_length = 80 / 3
-    num_of_obstacles = 800
+    num_of_obstacles = 1800
 
     obstacle_simulation(CA_width, 
                         CA_length, 
@@ -15,6 +38,7 @@ if True:
                         visualize_CDF = True,
                         do_problematic_check = False,
                         show_CA_first_point = False,
+                        model_CDF_high_res = False,
                         trials_count = 1000,
                         trial_area_sidelength = 1000,
                         random_generator_seed = 12345,
@@ -34,7 +58,7 @@ if True:
                         random_generator_seed = 12345,
                         save_file_name = 'fig_init_example_zoom.png')
 
-if True:
+if False:
     CA_width = 3
     CA_length = 90
 
@@ -47,7 +71,7 @@ if True:
                         visualize_obstacles = False,
                         visualize_CDF = True,
                         do_problematic_check = False,
-                        trials_count = 2000,
+                        trials_count = 10000,
                         trial_area_sidelength = 1000,
                         random_generator_seed = 1234,
                         save_file_name = 'fig_100obs.png')
@@ -61,7 +85,7 @@ if True:
                         visualize_obstacles = False,
                         visualize_CDF = True,
                         do_problematic_check = False,
-                        trials_count = 2000,
+                        trials_count = 10000,
                         trial_area_sidelength = 1000,
                         random_generator_seed = 1234,
                         show_legends = False,
@@ -76,7 +100,7 @@ if True:
                         visualize_obstacles = False,
                         visualize_CDF = True,
                         do_problematic_check = False,
-                        trials_count = 2000,
+                        trials_count = 10000,
                         trial_area_sidelength = 1000,
                         random_generator_seed = 1234,
                         show_legends = False,
@@ -91,7 +115,7 @@ if True:
                         visualize_obstacles = False,
                         visualize_CDF = True,
                         do_problematic_check = False,
-                        trials_count = 2000,
+                        trials_count = 10000,
                         trial_area_sidelength = 1000,
                         random_generator_seed = 1234,
                         show_legends = False,

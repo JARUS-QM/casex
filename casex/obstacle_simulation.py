@@ -13,13 +13,19 @@ from casex import Obstacles
 def obstacle_simulation(CA_width, 
                         CA_length, 
                         num_of_obstacles, 
+                        # Optional value parameters for simulation and modeling
                         trials_count = 1000,
                         trial_area_sidelength = 1000,
                         obstacle_width_mu = 17,
                         obstacle_width_sigma = 3,
                         obstacle_length_mu = 8,
                         obstacle_length_sigma = 2,
+                        obstacle_orientation = Obstacles.ObstacleOrientation.FIXED,
+                        obstacle_orientation_loc = 0,
+                        obstacle_orientation_scale = 1,
                         CDF_x_resolution = 100,
+                        obstacle_orientation_resolution = None,
+                        # Boolean parameters to control behavior
                         compute_coverage = True,
                         do_problematic_check = True,
                         do_model_CDF = True,
@@ -62,6 +68,7 @@ def obstacle_simulation(CA_width,
                                                        obstacle_length_sigma, houses_along_street, rows_of_houses,
                                                        distance_between_two_houses)
     else:
+        OS.set_obstacle_orientation(obstacle_orientation, loc = obstacle_orientation_loc, scale = obstacle_orientation_scale)
         OS.generate_rectangular_obstacles_normal_distributed(obstacle_width_mu, obstacle_width_sigma,
                                                              obstacle_length_mu, obstacle_length_sigma)
 
@@ -70,19 +77,19 @@ def obstacle_simulation(CA_width,
 
     # Run trials.
     intersection_time = time.time()
-    print('Intersection time:        ', end='', flush=True)
-    OS.compute_reduced_CAs()
+    print('Intersection time:        ', end='\r', flush=True)
+    OS.compute_reduced_CAs(show_progress = True)
     OS.compute_CA_lengths()
-    print('{:1.1f} sec'.format(time.time() - intersection_time), flush=True)
+    print('Intersection time:        {:1.1f} sec'.format(time.time() - intersection_time), flush=True)
 
     # Determine coverage.
-    print('Coverage time:            ', end='', flush=True)
+    print('Coverage time:            ', end='\r', flush=True)
     if compute_coverage:
         coverage_time = time.time()
-        OS.compute_coverage()
-        print('{:1.1f} sec'.format(time.time() - coverage_time), flush=True)
+        OS.compute_coverage(show_progress = True)
+        print('Coverage time:            {:1.1f} sec'.format(time.time() - coverage_time), flush=True)
     else:
-        print('Not computed', flush=True)
+        print('Coverage time:            Not computed', flush=True)
 
     # Do sanity check (basically checking if the probelmatic areas are sufficiently small)
     print('Problematic obstacles:    ', end='', flush=True)
@@ -96,18 +103,28 @@ def obstacle_simulation(CA_width,
         print('Not computed')
 
     # Compute the probability based on theory.
-    print('Theory time:              ', end='', flush=True)
+    print('Theory time:              ', end='\r', flush=True)
     if do_model_CDF:
         theory_time = time.time()
         x = np.linspace(0, CA_length, CDF_x_resolution)
 
         if model_CDF_high_res:
-            pdf_resolution = 25
+            obstacle_size_resolution = 20
+            CA_orientation_resolution = 20
+            if obstacle_orientation_resolution is None:
+                obstacle_orientation_resolution = 20
         else:
-            pdf_resolution = 15
+            obstacle_size_resolution = 10
+            CA_orientation_resolution = 10
+            if obstacle_orientation_resolution is None:
+                obstacle_orientation_resolution = 10
 
-        p_x, EX, beta_analytical, acc_probability_check = OS.cdf(x, pdf_resolution)
-        print('{:1.1f} sec'.format(time.time() - theory_time), flush=True)
+        p_x, EX, beta_analytical, acc_probability_check, total_integral_ignored = OS.cdf(x, 
+                                                                 obstacle_size_resolution = obstacle_size_resolution, 
+                                                                 CA_orientation_resolution = CA_orientation_resolution, 
+                                                                 obstacle_orientation_resolution = obstacle_orientation_resolution,
+                                                                 show_progress = True)
+        print('Theory time:              {:1.1f} sec'.format(time.time() - theory_time), flush=True)
 
         if compute_coverage:
             beta_numerical = OS.total_coverage / OS.trial_area_sidelength / OS.trial_area_sidelength
@@ -200,12 +217,18 @@ def obstacle_simulation(CA_width,
             print('beta (numerical):         Not computed')
         print('beta (analytical):        {:1.5f}'.format(beta_analytical))
         print('PDF sanity check:         {:1.3f} (should be close to 1)'.format(acc_probability_check))
+        print('CDF integrals ignored:    {:1.0f}% / {:1.0f}% / {:1.0f}% / {:1.0f}%'.format(total_integral_ignored[0], 
+                                                                                   total_integral_ignored[1], 
+                                                                                   total_integral_ignored[2], 
+                                                                                   total_integral_ignored[3]))
     else:
         print('beta (numerical):         Not computed')
         print('beta (analytical):        Not computed')
         print('PDF sanity check:         Not computed')
 
     print('fraction of empty CA):    {:1.3f}'.format(OS.num_of_empty_CA / trials_count))
+
+    print('Obstacle orientation type:{}'.format(OS.obstacle_orientation_parameters.orientation_type.name))
 
     if do_problematic_check:
         print('Missed intersection area: {:1.2f} m^2 (should be small or zero)'.format(problematic_area))

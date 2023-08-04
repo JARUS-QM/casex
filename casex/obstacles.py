@@ -3,6 +3,7 @@ Support both computation and simulation of the reduction of critical area.
 """
 from dataclasses import dataclass
 import math
+#from os import waitid_result
 import warnings
 
 import matplotlib.pyplot as plt
@@ -13,7 +14,7 @@ from descartes.patch import PolygonPatch
 from shapely import affinity
 from shapely.geometry import Polygon, Point, MultiPoint, LineString
 from shapely.strtree import STRtree
-
+from enum import Enum
 
 class Obstacles:
     """This class has methods for computing the theoretical reduction in the size of the
@@ -69,6 +70,17 @@ class Obstacles:
         length_mu : float
         length_sigma : float
 
+    class ObstacleOrientation(Enum):
+        FIXED = 1
+        UNIFORM = 2
+        NORM = 3
+
+    @dataclass
+    class ObstacleOrientationParameters():
+        orientation_type : "ObstacleOrientation"
+        loc : float = 0.0
+        scale : float = 1.0
+
     def __init__(self, CA_width, CA_length, num_of_obstacles, trial_area_sidelength):
         """ MISSING DOCS
 
@@ -96,6 +108,8 @@ class Obstacles:
         self.total_obstacle_area = None
         self.total_coverage = None
         self.ObstacleSizes = None
+        self.obstacle_orientation_parameters = Obstacles.ObstacleOrientationParameters(Obstacles.ObstacleOrientation.FIXED)
+
 
         self.obstacles = []
         self.CAs = []
@@ -146,13 +160,29 @@ class Obstacles:
         width = stats.norm.rvs(size=self.num_of_obstacles, loc=self.ObstacleSizes.width_mu, scale=self.ObstacleSizes.width_sigma)
         length = stats.norm.rvs(size=self.num_of_obstacles, loc=self.ObstacleSizes.length_mu, scale=self.ObstacleSizes.length_sigma)
 
+        if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.FIXED:
+            angle = np.full(self.num_of_obstacles, 0)
+        elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.UNIFORM:
+            angle = stats.uniform.rvs(size=self.num_of_obstacles, loc=self.obstacle_orientation_parameters.loc, scale=self.obstacle_orientation_parameters.scale)
+        elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.NORM:
+            angle = stats.norm.rvs(size=self.num_of_obstacles, loc=self.obstacle_orientation_parameters.loc, scale=self.obstacle_orientation_parameters.scale)
+        else:
+            warnings.warn("obstacle_orientation_type not recognized.")
+
         # Create a list of obstacle polygons.
         trans_x = stats.uniform.rvs(size=self.num_of_obstacles, loc=0, scale=self.trial_area_sidelength)
         trans_y = stats.uniform.rvs(size=self.num_of_obstacles, loc=0, scale=self.trial_area_sidelength)
 
         for k in range(0, self.num_of_obstacles):
             obs = [(0, 0), (length[k], 0), (length[k], width[k]), (0, width[k]), (0, 0)]
-            self.obstacles.append(affinity.translate(Polygon(obs), trans_x[k], trans_y[k]))
+            self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), angle[k], 'center'), trans_x[k], trans_y[k]))
+
+    def set_obstacle_orientation(self, orientation_distribution_type, loc = 0, scale = 1):
+        if not isinstance(orientation_distribution_type, Obstacles.ObstacleOrientation):
+            warnings.warn("orientation_distribution_type not recognized. Set to FIXED.")
+            orientation_distribution_type = Obstacles.ObstacleOrientation.FIXED
+
+        self.obstacle_orientation_parameters = Obstacles.ObstacleOrientationParameters(orientation_distribution_type, loc, scale)
 
     def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu, length_sigma,
                                                     houses_along_street, rows_of_houses, distance_between_two_houses):
@@ -273,7 +303,7 @@ class Obstacles:
 
             self.CAs.append(CA_polygon)
 
-    def compute_reduced_CAs(self):
+    def compute_reduced_CAs(self, show_progress = False):
         """Compute the reduction for each CA
         
         Any CA that intersects with an obstacles is reduced such as to no longer intersect with any obstacles.
@@ -299,6 +329,9 @@ class Obstacles:
         reduced_CA_idxs = []
 
         for CA_idx, CA_polygon in enumerate(self.CAs):
+            if show_progress:
+                print('Intersection time:        {:1.0f}%'.format(CA_idx / len(self.CAs) * 100), end='\r', flush=True)
+
             # Keep track of the starting coordinates of the original CA.
             CA_original_coords = MultiPoint(CA_polygon.exterior.coords)
 
@@ -449,6 +482,7 @@ class Obstacles:
 
         Parameters
         ----------
+        None
 
         Returns
         -------
@@ -469,7 +503,7 @@ class Obstacles:
         if not count_empties == self.num_of_empty_CA:
             warning("Sanity check failed for number of empty CAs.")
 
-    def compute_coverage(self):
+    def compute_coverage(self, show_progress = False):
         """Determine total obstacle coverage.
 
         Parameters
@@ -483,6 +517,9 @@ class Obstacles:
         self.total_coverage = 0
 
         for k in range(0, self.num_of_obstacles):
+            if show_progress:
+                print('Coverage time:            {:1.0f} %'.format(k / self.num_of_obstacles * 100), end='\r', flush=True)
+
             area = self.obstacles[k].area
             self.total_obstacle_area = self.total_obstacle_area + area
             self.total_coverage = self.total_coverage + area
@@ -530,15 +567,21 @@ class Obstacles:
 
         return intersection_area, problematic_obstacles, problematic_CAs
 
-    def cdf(self, x, #bstacle_width_mu, obstacle_width_sigma, obstacle_length_mu,
-            #obstacle_length_sigma, 
-            resolution = 15):
+    def cdf(self, 
+            x, 
+            obstacle_size_resolution = 10, 
+            CA_orientation_resolution = 10,
+            obstacle_orientation_resolution = 10,
+            probability_threshold = stats.norm.pdf(3),
+            show_progress = False):
         """Compute the CDF for the length of the critical area when rectangular obstacles are present.
         
         This is the CDF for the length of the critical area when there are a given obstacle density of rectangular
         obstacles with dimension given by normal distributions. To draw the full CDF, a typical input for x is an array
         ranging in value from 0 to the nominal length of the CA. Since this is usually a rather smooth curve, it can be
         approximated well by relatively few x values (typically 10 or 15).
+
+        The resolution should not be lower than 
 
         Note that this function relies on a previous call to generate_rectangular_obstacles_normal_distributed().
         
@@ -548,17 +591,24 @@ class Obstacles:
         ----------
         x : float array
             [m] The length of the critical area for which the CDF is computed. This can be a scalar or an array.
-        obstacle_width_mu : float
-            The mean of the normal distribution of the width of the obstacles.
-        obstacle_width_sigma : float
-            The standard deviation of the normal distribution of the width of the obstacles.
-        obstacle_length_mu : float
-            The mean of the normal distribution of the length of the obstacles.
-        obstacle_length_sigma : float
-            The standard deviation of the normal distribution of the length of the obstacles.
-        resolution : int (default is 15)
-            The number of points for the discretization of the integrals. A good starting value is 15.
-            For high resolution, 100 is an approprite choice.
+        obstacle_size_resolution : int (default is 10)
+            The number of points for the discretization of the two integrals for width and length of obstacles.
+            A good starting value is 10. For high resolution, 20 is an approprite choice.
+        CA_orientation_resolution : int (default is 10)
+            The number of points for the discretization of integral for CA orientation.
+            A good starting value is 10. For high resolution, 20 is an approprite choice.
+        obstacle_orientation_resoltion : int (default is 10)
+            The number of points for the discretization of the integral over the obstacle orientation.
+            The value depends highly on the chosen distribution. If the orientation type is FIXED, this value is not used, as
+            the integral does not need to be evaluated.
+        probability_threshold : float (default is PDF for normal distribution evaluated at 3 sigma, approx 0.0044)
+            This value is used to speed up computation of the integrals. For any probability below this threshold, the contribution 
+            to the integrals is ignored.
+            To include all values, set this to zero.
+            Adjusting this value will affect the sanity checking, so if it becomes too large (i.e., too much of the integral 
+            contributions are ignored), a warning will be issued.
+        show_progress : bool (default False)
+            Write the progress in percent to the prompt for the multple integral computation.
 
         Returns
         -------
@@ -573,20 +623,42 @@ class Obstacles:
             value of pdf_resolution.
         """
         # Sample the obstacle PDF.
-        width = np.linspace(self.ObstacleSizes.width_mu - 3 * self.ObstacleSizes.width_sigma, self.ObstacleSizes.width_mu + 3 * self.ObstacleSizes.width_sigma,
-                            resolution)
-        length = np.linspace(self.ObstacleSizes.length_mu - 3 * self.ObstacleSizes.length_sigma,
-                             self.ObstacleSizes.length_mu + 3 * self.ObstacleSizes.length_sigma, resolution)
-        CA_orientation = np.linspace(0, 360 - 360 / resolution, resolution)
+        width_range = np.linspace(self.ObstacleSizes.width_mu - 3 * self.ObstacleSizes.width_sigma, 
+                                  self.ObstacleSizes.width_mu + 3 * self.ObstacleSizes.width_sigma,
+                                  obstacle_size_resolution)
+        length_range = np.linspace(self.ObstacleSizes.length_mu - 3 * self.ObstacleSizes.length_sigma,
+                                   self.ObstacleSizes.length_mu + 3 * self.ObstacleSizes.length_sigma,
+                                   obstacle_size_resolution)
+        CA_orientation_range = np.linspace(0, 360 - 360 / CA_orientation_resolution, CA_orientation_resolution)
 
-        pdf_width = stats.norm(self.ObstacleSizes.width_mu, self.ObstacleSizes.width_sigma).pdf(width)
-        pdf_length = stats.norm(self.ObstacleSizes.length_mu, self.ObstacleSizes.length_sigma).pdf(length)
-        pdf_CA_orientation = stats.uniform(0, 360).pdf(CA_orientation)
+
+        pdf_width = stats.norm(self.ObstacleSizes.width_mu, self.ObstacleSizes.width_sigma).pdf(width_range)
+        pdf_length = stats.norm(self.ObstacleSizes.length_mu, self.ObstacleSizes.length_sigma).pdf(length_range)
+        pdf_CA_orientation = stats.uniform(0, 360).pdf(CA_orientation_range)
 
         # Compute the step length for the integral computation.
-        pdf_width_step = (width[-1] - width[0]) / (resolution - 1)
-        pdf_length_step = (length[-1] - length[0]) / (resolution - 1)
-        pdf_CA_orientation_step = (CA_orientation[-1] - CA_orientation[0]) / (resolution - 1)
+        pdf_width_step = (width_range[-1] - width_range[0]) / (obstacle_size_resolution - 1)
+        pdf_length_step = (length_range[-1] - length_range[0]) / (obstacle_size_resolution - 1)
+        pdf_CA_orientation_step = (CA_orientation_range[-1] - CA_orientation_range[0]) / (CA_orientation_resolution - 1)
+
+        # Handles the various types of obstacle orientations.
+        if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.FIXED:
+            obstacle_orientation_range = np.array([0])   # Fixed orientation at 0 degrees.
+            pdf_obstacle_orientation_step = 1            # Step-size is 1.
+            pdf_obstacle_orientation = np.array([1])         # Probability of orientation is 1.
+        else:
+            obstacle_orientation_range = np.linspace(0, 360 - 360 / obstacle_orientation_resolution, obstacle_orientation_resolution)
+            pdf_obstacle_orientation_step = (obstacle_orientation_range[-1] - obstacle_orientation_range[0]) / (obstacle_orientation_resolution - 1)
+
+            if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.UNIFORM:
+                pdf_obstacle_orientation = stats.uniform(loc = self.obstacle_orientation_parameters.loc, 
+                                                     scale = self.obstacle_orientation_parameters.scale).pdf(obstacle_orientation_range)
+                # Due to potentially very low sampling resolution, this PDF may be slightly off in terms of area.
+                # So we adjust that.
+                pdf_obstacle_orientation = pdf_obstacle_orientation / (np.sum(pdf_obstacle_orientation) * pdf_obstacle_orientation_step)
+            elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.NORM:
+                pdf_obstacle_orientation = stats.norm(loc = self.obstacle_orientation_parameters.loc, 
+                                                  scale = self.obstacle_orientation_parameters.scale).pdf(obstacle_orientation_range)
 
         # The assumption is that the input is an array, so if it is scalar, change it to an array.
         if not isinstance(x, np.ndarray):
@@ -603,28 +675,57 @@ class Obstacles:
         acc_probability_check = 0
         obstacle_density = self.obstacle_density()
  
+        # Loop over increase x values to get the full CDF.
+        if show_progress:
+            print('', end='\r')
         for idx_x, x_val in enumerate(x):
+            if show_progress:
+                print('Theory time:              {:1.0f}%'.format(idx_x / len(x) * 100), end='\r')
+
             # Reset acc for integral.
             accumulator = 0
 
             CA_polygon = Polygon([(0, 0), (self.CA_width, 0), (self.CA_width, x_val), (0, x_val), (0, 0)])
 
-            for idx_orientation, orientation_val in enumerate(CA_orientation):
-                CA_polygon = affinity.rotate(CA_polygon, orientation_val, 'center', use_radians=False)
+            # Loop over orientations of CA.
+            for idx_CA_orientation, CA_orientation_val in enumerate(CA_orientation_range):
+                CA_polygon = affinity.rotate(CA_polygon, CA_orientation_val, 'center', use_radians=False)
 
-                for index_w, w in enumerate(width):
-                    for index_l, l in enumerate(length):
-                        minkowski_area = self.Minkowski_sum_convex_polygons_area(self.CA_width, x_val, w, l,
-                                                                                 orientation_val, 0)
+                p_CA_orientation = pdf_CA_orientation[idx_CA_orientation] * pdf_CA_orientation_step
+
+                if p_CA_orientation <= probability_threshold:
+                    continue
+
+                # Loop over orientations of obstacles.
+                for idx_obstacle_orientation, obstacle_orientation_val in enumerate(obstacle_orientation_range):
+
+                    p_obstacle_orientation = pdf_obstacle_orientation[idx_obstacle_orientation] * pdf_obstacle_orientation_step
+
+                    if p_obstacle_orientation <= probability_threshold:
+                        continue
+
+                    # Loop for obstacle probabilistic properties (called \Phi_i in the paper).
+                    for index_w, w in enumerate(width_range):
+
                         p_width = pdf_width[index_w] * pdf_width_step
-                        p_length = pdf_length[index_l] * pdf_length_step
-                        p_orientation = pdf_CA_orientation[idx_orientation] * pdf_CA_orientation_step
-                        accumulator = accumulator + minkowski_area * p_width * p_length * p_orientation
-                        acc_probability_check = acc_probability_check + p_width * p_length * p_orientation
 
-                        # Compute beta (does not depend on x and orient, so only need to compute once).
-                        if idx_x == 0 and idx_orientation == 0:
-                            beta_acc = beta_acc + w * l * p_width * p_length
+                        if p_width <= probability_threshold:
+                            continue
+
+                        for index_l, l in enumerate(length_range):
+                            p_length = pdf_length[index_l] * pdf_length_step
+
+                            if p_width <= probability_threshold:
+                                continue
+
+                            minkowski_area = self.Minkowski_sum_convex_polygons_area(self.CA_width, x_val, w, l,
+                                                                                     CA_orientation_val, obstacle_orientation_val)
+                            accumulator = accumulator + minkowski_area * p_width * p_length * p_CA_orientation * p_obstacle_orientation
+                            acc_probability_check = acc_probability_check + p_width * p_length * p_CA_orientation * p_obstacle_orientation
+
+                            # Compute beta (does not depend on x and orient, so only need to compute once).
+                            if idx_x == 0 and idx_CA_orientation == 0 and idx_obstacle_orientation == 0:
+                                beta_acc = beta_acc + w * l * p_width * p_length
 
             p_x[idx_x] = 1 - np.exp(-obstacle_density * accumulator)
             
@@ -640,7 +741,20 @@ class Obstacles:
         # Divide to account for the accumulator is not reset in the above outer loop.
         acc_probability_check = acc_probability_check / x_resolution
 
-        return p_x, EX, beta, acc_probability_check
+        total_integral_ignored = np.array([np.count_nonzero(pdf_CA_orientation * pdf_CA_orientation_step <= probability_threshold) / len(CA_orientation_range),
+                                           np.count_nonzero(pdf_obstacle_orientation * pdf_obstacle_orientation_step <= probability_threshold) / len(obstacle_orientation_range),
+                                           np.count_nonzero(pdf_width * pdf_width_step <= probability_threshold) / len(width_range),
+                                           np.count_nonzero(pdf_length * pdf_length_step <= probability_threshold) / len(length_range)]) * 100
+
+       
+        if abs(acc_probability_check - 1) > 0.05:
+            warnings.warn("PDF sanity check failed.")
+            print('[DEBUG] pdf_width:                {:1.4f}'.format(np.sum(pdf_width) * pdf_width_step),flush = True)
+            print('[DEBUG] pdf_length:               {:1.4f}'.format(np.sum(pdf_length) * pdf_length_step),flush = True)
+            print('[DEBUG] pdf_CA_orientation:       {:1.4f}'.format(np.sum(pdf_CA_orientation) * pdf_CA_orientation_step),flush = True)
+            print('[DEBUG] pdf_obstacle_orientation: {:1.4f}'.format(np.sum(pdf_obstacle_orientation) * pdf_obstacle_orientation_step),flush = True)
+
+        return p_x, EX, beta, acc_probability_check, total_integral_ignored
 
     def singleton_objects_CDF(self, x):
         """ CDF for singleton objects.
