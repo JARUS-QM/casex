@@ -16,6 +16,7 @@ from shapely.geometry import Polygon, Point, MultiPoint, LineString
 from shapely.strtree import STRtree
 from enum import Enum
 
+
 class Obstacles:
     """This class has methods for computing the theoretical reduction in the size of the
     critical area when there are obstacles in the ground area as well as for simulating
@@ -614,13 +615,19 @@ class Obstacles:
         -------
         p_x : float array
             The CDF value for the given x. This return parameter has the same type as input x.
-        EX : float
+        expected_value : float
             [m] The expected value of the length.
         beta : float
             The beta values as computed in :cite:`f-lacour2021`.
         acc_probability_check : float
             A sanity check on the triple integral. This values should be relatively close to 1, especially for high
             value of pdf_resolution.
+        pdf_width : np.array
+            The PDF for the obstacle width as used in the integral.
+        pdf_length : np.array
+            The PDF for the obstacle length as used in the integral.
+        pdf_CA_orientation : np.array
+            The PDF for the CA orientation as used in the integral.
         """
         # Sample the obstacle PDF.
         width_range = np.linspace(self.ObstacleSizes.width_mu - 3 * self.ObstacleSizes.width_sigma, 
@@ -647,18 +654,22 @@ class Obstacles:
             pdf_obstacle_orientation_step = 1            # Step-size is 1.
             pdf_obstacle_orientation = np.array([1])         # Probability of orientation is 1.
         else:
-            obstacle_orientation_range = np.linspace(0, 360 - 360 / obstacle_orientation_resolution, obstacle_orientation_resolution)
-            pdf_obstacle_orientation_step = (obstacle_orientation_range[-1] - obstacle_orientation_range[0]) / (obstacle_orientation_resolution - 1)
-
             if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.UNIFORM:
+                obstacle_orientation_range = np.linspace(0, 360 - 360 / obstacle_orientation_resolution, obstacle_orientation_resolution)
                 pdf_obstacle_orientation = stats.uniform(loc = self.obstacle_orientation_parameters.loc, 
                                                      scale = self.obstacle_orientation_parameters.scale).pdf(obstacle_orientation_range)
-                # Due to potentially very low sampling resolution, this PDF may be slightly off in terms of area.
-                # So we adjust that.
+
+                # Due to potentially very low sampling resolution, this PDF may be slightly off in terms of area. So we adjust that.
                 pdf_obstacle_orientation = pdf_obstacle_orientation / (np.sum(pdf_obstacle_orientation) * pdf_obstacle_orientation_step)
             elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.NORM:
+                obstacle_orientation_range = np.linspace(self.obstacle_orientation_parameters.loc - 3 * self.obstacle_orientation_parameters.scale,
+                                   self.obstacle_orientation_parameters.loc + 3 * self.obstacle_orientation_parameters.scale,
+                                   obstacle_orientation_resolution)
                 pdf_obstacle_orientation = stats.norm(loc = self.obstacle_orientation_parameters.loc, 
                                                   scale = self.obstacle_orientation_parameters.scale).pdf(obstacle_orientation_range)
+
+            pdf_obstacle_orientation_step = (obstacle_orientation_range[-1] - obstacle_orientation_range[0]) / (obstacle_orientation_resolution - 1)
+
 
         # The assumption is that the input is an array, so if it is scalar, change it to an array.
         if not isinstance(x, np.ndarray):
@@ -670,14 +681,15 @@ class Obstacles:
         # Preset p_x.
         p_x = np.zeros(x_resolution)
 
-        EX = 0
+        expected_value = 0
         beta_acc = 0
         acc_probability_check = 0
         obstacle_density = self.obstacle_density()
  
-        # Loop over increase x values to get the full CDF.
         if show_progress:
             print('', end='\r')
+
+        # Loop over increasing x values to get the full CDF.
         for idx_x, x_val in enumerate(x):
             if show_progress:
                 print('Theory time:              {:1.0f}%'.format(idx_x / len(x) * 100), end='\r')
@@ -730,13 +742,13 @@ class Obstacles:
             p_x[idx_x] = 1 - np.exp(-obstacle_density * accumulator)
             
             # Find expected value from the CDF
-            EX = EX + (1 - p_x[idx_x]) * x_step
+            expected_value = expected_value + (1 - p_x[idx_x]) * x_step
 
         beta = 1 - np.exp(-obstacle_density * beta_acc)
         
         # If x is not an array, the EX does not make sense, so set to zero.
         if len(x) == 1:
-            EX = 0
+            expected_value = 0
                 
         # Divide to account for the accumulator is not reset in the above outer loop.
         acc_probability_check = acc_probability_check / x_resolution
@@ -754,7 +766,24 @@ class Obstacles:
             print('[DEBUG] pdf_CA_orientation:       {:1.4f}'.format(np.sum(pdf_CA_orientation) * pdf_CA_orientation_step),flush = True)
             print('[DEBUG] pdf_obstacle_orientation: {:1.4f}'.format(np.sum(pdf_obstacle_orientation) * pdf_obstacle_orientation_step),flush = True)
 
-        return p_x, EX, beta, acc_probability_check, total_integral_ignored
+        return (p_x, 
+                expected_value, 
+                beta, 
+                {'acc_probability_check' : acc_probability_check, 
+                 'total_integral_ignored' : total_integral_ignored,
+                 'pdf_width' : pdf_width,
+                 'pdf_width_range' : width_range,
+                 'pdf_width_step' : pdf_width_step,
+                 'pdf_length' : pdf_length,
+                 'pdf_length_range' : length_range,
+                 'pdf_length_step' : pdf_length_step,
+                 'pdf_CA_orientation' : pdf_CA_orientation,
+                 'CA_orientation_range' : CA_orientation_range,
+                 'pdf_CA_orientation_step' : pdf_CA_orientation_step,
+                 'pdf_obstacle_orientation' : pdf_obstacle_orientation,
+                 'obstacle_orientation_range' : obstacle_orientation_range,
+                 'pdf_obstacle_orientation_step' : pdf_obstacle_orientation_step,
+                 })
 
     def singleton_objects_CDF(self, x):
         """ CDF for singleton objects.

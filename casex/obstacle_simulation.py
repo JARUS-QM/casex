@@ -119,7 +119,7 @@ def obstacle_simulation(CA_width,
             if obstacle_orientation_resolution is None:
                 obstacle_orientation_resolution = 10
 
-        p_x, EX, beta_analytical, acc_probability_check, total_integral_ignored = OS.cdf(x, 
+        p_x, EX, beta_analytical, cdf_additional_results = OS.cdf(x, 
                                                                  obstacle_size_resolution = obstacle_size_resolution, 
                                                                  CA_orientation_resolution = CA_orientation_resolution, 
                                                                  obstacle_orientation_resolution = obstacle_orientation_resolution,
@@ -216,11 +216,11 @@ def obstacle_simulation(CA_width,
         else:
             print('beta (numerical):         Not computed')
         print('beta (analytical):        {:1.5f}'.format(beta_analytical))
-        print('PDF sanity check:         {:1.3f} (should be close to 1)'.format(acc_probability_check))
-        print('CDF integrals ignored:    {:1.0f}% / {:1.0f}% / {:1.0f}% / {:1.0f}%'.format(total_integral_ignored[0], 
-                                                                                   total_integral_ignored[1], 
-                                                                                   total_integral_ignored[2], 
-                                                                                   total_integral_ignored[3]))
+        print('PDF sanity check:         {:1.3f} (should be close to 1)'.format(cdf_additional_results['acc_probability_check']))
+        print('CDF integrals ignored:    {:1.0f}% / {:1.0f}% / {:1.0f}% / {:1.0f}%'.format(cdf_additional_results['total_integral_ignored'][0], 
+                                                                                   cdf_additional_results['total_integral_ignored'][1], 
+                                                                                   cdf_additional_results['total_integral_ignored'][2], 
+                                                                                   cdf_additional_results['total_integral_ignored'][3]))
     else:
         print('beta (numerical):         Not computed')
         print('beta (analytical):        Not computed')
@@ -269,6 +269,18 @@ def obstacle_simulation(CA_width,
         # Make the second axis square to give it same height as first axis.
         ax2.set_aspect(np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0])
 
+    if True:
+        fig_PDF, ax_pdf = plt.subplots(2,2)
+        ax_pdf[0, 0].plot(cdf_additional_results['pdf_width_range'], cdf_additional_results['pdf_width'],'-o', color='blue',linewidth=2)
+        ax_pdf[0, 0].set_title('PDF obstacle width, integral = {:1.3}'.format(np.sum(cdf_additional_results['pdf_width']*cdf_additional_results['pdf_width_step'])))
+        ax_pdf[0, 1].plot(cdf_additional_results['pdf_length_range'], cdf_additional_results['pdf_length'],'-o', color='orange',linewidth=2)
+        ax_pdf[0, 1].set_title('PDF obstacle length, integral = {:1.3}'.format(np.sum(cdf_additional_results['pdf_length']*cdf_additional_results['pdf_length_step'])))
+        ax_pdf[1, 0].plot(cdf_additional_results['obstacle_orientation_range'], cdf_additional_results['pdf_obstacle_orientation'],'-o', color='green',linewidth=2)
+        ax_pdf[1, 0].set_title('PDF obstacle orientation, integral = {:1.3}'.format(np.sum(cdf_additional_results['pdf_obstacle_orientation']*cdf_additional_results['pdf_obstacle_orientation_step'])))
+        ax_pdf[1, 1].plot(cdf_additional_results['CA_orientation_range'], cdf_additional_results['pdf_CA_orientation'],'-o', color='red',linewidth=2)
+        ax_pdf[1, 1].set_title('PDF CA orientation, integral = {:1.3}'.format(np.sum(cdf_additional_results['pdf_CA_orientation']*cdf_additional_results['pdf_CA_orientation_step'])))
+        plt.show()
+
     if visualize_obstacles or visualize_CDF:
         plt.show()
 
@@ -280,3 +292,4 @@ def obstacle_simulation(CA_width,
         return fig
     else:
         return None
+
