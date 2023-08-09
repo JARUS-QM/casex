@@ -1,7 +1,7 @@
 #from casex import Obstacle
 from obstacle_simulation import *
 
-if False:
+if True:
     CA_width = 3
     CA_length = 80 / 3
     num_of_obstacles = 1800
@@ -15,7 +15,7 @@ if False:
                         do_problematic_check = False,
                         show_CA_first_point = False,
                         model_CDF_high_res = True,
-                        obstacle_orientation = Obstacles.ObstacleOrientation.UNIFORM,
+                        obstacle_orientation = Obstacles.DistributionType.UNIFORM,
                         obstacle_orientation_loc = 0,
                         obstacle_orientation_scale = 19,
                         obstacle_orientation_resolution = 100,
@@ -33,7 +33,7 @@ if False:
                         do_problematic_check = False,
                         show_CA_first_point = False,
                         model_CDF_high_res = True,
-                        obstacle_orientation = Obstacles.ObstacleOrientation.UNIFORM,
+                        obstacle_orientation = Obstacles.DistributionType.UNIFORM,
                         obstacle_orientation_loc = 67,
                         obstacle_orientation_scale = 256,
                         obstacle_orientation_resolution = 100,
@@ -55,12 +55,12 @@ if True:
                         visualize_obstacles = True,
                         do_problematic_check = False,
                         show_CA_first_point = False,
-                        model_CDF_high_res = True,
-                        obstacle_orientation = Obstacles.ObstacleOrientation.NORM,
+                        model_CDF_high_res = False,
+                        obstacle_orientation = Obstacles.DistributionType.NORM,
                         obstacle_orientation_loc = 34,
                         obstacle_orientation_scale = 30,
-                        obstacle_orientation_resolution = 100,
-                        trials_count = 10000,
+                        obstacle_orientation_resolution = 10,
+                        trials_count = 1000,
                         trial_area_sidelength = 1000,
                         random_generator_seed = 12346,
                         save_file_name = 'fig_test_NORM_34_30.png')

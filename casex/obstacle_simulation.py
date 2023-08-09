@@ -20,7 +20,7 @@ def obstacle_simulation(CA_width,
                         obstacle_width_sigma = 3,
                         obstacle_length_mu = 8,
                         obstacle_length_sigma = 2,
-                        obstacle_orientation = Obstacles.ObstacleOrientation.FIXED,
+                        obstacle_orientation = Obstacles.DistributionType.FIXED,
                         obstacle_orientation_loc = 0,
                         obstacle_orientation_scale = 1,
                         CDF_x_resolution = 100,
@@ -228,7 +228,7 @@ def obstacle_simulation(CA_width,
 
     print('fraction of empty CA):    {:1.3f}'.format(OS.num_of_empty_CA / trials_count))
 
-    print('Obstacle orientation type:{}'.format(OS.obstacle_orientation_parameters.orientation_type.name))
+    print('Obstacle orientation type:{}'.format(OS.obstacle_orientation_parameters.distribution_type.name))
 
     if do_problematic_check:
         print('Missed intersection area: {:1.2f} m^2 (should be small or zero)'.format(problematic_area))

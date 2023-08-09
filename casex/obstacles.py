@@ -71,14 +71,14 @@ class Obstacles:
         length_mu : float
         length_sigma : float
 
-    class ObstacleOrientation(Enum):
+    class DistributionType(Enum):
         FIXED = 1
         UNIFORM = 2
         NORM = 3
 
     @dataclass
-    class ObstacleOrientationParameters():
-        orientation_type : "ObstacleOrientation"
+    class DistributionParameters():
+        distribution_type : "DistributionType"
         loc : float = 0.0
         scale : float = 1.0
 
@@ -109,7 +109,7 @@ class Obstacles:
         self.total_obstacle_area = None
         self.total_coverage = None
         self.ObstacleSizes = None
-        self.obstacle_orientation_parameters = Obstacles.ObstacleOrientationParameters(Obstacles.ObstacleOrientation.FIXED)
+        self.obstacle_orientation_parameters = Obstacles.DistributionParameters(Obstacles.DistributionType.FIXED)
 
 
         self.obstacles = []
@@ -161,11 +161,11 @@ class Obstacles:
         width = stats.norm.rvs(size=self.num_of_obstacles, loc=self.ObstacleSizes.width_mu, scale=self.ObstacleSizes.width_sigma)
         length = stats.norm.rvs(size=self.num_of_obstacles, loc=self.ObstacleSizes.length_mu, scale=self.ObstacleSizes.length_sigma)
 
-        if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.FIXED:
+        if self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.FIXED:
             angle = np.full(self.num_of_obstacles, 0)
-        elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.UNIFORM:
+        elif self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.UNIFORM:
             angle = stats.uniform.rvs(size=self.num_of_obstacles, loc=self.obstacle_orientation_parameters.loc, scale=self.obstacle_orientation_parameters.scale)
-        elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.NORM:
+        elif self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.NORM:
             angle = stats.norm.rvs(size=self.num_of_obstacles, loc=self.obstacle_orientation_parameters.loc, scale=self.obstacle_orientation_parameters.scale)
         else:
             warnings.warn("obstacle_orientation_type not recognized.")
@@ -179,11 +179,11 @@ class Obstacles:
             self.obstacles.append(affinity.translate(affinity.rotate(Polygon(obs), angle[k], 'center'), trans_x[k], trans_y[k]))
 
     def set_obstacle_orientation(self, orientation_distribution_type, loc = 0, scale = 1):
-        if not isinstance(orientation_distribution_type, Obstacles.ObstacleOrientation):
+        if not isinstance(orientation_distribution_type, Obstacles.DistributionType):
             warnings.warn("orientation_distribution_type not recognized. Set to FIXED.")
-            orientation_distribution_type = Obstacles.ObstacleOrientation.FIXED
+            orientation_distribution_type = Obstacles.DistributionType.FIXED
 
-        self.obstacle_orientation_parameters = Obstacles.ObstacleOrientationParameters(orientation_distribution_type, loc, scale)
+        self.obstacle_orientation_parameters = Obstacles.DistributionParameters(orientation_distribution_type, loc, scale)
 
     def generate_rectangular_obstacles_along_curves(self, width_mu, width_sigma, length_mu, length_sigma,
                                                     houses_along_street, rows_of_houses, distance_between_two_houses):
@@ -649,26 +649,27 @@ class Obstacles:
         pdf_CA_orientation_step = (CA_orientation_range[-1] - CA_orientation_range[0]) / (CA_orientation_resolution - 1)
 
         # Handles the various types of obstacle orientations.
-        if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.FIXED:
+        if self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.FIXED:
             obstacle_orientation_range = np.array([0])   # Fixed orientation at 0 degrees.
             pdf_obstacle_orientation_step = 1            # Step-size is 1.
             pdf_obstacle_orientation = np.array([1])         # Probability of orientation is 1.
         else:
-            if self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.UNIFORM:
+            if self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.UNIFORM:
                 obstacle_orientation_range = np.linspace(0, 360 - 360 / obstacle_orientation_resolution, obstacle_orientation_resolution)
+                pdf_obstacle_orientation_step = (obstacle_orientation_range[-1] - obstacle_orientation_range[0]) / (obstacle_orientation_resolution - 1)
                 pdf_obstacle_orientation = stats.uniform(loc = self.obstacle_orientation_parameters.loc, 
                                                      scale = self.obstacle_orientation_parameters.scale).pdf(obstacle_orientation_range)
 
                 # Due to potentially very low sampling resolution, this PDF may be slightly off in terms of area. So we adjust that.
                 pdf_obstacle_orientation = pdf_obstacle_orientation / (np.sum(pdf_obstacle_orientation) * pdf_obstacle_orientation_step)
-            elif self.obstacle_orientation_parameters.orientation_type == Obstacles.ObstacleOrientation.NORM:
+            elif self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.NORM:
                 obstacle_orientation_range = np.linspace(self.obstacle_orientation_parameters.loc - 3 * self.obstacle_orientation_parameters.scale,
                                    self.obstacle_orientation_parameters.loc + 3 * self.obstacle_orientation_parameters.scale,
                                    obstacle_orientation_resolution)
+                pdf_obstacle_orientation_step = (obstacle_orientation_range[-1] - obstacle_orientation_range[0]) / (obstacle_orientation_resolution - 1)
                 pdf_obstacle_orientation = stats.norm(loc = self.obstacle_orientation_parameters.loc, 
                                                   scale = self.obstacle_orientation_parameters.scale).pdf(obstacle_orientation_range)
 
-            pdf_obstacle_orientation_step = (obstacle_orientation_range[-1] - obstacle_orientation_range[0]) / (obstacle_orientation_resolution - 1)
 
 
         # The assumption is that the input is an array, so if it is scalar, change it to an array.
