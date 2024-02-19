@@ -134,7 +134,7 @@ class Obstacles:
         self.PURPLE = '#CF9FFF'
         self.WHITE = '#FFFFFF'
 
-    def generate_rectangular_obstacles_normal_distributed(self, width_mu, width_sigma, length_mu, length_sigma):
+    def generate_rectangular_obstacles_normal_distributed_rotated(self, width_mu, width_sigma, length_mu, length_sigma):
         """Generate a set of uniformly distributed rectangular obstacles.
         
         This method generates a number of rectangular obstacles which a co-linear with the axes, and with width and
@@ -574,6 +574,7 @@ class Obstacles:
             CA_orientation_resolution = 10,
             obstacle_orientation_resolution = 10,
             probability_threshold = stats.norm.pdf(3),
+            ignore_obstacle_orientation = False,
             show_progress = False):
         """Compute the CDF for the length of the critical area when rectangular obstacles are present.
         
@@ -608,6 +609,10 @@ class Obstacles:
             To include all values, set this to zero.
             Adjusting this value will affect the sanity checking, so if it becomes too large (i.e., too much of the integral 
             contributions are ignored), a warning will be issued.
+        ignore_obstacle_orientation : bool (default False)
+            If true, the integral that covers obstacle orientation is skipped, effectively assuming that obstacles have orientation 0.
+            Note that this overrides the provided density function for orientation.
+            Only use this option in special circumstances, and only if you know exactly what you are doing!
         show_progress : bool (default False)
             Write the progress in percent to the prompt for the multple integral computation.
 
@@ -650,9 +655,9 @@ class Obstacles:
 
         # Handles the various types of obstacle orientations.
         if self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.FIXED:
-            obstacle_orientation_range = np.array([0])   # Fixed orientation at 0 degrees.
-            pdf_obstacle_orientation_step = 1            # Step-size is 1.
-            pdf_obstacle_orientation = np.array([1])         # Probability of orientation is 1.
+            obstacle_orientation_range = np.array([0.0])   # Fixed orientation at 0 degrees.
+            pdf_obstacle_orientation_step = 1.0            # Step-size is 1.
+            pdf_obstacle_orientation = np.array([1.0])     # Probability of orientation is 1.
         else:
             if self.obstacle_orientation_parameters.distribution_type == Obstacles.DistributionType.UNIFORM:
                 obstacle_orientation_range = np.linspace(0, 360 - 360 / obstacle_orientation_resolution, obstacle_orientation_resolution)
@@ -698,10 +703,10 @@ class Obstacles:
             # Reset acc for integral.
             accumulator = 0
 
-            CA_polygon = Polygon([(0, 0), (self.CA_width, 0), (self.CA_width, x_val), (0, x_val), (0, 0)])
 
             # Loop over orientations of CA.
             for idx_CA_orientation, CA_orientation_val in enumerate(CA_orientation_range):
+                CA_polygon = Polygon([(0, 0), (self.CA_width, 0), (self.CA_width, x_val), (0, x_val), (0, 0)])
                 CA_polygon = affinity.rotate(CA_polygon, CA_orientation_val, 'center', use_radians=False)
 
                 p_CA_orientation = pdf_CA_orientation[idx_CA_orientation] * pdf_CA_orientation_step

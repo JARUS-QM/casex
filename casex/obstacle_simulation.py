@@ -39,6 +39,8 @@ def obstacle_simulation(CA_width,
                         show_obstacles_intersected = True,
                         show_CA_as_size = True,
                         show_legends = True,
+                        show_pdf_density_functions = False,
+                        force_fixed_obstacle_orientation_in_CDF = False,
                         do_houses_along_roads = False,
                         viz_obstacle_zoom = None,
                         random_generator_seed = None,
@@ -69,8 +71,14 @@ def obstacle_simulation(CA_width,
                                                        distance_between_two_houses)
     else:
         OS.set_obstacle_orientation(obstacle_orientation, loc = obstacle_orientation_loc, scale = obstacle_orientation_scale)
-        OS.generate_rectangular_obstacles_normal_distributed(obstacle_width_mu, obstacle_width_sigma,
-                                                             obstacle_length_mu, obstacle_length_sigma)
+
+        # Generate obstacles with normally distributed side sizes.
+        OS.generate_rectangular_obstacles_normal_distributed_rotated(obstacle_width_mu, obstacle_width_sigma,
+                                                                     obstacle_length_mu, obstacle_length_sigma)
+
+    # If we want to force the obstacle orientation integral in the CDF to be ignore, we just set orientation to FIXED after having created the obstacles above.
+    if force_fixed_obstacle_orientation_in_CDF:
+        OS.set_obstacle_orientation(Obstacles.DistributionType.FIXED, loc = 0, scale = 1)
 
     OS.generate_CAs(trials_count)
     print('{:1.1f} sec'.format(time.time() - gen_polygons_time), flush=True)
@@ -123,6 +131,7 @@ def obstacle_simulation(CA_width,
                                                                  obstacle_size_resolution = obstacle_size_resolution, 
                                                                  CA_orientation_resolution = CA_orientation_resolution, 
                                                                  obstacle_orientation_resolution = obstacle_orientation_resolution,
+                                                                 ignore_obstacle_orientation = force_fixed_obstacle_orientation_in_CDF,
                                                                  show_progress = True)
         print('Theory time:              {:1.1f} sec'.format(time.time() - theory_time), flush=True)
 
@@ -269,7 +278,7 @@ def obstacle_simulation(CA_width,
         # Make the second axis square to give it same height as first axis.
         ax2.set_aspect(np.diff(ax2.get_xlim())[0] / np.diff(ax2.get_ylim())[0])
 
-    if True:
+    if show_pdf_density_functions:
         fig_PDF, ax_pdf = plt.subplots(2,2)
         ax_pdf[0, 0].plot(cdf_additional_results['pdf_width_range'], cdf_additional_results['pdf_width'],'-o', color='blue',linewidth=2)
         ax_pdf[0, 0].set_title('PDF obstacle width, integral = {:1.3}'.format(np.sum(cdf_additional_results['pdf_width']*cdf_additional_results['pdf_width_step'])))
