@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{52dba72a-c0f7-4a32-a91a-c25f26e1ff5a}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>casex\obstacle_paper_figs.py</StartupFile>
+    <StartupFile>casex\examples\example2_vector_input.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>

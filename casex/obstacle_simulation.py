@@ -25,6 +25,7 @@ def obstacle_simulation(CA_width,
                         obstacle_orientation_scale = 1,
                         CDF_x_resolution = 100,
                         obstacle_orientation_resolution = None,
+                        set_obstacles_viewport = None,
                         # Boolean parameters to control behavior
                         compute_coverage = True,
                         do_problematic_check = True,
@@ -38,8 +39,10 @@ def obstacle_simulation(CA_width,
                         show_obstacles = True,
                         show_obstacles_intersected = True,
                         show_CA_as_size = True,
+                        show_grid_obstacles = True,
                         show_legends = True,
                         show_pdf_density_functions = False,
+                        hide_title_axis_names = False,
                         force_fixed_obstacle_orientation_in_CDF = False,
                         do_houses_along_roads = False,
                         viz_obstacle_zoom = None,
@@ -170,7 +173,8 @@ def obstacle_simulation(CA_width,
                                show_CAs_reduced = show_CAs_reduced, 
                                show_obstacles = show_obstacles,
                                show_obstacles_intersected = show_obstacles_intersected, 
-                               show_CA_first_point = show_CA_first_point)
+                               show_CA_first_point = show_CA_first_point,
+                               show_legends = show_legends)
 
             # If there is request for zoom in this axis.
             if viz_obstacle_zoom is not None:
@@ -291,6 +295,17 @@ def obstacle_simulation(CA_width,
         plt.show()
 
     if visualize_obstacles or visualize_CDF:
+        ax1.grid(show_grid_obstacles)
+        if hide_title_axis_names:
+            ax1.set_title("")
+            ax1.set_xlabel("")
+            ax1.set_ylabel("")
+            ax1.set_xticks([])
+            ax1.set_yticks([])
+
+        if set_obstacles_viewport != None:
+            ax1.axis(set_obstacles_viewport)
+
         plt.show()
 
         if save_file_name is not None:
@@ -298,7 +313,7 @@ def obstacle_simulation(CA_width,
             fig.savefig(save_file_name, format='png', dpi=300, bbox_inches = 'tight')
             print('Done', flush=True)
         
-        return fig
+        return fig, plt
     else:
         return None
 

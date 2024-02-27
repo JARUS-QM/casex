@@ -98,7 +98,7 @@ class AnnexFParms:
         aircraft: AircraftSpecs = None
 
     def __init__(self):
-        self.population_bands = [0.25, 25, 250, 2500, 25000, 250000]
+        self.population_bands = [0.5, 5, 50, 500, 5000, 50000, 500000]
 
         # Set aircraft type, the type has no effect in this example, but must be given a value.
         self.aircraft_type = enums.AircraftType.GENERIC
@@ -109,7 +109,7 @@ class AnnexFParms:
         self.CA_parms.append(self.CAParameters(1,      8,        25,      self.scenario_angles[1],         0.1,        3,       self.lethal_kinetic_energy/0.5,    75))
         self.CA_parms.append(self.CAParameters(3,      80,       35,      self.scenario_angles[1],         0.5,        50,      self.lethal_kinetic_energy,        100))
         self.CA_parms.append(self.CAParameters(8,      800,      75,      self.scenario_angles[1],         2.0,        400,     self.lethal_kinetic_energy,        200))
-        self.CA_parms.append(self.CAParameters(20,     8000,     150,     self.scenario_angles[1],         8.0,        5000,    self.lethal_kinetic_energy,        500))
+        self.CA_parms.append(self.CAParameters(20,     8000,     120,     self.scenario_angles[1],         8.0,        5000,    self.lethal_kinetic_energy,        500))
         self.CA_parms.append(self.CAParameters(40,     43000,    200,     self.scenario_angles[1],         14,         10000,   self.lethal_kinetic_energy,        1000))
 
         self.recompute_parameters(self.scenario_angles[1])
@@ -175,7 +175,9 @@ class AnnexFParms:
             [fatalities per flight hour] Target level of safety (the default is 1e-6).
             This value is described in more detail in Annex F :cite:`a-JARUS_AnnexF`.
         use_conservative_compensation: bool, optional
-            if True, the 0.3 reduction in iGRC value is applied.
+            if True, the conservative reduction in iGRC value is applied.
+        convervative_reduction_from_raw_iGRC = 0.5 : float
+            [-] The reduction of the raw iGRC when computing the Annex F iGRC table. Is derived from log_10(3).
             
         Returns
         -------
@@ -184,11 +186,15 @@ class AnnexFParms:
         raw iGRC : float
             The raw iGRC before rounding up.
         """
+
+        # The value for this is given in Annex F.
+        convervative_reduction_from_raw_iGRC = 0.5
+
         # Note that the 1E-6 here is the conversion of pop_dens from km^2 to m^2.
         raw_iGRC_value = 1 - math.log10(TLOS / (pop_dens * 1E-6 * CA))
         
         if use_conservative_compensation:
-            raw_iGRC_value = raw_iGRC_value - 0.3
+            raw_iGRC_value = raw_iGRC_value - convervative_reduction_from_raw_iGRC
             
         # The raw iGRC value may be rounded to one decimal.
         raw_iGRC_value = round(raw_iGRC_value * 10) / 10

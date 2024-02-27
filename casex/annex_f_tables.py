@@ -69,10 +69,10 @@ class AnnexFTables:
         aircraft.set_fuel_quantity(0)
         
         # Set list of population density bands in the table.
-        pop_density = np.array([0.25, 25, 250, 2500, 25000, 250000, 2500000])
+        pop_density = AFP.population_bands  # np.array([0.25, 25, 250, 2500, 25000, 250000, 2500000])
         
         if show_additional_pop_density:
-            pop_density = np.append(pop_density, [7.5, 75, 750, 7500, 750000, 750000])
+            pop_density = np.append(pop_density, [1.5, 15, 150, 1500, 15000, 150000])
         
         pop_density = np.sort(pop_density)
         
@@ -109,7 +109,6 @@ class AnnexFTables:
             for j in range(0, 5):
                 iGRC_table[i][j] = AFP.iGRC(pop_density[i],
                                             p[j][0],
-                                            width = AFP.CA_parms[j].wingspan,
                                             use_conservative_compensation = show_with_conservative_compensation)[1]
         console_output = []
         
@@ -287,7 +286,7 @@ class AnnexFTables:
         
         console_output.append("-----------------------+--------------------------------------------------")
         
-        for Dpop in [0.25, 25, 250, 2500, 25000, 250000, 250001]:
+        for Dpop in AFP.population_bands: #[0.5, 5, 50, 500, 5000, 50000, 500001]:
             
             if (Dpop > 1):
                 s = "    {:6} ppl/km^2    |   ".format(int(Dpop * Dpop_factor))
@@ -317,14 +316,12 @@ class AnnexFTables:
                 # Compute the raw iGRC according to Annex F.
                 raw_iGRC_original = AnnexFParms.iGRC(Dpop,
                                                      p_original,
-                                                     use_conservative_compensation=True,
-                                                     width=AFP.CA_parms[j].wingspan) 
+                                                     use_conservative_compensation=True) 
                 raw_iGRC_trade_off = AnnexFParms.iGRC(Dpop * Dpop_factor,
                                                       p_trade_off,
-                                                      use_conservative_compensation=True,
-                                                      width=AFP.CA_parms[j].wingspan) 
+                                                      use_conservative_compensation=True) 
         
-                if Dpop == 250001 and j > 0:
+                if Dpop == 500000 and j > 1:
                     s = s + "  n/a     "
                 else:                
                     if show_relative:

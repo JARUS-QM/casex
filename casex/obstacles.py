@@ -822,7 +822,7 @@ class Obstacles:
 
     def show_simulation(self, ax, problematic_obstacles = None, problematic_CAs = None, show_CAs = True, 
                         show_CA_first_point = False, show_CAs_reduced = True, show_obstacles = True,
-                        show_obstacles_intersected = True, show_debug_points = False):
+                        show_obstacles_intersected = True, show_debug_points = False, show_legends = True):
         """Visualize simulation with obstacles and critical areas.
 
         This functions makes it easy to visualize the result of simulations. It will show the simulated square area with obstacles (possible
@@ -914,7 +914,8 @@ class Obstacles:
         ax.set_xlabel('Size [m]')
         ax.set_ylabel('Size [m]')
         ax.grid()
-        ax.legend(loc="upper left", )
+        if show_legends:
+            ax.legend(loc="upper left", )
 
     def show_CDF(self, ax, show_CA_as_size = True, line_label = None, line_color = 'blue', line_width = 3):
         """Plots the CDF

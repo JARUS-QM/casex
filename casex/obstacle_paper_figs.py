@@ -1,6 +1,41 @@
 #from casex import Obstacle
 from obstacle_simulation import *
 
+
+# Make image showing how length of CA is done for intersecting obstacles
+if True:
+    CA_width = 3
+    CA_length = 80 / 3
+    num_of_obstacles = 200
+
+    [fig, plt] = obstacle_simulation(CA_width, 
+                        CA_length, 
+                        num_of_obstacles, 
+                        do_model_CDF = False, 
+                        compute_coverage = False,
+                        visualize_obstacles = True,
+                        do_problematic_check = False,
+                        show_CA_first_point = True,
+                        model_CDF_high_res = False,
+                        show_legends = False,
+                        visualize_CDF = False,
+                        obstacle_orientation = Obstacles.DistributionType.NORM,
+                        obstacle_orientation_loc = 34,
+                        obstacle_orientation_scale = 30,
+                        obstacle_orientation_resolution = 25,
+                        trials_count = 1000,
+                        trial_area_sidelength = 1000,
+                        random_generator_seed = 12346,
+                        show_pdf_density_functions = False,
+                        force_fixed_obstacle_orientation_in_CDF = False,
+                        set_obstacles_viewport = [210, 320, 740, 850],
+                        show_grid_obstacles = False,
+                        hide_title_axis_names = True,
+                        save_file_name = 'fig_obstacle_intersection_visualization.png'
+                        )
+
+
+
 if False:
     CA_width = 3
     CA_length = 80 / 3
@@ -68,7 +103,7 @@ if False:
                         save_file_name = None # 'fig_test_UNIFORM_67_256.png'
                         )
 
-if True:
+if False:
     CA_width = 3
     CA_length = 80 / 3
     num_of_obstacles = 1800

@@ -62,7 +62,7 @@ p.append(CA.critical_area(aircraft, v_impact_speed, impact_angle))
 
 # This is how to vary the critical_area_overlap.
 v_critical_areas_overlap = np.linspace(0, 1, 100)
-p.append(CA.critical_area(aircraft, impact_speed, impact_angle))
+p.append(CA.critical_area(aircraft, impact_speed, impact_angle, critical_areas_overlap = v_critical_areas_overlap))
 
 # This is how to vary the fuel_quantity.
 v_fuel_quantity = np.linspace(0, 10, 100)
